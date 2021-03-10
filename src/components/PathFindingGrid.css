@@ -1,0 +1,29 @@
+.pf-grid {
+    margin: 10px;
+    position: relative;
+}
+
+.pf-grid-nodes-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pf-grid-node {
+    border-top: 1px solid #007bff;
+    border-right: 1px solid #007bff;
+    width: 25px;
+    height: 25px;
+}
+
+.first-col-node {
+    border-left: 1px solid #007bff;
+}
+
+.last-row-node {
+    border-bottom: 1px solid #007bff;
+}
+
+.wall-node {
+    background-color: #016936;
+}

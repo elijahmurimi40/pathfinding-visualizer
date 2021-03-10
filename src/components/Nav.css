@@ -1,0 +1,21 @@
+.show-for-large {
+    display: flex !important;
+}
+
+.show-for-medium {
+    display: none !important;
+}
+
+.ui-menu {
+    margin: 0 !important;
+}
+
+@media only screen and (max-width: 680px) {
+    .show-for-large {
+        display: none !important;
+    }
+
+    .show-for-medium {
+        display: flex !important;
+    }
+}

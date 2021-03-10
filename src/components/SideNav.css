@@ -1,0 +1,89 @@
+.open-side-nav {
+    margin-top: 0 !important;
+    border-radius: 0px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer;
+}
+
+.open-menu-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 50px;
+}
+
+.ui.vertical.menu .item.open-menu-item>i.icon {
+    margin: 0 !important;
+}
+
+.side-nav {
+    display: flex !important;
+    /* align-items: center !important; */
+    margin-top: 0 !important;
+    border-radius: 0px !important;
+    /* overflow-x: hidden;
+    overflow-y: auto; */
+    scrollbar-width: thin;
+    z-index: 999;
+}
+
+.side-nav2 {
+    display: flex !important;
+    margin-top: 0 !important;
+    border-radius: 0px !important;
+    scrollbar-width: thin;
+    z-index: 999;
+    overflow-x: initial;
+    overflow-y: scroll;
+}
+
+.side-nav-open {
+    margin-top: 0 !important;
+    border-radius: 0px !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    z-index: 999;
+}
+
+.side-nav .menu-item {
+    display: flex !important;
+    /* align-items: center !important; */
+    /* justify-content: center !important; */
+    width: 50px;
+    cursor: pointer;
+}
+
+.side-nav .menu-item-name {
+    display: none;
+}
+
+.info-div span {
+    display: inline-block;
+    margin: 3px;
+}
+
+.side-nav .menu-item .info-div {
+    display: none
+}
+
+.side-nav-open .menu-item-name {
+    display: initial;
+}
+
+.ui.vertical.menu .item.menu-item>i.icon {
+    margin: 0 !important;
+}
+
+.ui.vertical.menu .item.open-menu-item>i.icon {
+    margin: 0 !important;
+}
+
+.info-span-div {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 1px solid #007bff;
+}
