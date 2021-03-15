@@ -15,6 +15,9 @@ let pfGridWidth = 0;
 let pfGridTopMargin = 0;
 let nodeIdx = 0;
 let isMousePressed = false;
+let noOfRows = 0;
+let noOfNodes = 0;
+let bombIndex = 0;
 
 const debounce = (callBack: () => void, time: number = 305) => {
   debounceTimer = 0;
@@ -86,7 +89,7 @@ function App() {
     }
   };
 
-  const generatePfGrid = (noOfRows: number, noOfNodes: number) => {
+  const generatePfGrid = () => {
     const rows: RowsType = [];
     const startRow = Math.floor(noOfRows / 2);
     const startNode = Math.floor(noOfNodes / 4);
@@ -103,6 +106,7 @@ function App() {
           isStartNode: row === startRow && col === startNode,
           isTargetNode: row === startRow && col === noOfNodes - startNode - 1,
           isWallNode: false,
+          isBombNode: false,
           idx: nodeIdx,
         };
         nodeIdx += 1;
@@ -112,6 +116,18 @@ function App() {
     }
     nodeIdx = 0;
     setPfgridRows(rows);
+  };
+
+  // remove wall node
+  const removeWallNode = (node: HTMLDivElement, idx: number) => {
+    const isWallNode = node.getAttribute('data-is-wall-node');
+    if (isWallNode === 'true') {
+      const nodeH = node;
+      const nodeIndex = wallNodes.indexOf(idx);
+      if (nodeIndex !== -1) wallNodes.splice(nodeIndex, 1);
+      nodeH.style.backgroundColor = transparent;
+      nodeH.setAttribute('data-is-wall-node', 'false');
+    }
   };
 
   const getNewPfGridWithWallToggled = (
@@ -137,8 +153,9 @@ function App() {
     const isWallNode = node.getAttribute('data-is-wall-node');
     const isStartNode = node.getAttribute('data-is-start-node');
     const isTargetNode = node.getAttribute('data-is-target-node');
+    const isBombNode = node.getAttribute('data-is-bomb-node');
 
-    if (isStartNode === 'true' || isTargetNode === 'true') return;
+    if (isStartNode === 'true' || isTargetNode === 'true' || isBombNode === 'true') return;
 
     // this results to a bug where if (isWallNode) means if isWallNode is false
     // and if (!isWallNode) is isWallNode is true confusion
@@ -147,13 +164,9 @@ function App() {
     // } else {
     //   console.log(111);
     // }
+    removeWallNode(node, idx);
 
-    if (isWallNode === 'true') {
-      const nodeIndex = wallNodes.indexOf(idx);
-      if (nodeIndex !== -1) wallNodes.splice(nodeIndex, 1);
-      node.style.backgroundColor = transparent;
-      node.setAttribute('data-is-wall-node', 'false');
-    } else {
+    if (isWallNode === 'false') {
       wallNodes.push(idx);
       node.style.backgroundColor = wallNodeColor;
       node.setAttribute('data-is-wall-node', 'true');
@@ -185,6 +198,44 @@ function App() {
     });
   };
 
+  // set bomb node attr to true
+  const setBombNodeAttr = (node: HTMLDivElement) => {
+    node.setAttribute('data-is-bomb-node', 'true');
+  };
+
+  // set bomb node attr to false
+  const unsetBombNodeAttr = (node: HTMLDivElement) => {
+    node.setAttribute('data-is-bomb-node', 'false');
+  };
+
+  const addBomb = () => {
+    const sideNavAddBomb = sideNavRef.current?.children[0];
+    const addBombElem = sideNavAddBomb!!.children[1];
+
+    // multiply by 2 for node to be in 3 row
+    const rowIndex = noOfNodes * 2;
+    const nodeIndex = Math.floor(noOfNodes / 2);
+    const node = nodesRef.current[rowIndex + nodeIndex];
+
+    if (bombIndex === 0) {
+      removeWallNode(node, rowIndex + nodeIndex);
+      setBombNodeAttr(node);
+      const i = document.createElement('i');
+      i.classList.add('large', 'bomb', 'icon');
+      node.appendChild(i);
+
+      addBombElem.textContent = 'Remove Bomb';
+      bombIndex = rowIndex + nodeIndex;
+    } else {
+      unsetBombNodeAttr(node);
+      const child = node.children[0];
+      node.removeChild(child);
+
+      addBombElem.textContent = 'Add Bomb';
+      bombIndex = 0;
+    }
+  };
+
   calculateAndSetDimension.current = () => {
     clearWalls();
     const windowHeight = window.innerHeight;
@@ -199,12 +250,12 @@ function App() {
     pfGridWidth = pfGridRef.current!!.clientWidth;
 
     // dividing by 25 the height and width of each node
-    const noOfRows = Math.floor(height / 25);
-    const noOfNodes = Math.floor(pfGridWidth / 25);
+    noOfRows = Math.floor(height / 25);
+    noOfNodes = Math.floor(pfGridWidth / 25);
     const remaingSpace = height - (height - noOfRows);
     // -1 for border of 1px
     pfGridTopMargin = (remaingSpace / 2) - 1;
-    generatePfGrid(noOfRows, noOfNodes);
+    generatePfGrid();
     clearTimeout(debounceTimer);
   };
 
@@ -235,6 +286,7 @@ function App() {
         ref={sideNavRef}
         top={pfGridRef.current === null ? 0 : pfGridRef.current!!.offsetTop}
         height={pfGridHeight}
+        addBomb={addBomb}
         clearWalls={clearWalls}
       />
 

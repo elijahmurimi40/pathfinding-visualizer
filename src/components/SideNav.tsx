@@ -90,7 +90,7 @@ export const SideNav = React.forwardRef((
         className="ui vertical menu side-nav"
         ref={ref}
       >
-        <Menu.Item className="menu-item">
+        <Menu.Item className="menu-item" onClick={props.addBomb}>
           <Icon name="bomb" />
           <span className="menu-item-name">Add Bomb</span>
         </Menu.Item>

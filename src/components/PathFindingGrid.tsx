@@ -48,7 +48,8 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
                 {
                   row.map((node: NodeType, idxR: number) => {
                     const {
-                      isNodeInFirstCol, isNodeInLastRow, isStartNode, isTargetNode, isWallNode, idx,
+                      isNodeInFirstCol, isNodeInLastRow, isStartNode, isTargetNode, isWallNode,
+                      isBombNode, idx,
                     } = node;
                     const firstColNode = isNodeInFirstCol ? 'first-col-node' : '';
                     const lastRowNode = isNodeInLastRow ? 'last-row-node' : '';
@@ -63,6 +64,7 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
                         data-is-start-node={isStartNode}
                         data-is-target-node={isTargetNode}
                         data-is-wall-node={isWallNode}
+                        data-is-bomb-node={isBombNode}
                         data-idx={idx}
                         onMouseDown={(e) => {
                           e.preventDefault();
