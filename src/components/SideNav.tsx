@@ -1,6 +1,9 @@
 import React, { ForwardedRef, RefObject } from 'react';
 import { Menu, Icon, Dropdown } from 'semantic-ui-react';
-import { SideNavProps } from '../helperFunctions/props';
+import {
+  shortestPathNodeColor, transparent, visitedNodeColor, visitedNodeColorToBomb, wallNodeColor,
+} from '../helperFunctions/color';
+import { OpenSideNavProps, SideNavDivProps } from '../helperFunctions/props';
 import './SideNav.css';
 
 const animateSideNavRefWidth = (sideNavRef: RefObject<HTMLDivElement> | null) => {
@@ -34,7 +37,7 @@ const infoOnClick = (sideNavRef: RefObject<HTMLDivElement>) => {
 };
 
 export const OpenSideNav = React.forwardRef((
-  props: SideNavProps, ref: ForwardedRef<HTMLDivElement>,
+  props: OpenSideNavProps, ref: ForwardedRef<HTMLDivElement>,
 ) => (
   <div
     style={{
@@ -56,7 +59,7 @@ export const OpenSideNav = React.forwardRef((
 ));
 
 export const SideNav = React.forwardRef((
-  props: SideNavProps, ref: ForwardedRef<HTMLDivElement>,
+  props: SideNavDivProps, ref: ForwardedRef<HTMLDivElement>,
 ) => {
   console.log('p');
   return (
@@ -102,7 +105,7 @@ export const SideNav = React.forwardRef((
           <span className="menu-item-name">Clear Path</span>
         </Menu.Item>
 
-        <Menu.Item className="menu-item">
+        <Menu.Item className="menu-item" onClick={props.clearWalls}>
           <Icon name="window close" />
           <span className="menu-item-name">Clear Walls</span>
         </Menu.Item>
@@ -139,26 +142,26 @@ export const SideNav = React.forwardRef((
 
             <br />
             <span>
-              <div className="info-span-div" />
+              <div className="info-span-div" style={{ backgroundColor: transparent }} />
               <span>Unvisited Node</span>
             </span>
 
             <br />
             <span>
-              <div className="info-span-div" style={{ backgroundColor: '#ffff00' }} />
+              <div className="info-span-div" style={{ backgroundColor: shortestPathNodeColor }} />
               <span>Shortest-path Node</span>
             </span>
 
             <br />
             <span>
-              <div className="info-span-div" style={{ backgroundColor: '#016936' }} />
+              <div className="info-span-div" style={{ backgroundColor: wallNodeColor }} />
               <span>Wall Node</span>
             </span>
 
             <br />
             <span>
-              <div className="info-span-div" style={{ backgroundColor: '#ff1493' }} />
-              <div className="info-span-div" style={{ marginLeft: 5, backgroundColor: '#a52a2a' }} />
+              <div className="info-span-div" style={{ backgroundColor: visitedNodeColor }} />
+              <div className="info-span-div" style={{ marginLeft: 5, backgroundColor: visitedNodeColorToBomb }} />
               <span>Visited Nodes</span>
             </span>
           </div>

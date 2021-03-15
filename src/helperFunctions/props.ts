@@ -13,8 +13,17 @@ export interface NavProps {
 }
 
 // side nav props
-export interface SideNavProps {
+interface SideNavProps {
   top: number;
   height: number;
+}
+
+// open side nav props
+export interface OpenSideNavProps extends SideNavProps {
   sideNavRef: RefObject<HTMLDivElement> | null;
+}
+
+// side nav div props
+export interface SideNavDivProps extends SideNavProps {
+  clearWalls: () => void;
 }

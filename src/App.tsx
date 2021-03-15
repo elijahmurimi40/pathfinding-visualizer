@@ -5,6 +5,7 @@ import { OpenSideNav, SideNav } from './components/SideNav';
 import MazesPatternSwitchButton from './components/MazesPatternSwitchButton';
 import PathFindingGrid from './components/PathFindingGrid';
 import { NodeType, RowType, RowsType } from './helperFunctions/types';
+import { transparent, wallNodeColor } from './helperFunctions/color';
 import './App.css';
 
 // pf => pathfinding
@@ -12,6 +13,8 @@ let isSliderChecked = false;
 let debounceTimer: number = 0;
 let pfGridWidth = 0;
 let pfGridTopMargin = 0;
+let nodeIdx = 0;
+let isMousePressed = false;
 
 const debounce = (callBack: () => void, time: number = 305) => {
   debounceTimer = 0;
@@ -21,9 +24,11 @@ const debounce = (callBack: () => void, time: number = 305) => {
   };
 };
 
+const wallNodes: number[] = [];
+
 function App() {
   const [pfGridHeight, setPfGridHeight] = useState(0);
-  const [pfGridRows, setPfgridRows] = useState<RowsType>();
+  const [pfGridRows, setPfgridRows] = useState<RowsType>([]);
 
   const topNavRef = useRef<HTMLDivElement>(null);
   const bottomNavRef = useRef<HTMLDivElement>(null);
@@ -32,6 +37,7 @@ function App() {
   const sideNavRef = useRef<HTMLDivElement>(null);
   const startNodeRef = useRef<HTMLElement>(null);
   const targetNodeRef = useRef<HTMLElement>(null);
+  const nodesRef = useRef<Array<HTMLDivElement>>([]);
 
   const calculateAndSetDimension = useRef(() => {});
 
@@ -97,15 +103,90 @@ function App() {
           isStartNode: row === startRow && col === startNode,
           isTargetNode: row === startRow && col === noOfNodes - startNode - 1,
           isWallNode: false,
+          idx: nodeIdx,
         };
+        nodeIdx += 1;
         currentRow.push(currentNode);
       }
       rows.push(currentRow);
     }
+    nodeIdx = 0;
     setPfgridRows(rows);
   };
 
+  const getNewPfGridWithWallToggled = (
+    // rows: RowsType,
+    // row: number,
+    // col: number,
+    elem: HTMLElement,
+  ) => {
+    // updating state makes app to slow down
+    // const newGrid = rows.slice();
+    // const node = newGrid[row][col];
+    // const newNode = {
+    //   ...node,
+    //   isWallNode: !node.isWallNode,
+    // };
+    // newGrid[row][col] = newNode;
+    // setPfgridRows(newGrid);
+    const className = elem.classList;
+    if (!className.contains('pf-grid-node')) return;
+
+    const idx = elem.getAttribute('data-idx') as unknown as number;
+    const node = nodesRef.current[idx];
+    const isWallNode = node.getAttribute('data-is-wall-node');
+    const isStartNode = node.getAttribute('data-is-start-node');
+    const isTargetNode = node.getAttribute('data-is-target-node');
+
+    if (isStartNode === 'true' || isTargetNode === 'true') return;
+
+    // this results to a bug where if (isWallNode) means if isWallNode is false
+    // and if (!isWallNode) is isWallNode is true confusion
+    // if (isWallNode) {
+    //   console.log(999);
+    // } else {
+    //   console.log(111);
+    // }
+
+    if (isWallNode === 'true') {
+      const nodeIndex = wallNodes.indexOf(idx);
+      if (nodeIndex !== -1) wallNodes.splice(nodeIndex, 1);
+      node.style.backgroundColor = transparent;
+      node.setAttribute('data-is-wall-node', 'false');
+    } else {
+      wallNodes.push(idx);
+      node.style.backgroundColor = wallNodeColor;
+      node.setAttribute('data-is-wall-node', 'true');
+    }
+  };
+
+  const handleMouseDown = (elem: HTMLElement) => {
+    isMousePressed = true;
+    getNewPfGridWithWallToggled(elem);
+  };
+
+  const handleMouseEnter = (elem: HTMLElement) => {
+    if (!isMousePressed) return;
+    getNewPfGridWithWallToggled(elem);
+  };
+
+  const handleMouseUp = () => {
+    isMousePressed = false;
+  };
+
+  const clearWalls = () => {
+    if (wallNodes.length === 0) return;
+    wallNodes.forEach((idx: number) => {
+      const node: HTMLDivElement | null = nodesRef.current[idx];
+      if (node !== null) {
+        node.style.backgroundColor = transparent;
+        node.setAttribute('data-is-wall-node', 'false');
+      }
+    });
+  };
+
   calculateAndSetDimension.current = () => {
+    clearWalls();
     const windowHeight = window.innerHeight;
     const pfGridOffset = pfGridRef.current!!.offsetTop;
     const bottomNavHeight = bottomNavRef.current!!.clientHeight;
@@ -131,9 +212,11 @@ function App() {
     // effect
     calculateAndSetDimension.current();
     window.addEventListener('resize', debounce(calculateAndSetDimension.current));
+    window.addEventListener('mouseup', handleMouseUp);
     return () => {
       // cleanup
       window.removeEventListener('resize', debounce(calculateAndSetDimension.current));
+      window.removeEventListener('mouseup', handleMouseUp);
     };
   }, []);
 
@@ -152,7 +235,7 @@ function App() {
         ref={sideNavRef}
         top={pfGridRef.current === null ? 0 : pfGridRef.current!!.offsetTop}
         height={pfGridHeight}
-        sideNavRef={null}
+        clearWalls={clearWalls}
       />
 
       <MazesPatternSwitchButton
@@ -167,6 +250,9 @@ function App() {
         pfGridRows={pfGridRows}
         startNodeRef={startNodeRef}
         targetNodeRef={targetNodeRef}
+        nodesRef={nodesRef}
+        onMouseDown={handleMouseDown}
+        onMouseEnter={handleMouseEnter}
       />
 
       <BottomNav ref={bottomNavRef} />

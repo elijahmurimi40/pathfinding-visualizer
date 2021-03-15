@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { ForwardedRef, RefObject } from 'react';
 import { RowsType, RowType, NodeType } from '../helperFunctions/types';
 import './PathFindingGrid.css';
@@ -5,9 +7,14 @@ import './PathFindingGrid.css';
 interface Props {
   pfGridHeight: number;
   marginTop: number;
-  pfGridRows: RowsType | undefined;
+  pfGridRows: RowsType;
   startNodeRef: RefObject<HTMLElement>;
   targetNodeRef: RefObject<HTMLElement>;
+  nodesRef: RefObject<Array<HTMLDivElement>>;
+  // eslint-disable-next-line no-unused-vars
+  onMouseDown: (elem: HTMLElement) => void;
+  // eslint-disable-next-line no-unused-vars
+  onMouseEnter: (elem: HTMLElement,) => void;
 }
 
 const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDivElement>) => {
@@ -17,6 +24,9 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
     pfGridRows,
     startNodeRef,
     targetNodeRef,
+    nodesRef,
+    onMouseDown,
+    onMouseEnter,
   } = props;
 
   return (
@@ -31,14 +41,14 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
     >
       <div style={{ marginTop }}>
         {
-          pfGridRows === undefined ? ''
+          pfGridRows.length === 0 ? ''
             : pfGridRows.map((row: RowType, idxC: number) => (
               // eslint-disable-next-line react/no-array-index-key
               <div className="pf-grid-nodes-row" key={idxC}>
                 {
                   row.map((node: NodeType, idxR: number) => {
                     const {
-                      isNodeInFirstCol, isNodeInLastRow, isStartNode, isTargetNode, isWallNode,
+                      isNodeInFirstCol, isNodeInLastRow, isStartNode, isTargetNode, isWallNode, idx,
                     } = node;
                     const firstColNode = isNodeInFirstCol ? 'first-col-node' : '';
                     const lastRowNode = isNodeInLastRow ? 'last-row-node' : '';
@@ -49,6 +59,19 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
                         className={`pf-grid-node ${firstColNode} ${lastRowNode} ${wallNode}`}
                         // eslint-disable-next-line react/no-array-index-key
                         key={idxR}
+                        ref={(element: HTMLDivElement) => { nodesRef.current!![idx] = element; }}
+                        data-is-start-node={isStartNode}
+                        data-is-target-node={isTargetNode}
+                        data-is-wall-node={isWallNode}
+                        data-idx={idx}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          onMouseDown(nodesRef.current!![idx]);
+                        }}
+                        onMouseEnter={(e) => {
+                          e.preventDefault();
+                          onMouseEnter(nodesRef.current!![idx]);
+                        }}
                       >
                         {
                           isStartNode

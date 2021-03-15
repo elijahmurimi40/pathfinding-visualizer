@@ -11,6 +11,7 @@ export interface NodeType {
   isStartNode: boolean;
   isTargetNode: boolean;
   isWallNode: boolean;
+  idx: number;
 }
 
 // a row in pf-grid
