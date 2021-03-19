@@ -24,3 +24,18 @@ export interface RowsType extends Array<RowType> {}
 /**
  * END OF PF-GRID-TYPES
  */
+
+/**
+ * START OF APP.FUNCTIONS
+ */
+
+export interface NodeInfoType {
+  index: number;
+  isWallNode: string | null;
+  x: number;
+  y: number;
+}
+
+/**
+ * START OF APP.FUNCTIONS
+ */
