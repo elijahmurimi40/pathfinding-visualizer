@@ -3,7 +3,7 @@ import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode, dataIdx,
 } from './helperFunctions/customAttr';
 import {
-  bombNode, createDraggble, nodeInfoBomb, wallNodes, addRemoveWallNode,
+  bombNode, createDraggble, getNodeBombInfo, wallNodes, addRemoveWallNode,
   getAttr, setAttr,
 } from './helperFunctions/helperFunctions';
 import {
@@ -142,12 +142,12 @@ export const addBomb = (
     }
     const isWallNode = getAttr(node, dataIsWallNode);
     if (isWallNode === 'true') {
-      nodeInfoBomb.index = nodeIndex;
-      nodeInfoBomb.isWallNode = isWallNode;
+      getNodeBombInfo().index = nodeIndex;
+      getNodeBombInfo().isWallNode = isWallNode;
       addRemoveWallNode(node, nodeIndex);
     } else {
-      nodeInfoBomb.index = nodeIndex;
-      nodeInfoBomb.isWallNode = isWallNode;
+      getNodeBombInfo().index = nodeIndex;
+      getNodeBombInfo().isWallNode = isWallNode;
     }
     setAttr(node, dataIsBombNode, 'true');
     i = document.createElement('i');
@@ -160,8 +160,8 @@ export const addBomb = (
     addBombElem.textContent = 'Remove Bomb';
     bombIndex = nodeIndex;
   } else {
-    const newNode = nodes[nodeInfoBomb.index];
-    if (nodeInfoBomb.isWallNode === 'true') addRemoveWallNode(newNode, nodeInfoBomb.index);
+    const newNode = nodes[getNodeBombInfo().index];
+    if (getNodeBombInfo().isWallNode === 'true') addRemoveWallNode(newNode, getNodeBombInfo().index);
     setAttr(newNode, dataIsBombNode, 'false');
     i?.remove();
 

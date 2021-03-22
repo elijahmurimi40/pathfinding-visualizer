@@ -25,9 +25,7 @@ let nodeInfoTarget: NodeInfoType = {
   y: 0,
 };
 
-// exporting the let just to read values but not chaging
-// eslint-disable-next-line import/no-mutable-exports
-export let nodeInfoBomb: NodeInfoType = {
+let nodeInfoBomb: NodeInfoType = {
   index: 0,
   isWallNode: 'false',
   x: 0,
@@ -64,6 +62,9 @@ export const wallNodes: number[] = [];
 export const startNode = 'start-node';
 export const targetNode = 'target-node';
 export const bombNode = 'bomb-node';
+
+// get nodeBombInfo
+export const getNodeBombInfo = () => nodeInfoBomb;
 
 // getAttr
 export const getAttr = (node: HTMLDivElement, attr: string) => {
