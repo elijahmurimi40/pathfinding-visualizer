@@ -1,75 +1,32 @@
-import { gsap } from 'gsap';
-import { TweenLite } from 'gsap/all';
-import { Draggable } from 'gsap/Draggable';
-import { transparent, wallNodeColor } from './helperFunctions/color';
+import { transparent } from './helperFunctions/color';
 import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode, dataIdx,
 } from './helperFunctions/customAttr';
 import {
-  NodeType, RowsType, RowType, NodeInfoType,
+  bombNode, createDraggble, nodeInfoBomb, wallNodes, addRemoveWallNode,
+  getAttr, setAttr,
+} from './helperFunctions/helperFunctions';
+import {
+  NodeType, RowsType, RowType,
 } from './helperFunctions/types';
 
-gsap.registerPlugin(Draggable, TweenLite);
-
 let nodeIdx = 0;
-let wallNodes: number[] = [];
 let bombIndex = 0;
 let i: HTMLElement | null = null;
+let isDarkMode = false;
 
-const nodeInfo: NodeInfoType = {
-  index: 0,
-  isWallNode: 'false',
-  x: 0,
-  y: 0,
-};
+// exporting the let just to read values but not chaging
+// eslint-disable-next-line import/no-mutable-exports
+export let startNodeIdx = 0;
+// eslint-disable-next-line import/no-mutable-exports
+export let targetNodeIdx = 0;
 
-// getAttr
-const getAttr = (node: HTMLDivElement, attr: string) => {
-  // start target wall bomb
-  switch (attr) {
-    case dataIsStartNode:
-      return node.getAttribute(attr);
-    case dataIsTargetNode:
-      return node.getAttribute(attr);
-    case dataIsWallNode:
-      return node.getAttribute(attr);
-    case dataIsBombNode:
-      return node.getAttribute(attr);
-    case dataIdx:
-      return node.getAttribute(attr);
-    default:
-      return node.getAttribute('');
-  }
-};
+// get bombIndex
+export const getBombIndex = () => bombIndex;
 
-// setAttr
-const setAttr = (node: HTMLDivElement, attr: string, value: any) => {
-  switch (attr) {
-    case dataIsWallNode:
-      node.setAttribute(attr, value);
-      break;
-    case dataIsBombNode:
-      node.setAttribute(attr, value);
-      break;
-    default:
-      node.setAttribute('', '');
-  }
-};
-
-// add remove wall node
-const addRemoveWallNode = (node: HTMLDivElement, idx: number) => {
-  const isWallNode = getAttr(node, dataIsWallNode);
-  const nodeH = node;
-  if (isWallNode === 'true') {
-    const nodeIndex = wallNodes.indexOf(idx);
-    if (nodeIndex !== -1) wallNodes.splice(nodeIndex, 1);
-    nodeH.style.backgroundColor = transparent;
-    setAttr(nodeH, dataIsWallNode, 'false');
-  } else {
-    wallNodes.push(idx);
-    nodeH.style.backgroundColor = wallNodeColor;
-    setAttr(nodeH, dataIsWallNode, 'true');
-  }
+// set is dark mode
+export const setDarkMode = (darkMode: boolean) => {
+  isDarkMode = darkMode;
 };
 
 // generate a pfGrid
@@ -96,6 +53,8 @@ export const generatePfGrid = (noOfRows: number, noOfNodes: number): RowsType =>
         isBombNode: false,
         idx: nodeIdx,
       };
+      if (currentNode.isStartNode) startNodeIdx = currentNode.idx;
+      if (currentNode.isTargetNode) targetNodeIdx = currentNode.idx;
       nodeIdx += 1;
       currentRow.push(currentNode);
     }
@@ -153,12 +112,11 @@ export const clearWalls = (nodes: HTMLDivElement[]) => {
       setAttr(node, dataIsWallNode, 'false');
     }
   });
-  wallNodes = [];
+  wallNodes.length = 0;
 };
 
 // add bomb node
 export const addBomb = (
-  offset: number,
   noOfNodes: number,
   nodes: HTMLDivElement[],
   sideNav: HTMLDivElement | null,
@@ -167,93 +125,45 @@ export const addBomb = (
   const addBombElem = sideNavAddBomb!!.children[1];
 
   // multiply by 2 for node to be in 3rd row
-  const rowIndex = noOfNodes * 2;
+  const row = noOfNodes * 2;
   // node to be in the mid column
-  const nodeIndex = Math.floor(noOfNodes / 2);
-  const node = nodes[rowIndex + nodeIndex];
+  const column = Math.floor(noOfNodes / 2);
+  let nodeIndex = row + column;
+  let node = nodes[nodeIndex];
 
   if (bombIndex === 0) {
+    // loop checking if its start or target node to skip the node
+    for (let j = 0; j < 2; j += 1) {
+      const isStartNode = getAttr(node, dataIsStartNode);
+      const isTargetNode = getAttr(node, dataIsTargetNode);
+      if (isStartNode === 'false' && isTargetNode === 'false') break;
+      nodeIndex += 1;
+      node = nodes[nodeIndex];
+    }
     const isWallNode = getAttr(node, dataIsWallNode);
     if (isWallNode === 'true') {
-      nodeInfo.index = rowIndex + nodeIndex;
-      nodeInfo.isWallNode = isWallNode;
-      addRemoveWallNode(node, rowIndex + nodeIndex);
+      nodeInfoBomb.index = nodeIndex;
+      nodeInfoBomb.isWallNode = isWallNode;
+      addRemoveWallNode(node, nodeIndex);
     } else {
-      nodeInfo.isWallNode = isWallNode;
+      nodeInfoBomb.index = nodeIndex;
+      nodeInfoBomb.isWallNode = isWallNode;
     }
     setAttr(node, dataIsBombNode, 'true');
     i = document.createElement('i');
-    i.classList.add('large', 'bomb', 'icon', 'bomb-node');
+    const addDarkMode = isDarkMode ? 'inverted' : 'NA';
+    i.classList.add('large', 'bomb', 'icon', bombNode, addDarkMode);
     node.appendChild(i);
 
-    /**
-     * Magic number 25
-     * height and width of node is 25
-     *
-     * magic number 2
-     * since we multplied by 2 for row index and
-     * divide by 2 for node index
-     */
-
-    Draggable.create('.bomb-node', {
-      type: 'x,y',
-      bounds: '.pf-grid-node-holder',
-      inertia: true,
-      liveSnap: true,
-      snap: {
-        x(endValue) {
-          return Math.round(endValue / 25) * 25;
-        },
-        y(endValue) {
-          return Math.round(endValue / 25) * 25;
-        },
-      },
-      onDrag() {
-        if (nodeInfo.isWallNode === 'true') {
-          addRemoveWallNode(nodes[nodeInfo.index], nodeInfo.index);
-        }
-        const tempRowIndex = ((this.y / 25) + 2) * noOfNodes;
-        const tempNodeIndex = (this.x / 25) + nodeIndex;
-
-        nodeInfo.index = tempRowIndex + tempNodeIndex;
-
-        const tempNode = nodes[nodeInfo.index];
-        const isWallNodeTemp = getAttr(tempNode, dataIsWallNode);
-        const isStartNode = getAttr(tempNode, dataIsStartNode);
-        const isTargetNode = getAttr(tempNode, dataIsTargetNode);
-
-        nodeInfo.isWallNode = isWallNodeTemp;
-        if (isWallNodeTemp === 'true') addRemoveWallNode(tempNode, nodeInfo.index);
-
-        if (isStartNode === 'false' && isTargetNode === 'false') {
-          nodeInfo.x = this.x;
-          nodeInfo.y = this.y;
-        }
-      },
-      onDragEnd(e) {
-        const isStartNode = getAttr(nodes[nodeInfo.index], dataIsStartNode);
-        const isTargetNode = getAttr(nodes[nodeInfo.index], dataIsTargetNode);
-
-        if (isStartNode === 'true' || isTargetNode === 'true') {
-          const tempRowIndex = ((nodeInfo.y / 25) + 2) * noOfNodes;
-          const tempNodeIndex = (nodeInfo.x / 25) + nodeIndex;
-          nodeInfo.index = tempRowIndex + tempNodeIndex;
-          TweenLite.to(e.target, { x: nodeInfo.x, y: nodeInfo.y });
-        }
-
-        setAttr(nodes[bombIndex], dataIsBombNode, 'false');
-        bombIndex = nodeInfo.index;
-        setAttr(nodes[bombIndex], dataIsBombNode, 'true');
-      },
-    });
+    createDraggble(bombNode, nodeIndex, noOfNodes, nodes);
 
     addBombElem.textContent = 'Remove Bomb';
-    bombIndex = rowIndex + nodeIndex;
+    bombIndex = nodeIndex;
   } else {
-    if (nodeInfo.isWallNode === 'true') addRemoveWallNode(node, nodeInfo.index);
-    setAttr(node, dataIsBombNode, 'false');
-    const child = node.children[0];
-    node.removeChild(child);
+    const newNode = nodes[nodeInfoBomb.index];
+    if (nodeInfoBomb.isWallNode === 'true') addRemoveWallNode(newNode, nodeInfoBomb.index);
+    setAttr(newNode, dataIsBombNode, 'false');
+    i?.remove();
 
     addBombElem.textContent = 'Add Bomb';
     bombIndex = 0;

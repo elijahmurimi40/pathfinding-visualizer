@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { Draggable } from 'gsap/Draggable';
 import TopNav from './components/TopNav';
 import BottomNav from './components/BottomNav';
 import { OpenSideNav, SideNav } from './components/SideNav';
@@ -9,10 +7,9 @@ import PathFindingGrid from './components/PathFindingGrid';
 import { RowsType } from './helperFunctions/types';
 import {
   generatePfGrid, getNewPfGridWithWallToggled, clearWalls, addBomb,
+  startNodeIdx, targetNodeIdx, getBombIndex, setDarkMode,
 } from './App.Functions';
 import './App.css';
-
-gsap.registerPlugin(Draggable);
 
 // pf => pathfinding
 let isSliderChecked = false;
@@ -40,8 +37,6 @@ function App() {
   const pfGridRef = useRef<HTMLDivElement>(null);
   const openSideNavRef = useRef<HTMLDivElement>(null);
   const sideNavRef = useRef<HTMLDivElement>(null);
-  const startNodeRef = useRef<HTMLElement>(null);
-  const targetNodeRef = useRef<HTMLElement>(null);
   const nodesRef = useRef<Array<HTMLDivElement>>([]);
 
   const calculateAndSetDimension = useRef(() => {});
@@ -78,16 +73,24 @@ function App() {
       semanticUIDarkMode(bottomNavRef.current!!);
       semanticUIDarkMode(sideNavRef.current!!);
       semanticUIDarkMode(openSideNavRef.current!!);
-      startNodeRef.current?.classList.add('inverted');
-      targetNodeRef.current?.classList.add('inverted');
+      nodesRef.current[startNodeIdx].children[0].classList.add('inverted');
+      nodesRef.current[targetNodeIdx].children[0].classList.add('inverted');
+      if (getBombIndex() !== 0) {
+        nodesRef.current[getBombIndex()].children[0].classList.add('inverted');
+      }
+      setDarkMode(isChecked);
     } else {
       document.body.style.backgroundColor = '#ffffff';
       semanticUILightMode(topNavRef.current!!);
       semanticUILightMode(bottomNavRef.current!!);
       semanticUILightMode(sideNavRef.current!!);
       semanticUILightMode(openSideNavRef.current!!);
-      startNodeRef.current?.classList.remove('inverted');
-      targetNodeRef.current?.classList.remove('inverted');
+      nodesRef.current[startNodeIdx].children[0].classList.remove('inverted');
+      nodesRef.current[targetNodeIdx].children[0].classList.remove('inverted');
+      if (getBombIndex() !== 0) {
+        nodesRef.current[getBombIndex()].children[0].classList.remove('inverted');
+      }
+      setDarkMode(isChecked);
     }
   };
 
@@ -107,7 +110,7 @@ function App() {
 
   calculateAndSetDimension.current = () => {
     clearWalls(nodesRef.current);
-    nodesRef.current = [];
+    nodesRef.current.length = 0;
 
     const sideNavAddBomb = sideNavRef.current?.children[0];
     const addBombElem = sideNavAddBomb!!.children[1];
@@ -164,7 +167,7 @@ function App() {
         height={pfGridHeight}
         addBomb={
           // eslint-disable-next-line max-len
-          () => { addBomb(pfGridRef.current!!.offsetTop, noOfNodes, nodesRef.current, sideNavRef.current); }
+          () => { addBomb(noOfNodes, nodesRef.current, sideNavRef.current); }
         }
         clearWalls={() => { clearWalls(nodesRef.current); }}
       />
@@ -179,9 +182,8 @@ function App() {
         pfGridHeight={pfGridHeight}
         marginTop={pfGridTopMargin}
         pfGridRows={pfGridRows}
-        startNodeRef={startNodeRef}
-        targetNodeRef={targetNodeRef}
         nodesRef={nodesRef}
+        noOfNodes={noOfNodes}
         onMouseDown={handleMouseDown}
         onMouseEnter={handleMouseEnter}
       />

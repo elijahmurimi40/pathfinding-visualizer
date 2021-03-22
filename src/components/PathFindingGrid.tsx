@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { ForwardedRef, RefObject } from 'react';
+import { startNode, targetNode, createDraggble } from '../helperFunctions/helperFunctions';
 import { RowsType, RowType, NodeType } from '../helperFunctions/types';
 import './PathFindingGrid.css';
 
@@ -8,9 +9,8 @@ interface Props {
   pfGridHeight: number;
   marginTop: number;
   pfGridRows: RowsType;
-  startNodeRef: RefObject<HTMLElement>;
-  targetNodeRef: RefObject<HTMLElement>;
   nodesRef: RefObject<Array<HTMLDivElement>>;
+  noOfNodes: number;
   // eslint-disable-next-line no-unused-vars
   onMouseDown: (elem: HTMLElement) => void;
   // eslint-disable-next-line no-unused-vars
@@ -22,12 +22,32 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
     pfGridHeight,
     marginTop,
     pfGridRows,
-    startNodeRef,
-    targetNodeRef,
     nodesRef,
+    noOfNodes,
     onMouseDown,
     onMouseEnter,
   } = props;
+
+  let iNode: HTMLElement[] = [];
+  const createStartTargetNode = (node: HTMLDivElement, nodeIndex: number, type: string) => {
+    if (iNode.length > nodeIndex) {
+      iNode.forEach((elem: HTMLElement) => {
+        elem.remove();
+      });
+      iNode = [];
+    }
+    iNode[nodeIndex] = document.createElement('i');
+    if (type === startNode) {
+      iNode[nodeIndex].classList.add('large', 'chevron', 'right', 'icon', type);
+      node?.appendChild(iNode[nodeIndex]);
+    }
+
+    if (type === targetNode) {
+      iNode[nodeIndex].classList.add('large', 'bullseye', 'icon', type);
+      node?.appendChild(iNode[nodeIndex]);
+    }
+    createDraggble(type, nodeIndex, noOfNodes, nodesRef.current);
+  };
 
   return (
     <div
@@ -60,7 +80,11 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
                         className={`pf-grid-node ${firstColNode} ${lastRowNode} ${wallNode}`}
                         // eslint-disable-next-line react/no-array-index-key
                         key={idxR}
-                        ref={(element: HTMLDivElement) => { nodesRef.current!![idx] = element; }}
+                        ref={(element: HTMLDivElement) => {
+                          if (isStartNode) createStartTargetNode(element, idx, startNode);
+                          if (isTargetNode) createStartTargetNode(element, idx, targetNode);
+                          nodesRef.current!![idx] = element;
+                        }}
                         data-is-start-node={isStartNode}
                         data-is-target-node={isTargetNode}
                         data-is-wall-node={isWallNode}
@@ -74,19 +98,7 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
                           e.preventDefault();
                           onMouseEnter(nodesRef.current!![idx]);
                         }}
-                      >
-                        {
-                          isStartNode
-                            ? <i ref={startNodeRef} className="large chevron right icon" />
-                            : ''
-                        }
-
-                        {
-                          isTargetNode
-                            ? <i ref={targetNodeRef} className="large bullseye icon" />
-                            : ''
-                        }
-                      </div>
+                      />
                     );
                   })
                 }
