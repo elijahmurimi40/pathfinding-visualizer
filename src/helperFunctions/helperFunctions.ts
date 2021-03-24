@@ -1,13 +1,13 @@
 import { gsap } from 'gsap';
 import { Draggable } from 'gsap/Draggable';
-import { TweenLite } from 'gsap/all';
+// import { TweenLite } from 'gsap/all';
 import { NodeInfoType } from './types';
 import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode, dataIdx,
 } from './customAttr';
 import { transparent, wallNodeColor } from './color';
 
-gsap.registerPlugin(Draggable, TweenLite);
+gsap.registerPlugin(Draggable);
 
 let initialIndex = 0;
 
@@ -183,7 +183,7 @@ export const createDraggble = (
         nodeInfo.y = this.y;
       }
     },
-    onDragEnd(e) {
+    onDragEnd() {
       if (nodes === null) return;
       const isStartNode = getAttr(nodes[nodeInfo.index], dataIsStartNode);
       const isTargetNode = getAttr(nodes[nodeInfo.index], dataIsTargetNode);
@@ -198,7 +198,8 @@ export const createDraggble = (
         if (isWallNode === 'true') {
           addRemoveWallNode(nodes[nodeInfo.index], nodeInfo.index);
         }
-        TweenLite.to(e.target, { x: nodeInfo.x, y: nodeInfo.y });
+        // TweenLite.to(`.${className}`, { x: nodeInfo.x, y: nodeInfo.y });
+        gsap.to(`.${className}`, { x: nodeInfo.x, y: nodeInfo.y });
       }
 
       // dragging startNode
