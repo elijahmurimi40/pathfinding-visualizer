@@ -2,10 +2,10 @@ import React, { ForwardedRef } from 'react';
 import { Menu } from 'semantic-ui-react';
 import pathfindingAlgorithmsOptions from '../pathfindingAlgorihms/pathfindingAlgorithmsOptions';
 import Nav from './Nav';
-import { arrowDown } from '../helperFunctions/props';
+import { arrowDown, NavProps } from '../helperFunctions/props';
 import './Nav.css';
 
-const TopNav = React.forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
+const TopNav = React.forwardRef((props: NavProps, ref: ForwardedRef<HTMLDivElement>) => {
   const options = [];
   const pathFindingAlgorithmsOptions = pathfindingAlgorithmsOptions();
   for (let i = 0; i < pathFindingAlgorithmsOptions.length; i += 1) {
@@ -21,7 +21,11 @@ const TopNav = React.forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
     <>
       <div ref={ref} className="ui menu ui-menu">
         <span className="show-for-large">
-          <Nav arrowDirection={arrowDown} />
+          <Nav
+            arrowDirection={arrowDown}
+            animateMazesAndPatterns={props.animateMazesAndPatterns}
+            mazesPatternButtonsRef={props.mazesPatternButtonsRef}
+          />
         </span>
         <Menu.Item>
           <select

@@ -9,7 +9,10 @@ export const arrowUp: ArrowDirection = { direction: 'up' };
 
 // Nav.tsx
 export interface NavProps {
-  arrowDirection: ArrowDirection;
+  arrowDirection: ArrowDirection | string;
+  mazesPatternButtonsRef: RefObject<Array<HTMLButtonElement>>;
+  // eslint-disable-next-line no-unused-vars
+  animateMazesAndPatterns: (maze: string, idx: number) => void;
 }
 
 // side nav props

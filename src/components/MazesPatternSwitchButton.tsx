@@ -1,3 +1,4 @@
+import React, { ForwardedRef } from 'react';
 import BootstrapSwitchButton from 'bootstrap-switch-button-react';
 import { Label } from 'semantic-ui-react';
 import './MazesPatternSwitchButton.css';
@@ -8,7 +9,9 @@ interface Props {
   darkModeToggle: (checked: boolean) => void;
 }
 
-function MazesPatternSwitchButton(props: Props) {
+const MazesPatternSwitchButton = React.forwardRef((
+  props: Props, ref: ForwardedRef<HTMLDivElement>,
+) => {
   const { isSliderChecked, darkModeToggle } = props;
   return (
     <div className="mazes-pattern-label">
@@ -29,10 +32,10 @@ function MazesPatternSwitchButton(props: Props) {
       <Label color="blue" style={{ marginLeft: '5px' }}>
         Current Maze & Pattern
         <br />
-        <Label.Detail>None</Label.Detail>
+        <div ref={ref} className="detail">None</div>
       </Label>
     </div>
   );
-}
+});
 
 export default MazesPatternSwitchButton;

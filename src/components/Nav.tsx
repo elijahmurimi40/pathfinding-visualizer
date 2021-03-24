@@ -1,21 +1,12 @@
 import { Menu } from 'semantic-ui-react';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
-import mazesAndPatternsOptions from '../pathfindingAlgorihms/mazesAndPatternsOptions';
+import mazesAndPatternsOptions, { mazesType } from '../mazesAndPatterns/mazesAndPatternsOptions';
 import { NavProps, arrowDown } from '../helperFunctions/props';
 
 function Nav(props: NavProps) {
-  const { arrowDirection } = props;
-  const options = [];
+  const { arrowDirection, animateMazesAndPatterns, mazesPatternButtonsRef } = props;
   // v for variable :-)
   const mazesAndPatternsOptionsV = mazesAndPatternsOptions();
-  for (let i = 0; i < mazesAndPatternsOptionsV.length; i += 1) {
-    const mazesAndPatternsOptionVal = mazesAndPatternsOptionsV[i];
-    options.push(
-      <option key={mazesAndPatternsOptionVal.key} value={mazesAndPatternsOptionVal.value}>
-        {mazesAndPatternsOptionVal.text}
-      </option>,
-    );
-  }
 
   return (
     <>
@@ -26,9 +17,19 @@ function Nav(props: NavProps) {
           id="dropdown-basic-button"
           title="Mazes & Patterns"
         >
-          <Dropdown.Item as="button">Action</Dropdown.Item>
-          <Dropdown.Item as="button">Another action</Dropdown.Item>
-          <Dropdown.Item as="button">Something else</Dropdown.Item>
+          {mazesAndPatternsOptionsV.map((maze: mazesType, idx: number) => (
+            <Dropdown.Item
+              ref={(elem: HTMLButtonElement) => {
+                mazesPatternButtonsRef.current!![maze.idx] = elem;
+              }}
+              className={idx === 0 ? 'active' : ''}
+              as="button"
+              key={maze.key}
+              onClick={() => { animateMazesAndPatterns(maze.key, maze.idx); }}
+            >
+              {maze.text}
+            </Dropdown.Item>
+          ))}
         </DropdownButton>
       </Menu.Item>
     </>

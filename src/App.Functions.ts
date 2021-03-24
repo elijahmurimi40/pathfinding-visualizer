@@ -103,8 +103,9 @@ export const getNewPfGridWithWallToggled = (
 };
 
 // clear wall nodes
-export const clearWalls = (nodes: HTMLDivElement[]) => {
+export const clearWalls = (nodes: HTMLDivElement[], resetMazesAndPatterns: () => void) => {
   if (wallNodes.length === 0) return;
+  resetMazesAndPatterns();
   wallNodes.forEach((idx: number) => {
     const node: HTMLDivElement | null = nodes[idx];
     if (node !== null) {

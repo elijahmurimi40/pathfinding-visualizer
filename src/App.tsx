@@ -19,6 +19,7 @@ let pfGridTopMargin = 0;
 let isMousePressed = false;
 let noOfRows = 0;
 let noOfNodes = 0;
+let currentActiveMazeAndPattern = 0;
 
 const debounce = (callBack: () => void, time: number = 305) => {
   debounceTimer = 0;
@@ -38,6 +39,9 @@ function App() {
   const openSideNavRef = useRef<HTMLDivElement>(null);
   const sideNavRef = useRef<HTMLDivElement>(null);
   const nodesRef = useRef<Array<HTMLDivElement>>([]);
+  const animateCoverRef = useRef<HTMLDivElement>(null);
+  const mazesPatternDetailRef = useRef<HTMLDivElement>(null);
+  const mazesPatternButtonsRef = useRef<Array<HTMLButtonElement>>([]);
 
   const calculateAndSetDimension = useRef(() => {});
 
@@ -108,8 +112,28 @@ function App() {
     isMousePressed = false;
   };
 
+  // reset mazes and patters
+  const resetMazesAndPatterns = () => {
+    if (mazesPatternButtonsRef.current.length === 0) return;
+    mazesPatternDetailRef.current!!.textContent = 'None';
+    mazesPatternButtonsRef.current!![currentActiveMazeAndPattern].classList.remove('active');
+    mazesPatternButtonsRef.current!![0].classList.add('active');
+    currentActiveMazeAndPattern = 0;
+  };
+
+  // mazes and patterns
+  const animateMazesAndPatterns = (maze: string, idx: number) => {
+    const index = currentActiveMazeAndPattern;
+    clearWalls(nodesRef.current, resetMazesAndPatterns);
+    currentActiveMazeAndPattern = idx;
+    mazesPatternDetailRef.current!!.textContent = maze;
+    mazesPatternButtonsRef.current!![index].classList.remove('active');
+    mazesPatternButtonsRef.current!![idx].classList.add('active');
+  };
+
   calculateAndSetDimension.current = () => {
-    clearWalls(nodesRef.current);
+    animateCoverRef.current!!.style.display = 'none';
+    clearWalls(nodesRef.current, resetMazesAndPatterns);
     nodesRef.current.length = 0;
 
     const sideNavAddBomb = sideNavRef.current?.children[0];
@@ -152,7 +176,12 @@ function App() {
 
   return (
     <div>
-      <TopNav ref={topNavRef} />
+      <TopNav
+        ref={topNavRef}
+        arrowDirection=""
+        animateMazesAndPatterns={animateMazesAndPatterns}
+        mazesPatternButtonsRef={mazesPatternButtonsRef}
+      />
 
       <OpenSideNav
         ref={openSideNavRef}
@@ -169,10 +198,11 @@ function App() {
           // eslint-disable-next-line max-len
           () => { addBomb(noOfNodes, nodesRef.current, sideNavRef.current); }
         }
-        clearWalls={() => { clearWalls(nodesRef.current); }}
+        clearWalls={() => { clearWalls(nodesRef.current, resetMazesAndPatterns); }}
       />
 
       <MazesPatternSwitchButton
+        ref={mazesPatternDetailRef}
         isSliderChecked={isSliderChecked}
         darkModeToggle={darkModeToggle}
       />
@@ -188,9 +218,17 @@ function App() {
         onMouseEnter={handleMouseEnter}
       />
 
-      <BottomNav ref={bottomNavRef} />
-      <div className="error-div">Use Screen of 320px and above</div>
+      <BottomNav
+        ref={bottomNavRef}
+        arrowDirection=""
+        animateMazesAndPatterns={animateMazesAndPatterns}
+        mazesPatternButtonsRef={mazesPatternButtonsRef}
+      />
+      <div className="cover-div cover-div-error">
+        <div className="error-div">Use Screen of 320px and above</div>
+      </div>
 
+      <div className="cover-div" ref={animateCoverRef} />
     </div>
   );
 }

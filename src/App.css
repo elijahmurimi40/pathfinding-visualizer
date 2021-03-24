@@ -15,11 +15,25 @@ html, body {
     line-height: 40px;
     text-align: center;
     background-color: #eee;
+}
+
+.cover-div {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 999;
+}
+
+.cover-div-error {
     display: none;
 }
 
 @media only screen and (max-width: 319px) {
-    .error-div {
+    .cover-div-error {
         display: block;
     }
 }
