@@ -1,7 +1,9 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { ForwardedRef, RefObject } from 'react';
-import { startNode, targetNode, createDraggble } from '../helperFunctions/helperFunctions';
+import {
+  startNode, targetNode, createDraggble, getDarkMode,
+} from '../helperFunctions/helperFunctions';
 import { RowsType, RowType, NodeType } from '../helperFunctions/types';
 import './PathFindingGrid.css';
 
@@ -37,13 +39,14 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
       iNode = [];
     }
     iNode[nodeIndex] = document.createElement('i');
+    const addDarkMode = getDarkMode() ? 'inverted' : 'NA';
     if (type === startNode) {
-      iNode[nodeIndex].classList.add('large', 'chevron', 'right', 'icon', type);
+      iNode[nodeIndex].classList.add('large', 'chevron', 'right', 'icon', addDarkMode, type);
       node?.appendChild(iNode[nodeIndex]);
     }
 
     if (type === targetNode) {
-      iNode[nodeIndex].classList.add('large', 'bullseye', 'icon', type);
+      iNode[nodeIndex].classList.add('large', 'bullseye', 'icon', addDarkMode, type);
       node?.appendChild(iNode[nodeIndex]);
     }
     createDraggble(type, nodeIndex, noOfNodes, nodesRef.current);

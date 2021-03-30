@@ -1,10 +1,13 @@
 import { Menu } from 'semantic-ui-react';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import mazesAndPatternsOptions, { mazesType } from '../mazesAndPatterns/mazesAndPatternsOptions';
-import { NavProps, arrowDown } from '../helperFunctions/props';
+import { NavProps, arrowDown, topNav } from '../helperFunctions/props';
 
 function Nav(props: NavProps) {
-  const { arrowDirection, animateMazesAndPatterns, mazesPatternButtonsRef } = props;
+  const {
+    navType, arrowDirection, animateMazesAndPatterns,
+    mazesPatternButtonsRef, currentActiveMazeAndPattern,
+  } = props;
   // v for variable :-)
   const mazesAndPatternsOptionsV = mazesAndPatternsOptions();
 
@@ -20,9 +23,13 @@ function Nav(props: NavProps) {
           {mazesAndPatternsOptionsV.map((maze: mazesType, idx: number) => (
             <Dropdown.Item
               ref={(elem: HTMLButtonElement) => {
-                mazesPatternButtonsRef.current!![maze.idx] = elem;
+                if (navType === topNav) {
+                  mazesPatternButtonsRef[0].current!![maze.idx] = elem;
+                } else {
+                  mazesPatternButtonsRef[1].current!![maze.idx] = elem;
+                }
               }}
-              className={idx === 0 ? 'active' : ''}
+              className={idx === currentActiveMazeAndPattern ? 'active' : ''}
               as="button"
               key={maze.key}
               onClick={() => { animateMazesAndPatterns(maze.key, maze.idx); }}

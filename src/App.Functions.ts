@@ -4,7 +4,7 @@ import {
 } from './helperFunctions/customAttr';
 import {
   bombNode, createDraggble, getNodeBombInfo, wallNodes, addRemoveWallNode,
-  getAttr, setAttr,
+  getAttr, setAttr, getDarkMode,
 } from './helperFunctions/helperFunctions';
 import {
   NodeType, RowsType, RowType,
@@ -13,7 +13,6 @@ import {
 let nodeIdx = 0;
 let bombIndex = 0;
 let i: HTMLElement | null = null;
-let isDarkMode = false;
 
 // exporting the let just to read values but not chaging
 // eslint-disable-next-line import/no-mutable-exports
@@ -23,11 +22,6 @@ export let targetNodeIdx = 0;
 
 // get bombIndex
 export const getBombIndex = () => bombIndex;
-
-// set is dark mode
-export const setDarkMode = (darkMode: boolean) => {
-  isDarkMode = darkMode;
-};
 
 // generate a pfGrid
 export const generatePfGrid = (noOfRows: number, noOfNodes: number): RowsType => {
@@ -152,7 +146,7 @@ export const addBomb = (
     }
     setAttr(node, dataIsBombNode, 'true');
     i = document.createElement('i');
-    const addDarkMode = isDarkMode ? 'inverted' : 'NA';
+    const addDarkMode = getDarkMode() ? 'inverted' : 'NA';
     i.classList.add('large', 'bomb', 'icon', bombNode, addDarkMode);
     node.appendChild(i);
 

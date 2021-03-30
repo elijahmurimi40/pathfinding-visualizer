@@ -10,6 +10,7 @@ import { transparent, wallNodeColor } from './color';
 gsap.registerPlugin(Draggable);
 
 let initialIndex = 0;
+let isDarkMode = false;
 
 let nodeInfoStart: NodeInfoType = {
   index: 0,
@@ -53,6 +54,14 @@ const calculateNodeNewIndex = (params: number[]) => {
   const row = ((params[3] / 25) * params[1]) + initialRow;
   const column = (params[2] / 25) + (params[0] % params[1]);
   nodeInfo.index = row + column;
+};
+
+// get is dark mode
+export const getDarkMode = () => isDarkMode;
+
+// set is dark mode
+export const setDarkMode = (darkMode: boolean) => {
+  isDarkMode = darkMode;
 };
 
 // wall nodes array

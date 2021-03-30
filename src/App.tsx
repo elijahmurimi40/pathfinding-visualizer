@@ -7,9 +7,13 @@ import PathFindingGrid from './components/PathFindingGrid';
 import { RowsType } from './helperFunctions/types';
 import {
   generatePfGrid, getNewPfGridWithWallToggled, clearWalls, addBomb,
-  startNodeIdx, targetNodeIdx, getBombIndex, setDarkMode,
+  startNodeIdx, targetNodeIdx, getBombIndex,
 } from './App.Functions';
+import { setDarkMode } from './helperFunctions/helperFunctions';
+import { mazesKeys } from './mazesAndPatterns/mazesAndPatternsOptions';
+import simpleStairPattern from './mazesAndPatterns/simpleStairPattern';
 import './App.css';
+import { topNav, bottomNav } from './helperFunctions/props';
 
 // pf => pathfinding
 let isSliderChecked = false;
@@ -41,7 +45,9 @@ function App() {
   const nodesRef = useRef<Array<HTMLDivElement>>([]);
   const animateCoverRef = useRef<HTMLDivElement>(null);
   const mazesPatternDetailRef = useRef<HTMLDivElement>(null);
-  const mazesPatternButtonsRef = useRef<Array<HTMLButtonElement>>([]);
+  // bottom and top ref for putting active item
+  const mazesPatternButtonsRefTop = useRef<Array<HTMLButtonElement>>([]);
+  const mazesPatternButtonsRefBottom = useRef<Array<HTMLButtonElement>>([]);
 
   const calculateAndSetDimension = useRef(() => {});
 
@@ -114,10 +120,17 @@ function App() {
 
   // reset mazes and patters
   const resetMazesAndPatterns = () => {
-    if (mazesPatternButtonsRef.current.length === 0) return;
+    if (mazesPatternButtonsRefTop.current.length !== 0) {
+      mazesPatternButtonsRefTop.current!![currentActiveMazeAndPattern].classList.remove('active');
+      mazesPatternButtonsRefTop.current!![0].classList.add('active');
+    }
+
+    if (mazesPatternButtonsRefBottom.current.length !== 0) {
+      mazesPatternButtonsRefBottom.current!![currentActiveMazeAndPattern].classList.remove('active');
+      mazesPatternButtonsRefBottom.current!![0].classList.add('active');
+    }
+
     mazesPatternDetailRef.current!!.textContent = 'None';
-    mazesPatternButtonsRef.current!![currentActiveMazeAndPattern].classList.remove('active');
-    mazesPatternButtonsRef.current!![0].classList.add('active');
     currentActiveMazeAndPattern = 0;
   };
 
@@ -127,8 +140,28 @@ function App() {
     clearWalls(nodesRef.current, resetMazesAndPatterns);
     currentActiveMazeAndPattern = idx;
     mazesPatternDetailRef.current!!.textContent = maze;
-    mazesPatternButtonsRef.current!![index].classList.remove('active');
-    mazesPatternButtonsRef.current!![idx].classList.add('active');
+
+    if (mazesPatternButtonsRefTop.current.length !== 0) {
+      mazesPatternButtonsRefTop.current!![index].classList.remove('active');
+      mazesPatternButtonsRefTop.current!![idx].classList.add('active');
+    }
+
+    if (mazesPatternButtonsRefBottom.current.length !== 0) {
+      mazesPatternButtonsRefBottom.current!![index].classList.remove('active');
+      mazesPatternButtonsRefBottom.current!![idx].classList.add('active');
+    }
+
+    switch (maze) {
+      case mazesKeys[0]:
+        clearWalls(nodesRef.current, resetMazesAndPatterns);
+        break;
+      case mazesKeys[1]:
+        simpleStairPattern(nodesRef.current, noOfRows, noOfNodes);
+        break;
+      default:
+        return 0;
+    }
+    return 0;
   };
 
   calculateAndSetDimension.current = () => {
@@ -177,10 +210,12 @@ function App() {
   return (
     <div>
       <TopNav
+        navType={topNav}
         ref={topNavRef}
         arrowDirection=""
         animateMazesAndPatterns={animateMazesAndPatterns}
-        mazesPatternButtonsRef={mazesPatternButtonsRef}
+        mazesPatternButtonsRef={[mazesPatternButtonsRefTop, mazesPatternButtonsRefBottom]}
+        currentActiveMazeAndPattern={currentActiveMazeAndPattern}
       />
 
       <OpenSideNav
@@ -219,10 +254,12 @@ function App() {
       />
 
       <BottomNav
+        navType={bottomNav}
         ref={bottomNavRef}
         arrowDirection=""
         animateMazesAndPatterns={animateMazesAndPatterns}
-        mazesPatternButtonsRef={mazesPatternButtonsRef}
+        mazesPatternButtonsRef={[mazesPatternButtonsRefTop, mazesPatternButtonsRefBottom]}
+        currentActiveMazeAndPattern={currentActiveMazeAndPattern}
       />
       <div className="cover-div cover-div-error">
         <div className="error-div">Use Screen of 320px and above</div>
