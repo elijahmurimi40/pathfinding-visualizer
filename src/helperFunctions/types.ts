@@ -7,6 +7,8 @@ export interface NodeType {
   col: number;
   row: number;
   isNodeInFirstCol: boolean;
+  isNodeInLastCol: boolean;
+  isNodeInFirstRow: boolean;
   isNodeInLastRow: boolean;
   isStartNode: boolean;
   isTargetNode: boolean;

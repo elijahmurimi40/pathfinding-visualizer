@@ -14,11 +14,11 @@ let nodeIdx = 0;
 let bombIndex = 0;
 let i: HTMLElement | null = null;
 
-// exporting the let just to read values but not chaging
-// eslint-disable-next-line import/no-mutable-exports
-export let startNodeIdx = 0;
-// eslint-disable-next-line import/no-mutable-exports
-export let targetNodeIdx = 0;
+let startNodeIdx = 0;
+let targetNodeIdx = 0;
+
+export const getStartNodeIdx = () => startNodeIdx;
+export const getTargetNodeIdx = () => targetNodeIdx;
 
 // get bombIndex
 export const getBombIndex = () => bombIndex;
@@ -40,6 +40,8 @@ export const generatePfGrid = (noOfRows: number, noOfNodes: number): RowsType =>
         row,
         col,
         isNodeInFirstCol: col === 0,
+        isNodeInLastCol: col === noOfNodes - 1,
+        isNodeInFirstRow: row === 0,
         isNodeInLastRow: row === noOfRows - 1,
         isStartNode: row === startRow && col === startNode,
         isTargetNode: row === startRow && col === noOfNodes - startNode - 1,

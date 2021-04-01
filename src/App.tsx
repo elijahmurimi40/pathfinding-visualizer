@@ -7,7 +7,7 @@ import PathFindingGrid from './components/PathFindingGrid';
 import { RowsType } from './helperFunctions/types';
 import {
   generatePfGrid, getNewPfGridWithWallToggled, clearWalls, addBomb,
-  startNodeIdx, targetNodeIdx, getBombIndex,
+  getStartNodeIdx, getTargetNodeIdx, getBombIndex,
 } from './App.Functions';
 import { setDarkMode } from './helperFunctions/helperFunctions';
 import { mazesKeys } from './mazesAndPatterns/mazesAndPatternsOptions';
@@ -83,8 +83,8 @@ function App() {
       semanticUIDarkMode(bottomNavRef.current!!);
       semanticUIDarkMode(sideNavRef.current!!);
       semanticUIDarkMode(openSideNavRef.current!!);
-      nodesRef.current[startNodeIdx].children[0].classList.add('inverted');
-      nodesRef.current[targetNodeIdx].children[0].classList.add('inverted');
+      nodesRef.current[getStartNodeIdx()].children[0].classList.add('inverted');
+      nodesRef.current[getTargetNodeIdx()].children[0].classList.add('inverted');
       if (getBombIndex() !== 0) {
         nodesRef.current[getBombIndex()].children[0].classList.add('inverted');
       }
@@ -95,8 +95,8 @@ function App() {
       semanticUILightMode(bottomNavRef.current!!);
       semanticUILightMode(sideNavRef.current!!);
       semanticUILightMode(openSideNavRef.current!!);
-      nodesRef.current[startNodeIdx].children[0].classList.remove('inverted');
-      nodesRef.current[targetNodeIdx].children[0].classList.remove('inverted');
+      nodesRef.current[getStartNodeIdx()].children[0].classList.remove('inverted');
+      nodesRef.current[getTargetNodeIdx()].children[0].classList.remove('inverted');
       if (getBombIndex() !== 0) {
         nodesRef.current[getBombIndex()].children[0].classList.remove('inverted');
       }

@@ -4,6 +4,7 @@ import { Draggable } from 'gsap/Draggable';
 import { NodeInfoType } from './types';
 import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode, dataIdx,
+  dataIsFirstCol, dataIsLastCol, dataIsFirstRow, dataIsLastRow,
 } from './customAttr';
 import { transparent, wallNodeColor } from './color';
 
@@ -72,6 +73,12 @@ export const startNode = 'start-node';
 export const targetNode = 'target-node';
 export const bombNode = 'bomb-node';
 
+// get nodeStartInfo
+export const getNodeStartInfo = () => nodeInfoStart;
+
+// get nodeTargetInfo
+export const getNodeTargetInfo = () => nodeInfoTarget;
+
 // get nodeBombInfo
 export const getNodeBombInfo = () => nodeInfoBomb;
 
@@ -88,6 +95,14 @@ export const getAttr = (node: HTMLDivElement, attr: string) => {
     case dataIsBombNode:
       return node.getAttribute(attr);
     case dataIdx:
+      return node.getAttribute(attr);
+    case dataIsFirstCol:
+      return node.getAttribute(attr);
+    case dataIsLastCol:
+      return node.getAttribute(attr);
+    case dataIsFirstRow:
+      return node.getAttribute(attr);
+    case dataIsLastRow:
       return node.getAttribute(attr);
     default:
       return node.getAttribute('');
@@ -153,9 +168,18 @@ export const createDraggble = (
       },
     },
     onPress() {
-      if (className === startNode) nodeInfo = JSON.parse(JSON.stringify(nodeInfoStart));
-      if (className === targetNode) nodeInfo = JSON.parse(JSON.stringify(nodeInfoTarget));
-      if (className === bombNode) nodeInfo = JSON.parse(JSON.stringify(nodeInfoBomb));
+      if (className === startNode) {
+        nodeInfo = JSON.parse(JSON.stringify(nodeInfoStart));
+        if (nodes !== null) setAttr(nodes[nodeInfo.index], dataIsStartNode, 'false');
+      }
+      if (className === targetNode) {
+        nodeInfo = JSON.parse(JSON.stringify(nodeInfoTarget));
+        if (nodes !== null) setAttr(nodes[nodeInfo.index], dataIsTargetNode, 'false');
+      }
+      if (className === bombNode) {
+        nodeInfo = JSON.parse(JSON.stringify(nodeInfoBomb));
+        if (nodes !== null) setAttr(nodes[nodeInfo.index], dataIsBombNode, 'false');
+      }
       initialIndex = nodeInfo.index === 0 ? nodeIndex : nodeInfo.index;
     },
     onDrag() {
