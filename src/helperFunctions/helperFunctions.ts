@@ -131,8 +131,16 @@ export const setAttr = (node: HTMLDivElement, attr: string, value: any) => {
 
 // add remove wall node
 export const addRemoveWallNode = (node: HTMLDivElement, idx: number) => {
+  const isStartNode = getAttr(node, dataIsStartNode);
+  const isTargetNode = getAttr(node, dataIsTargetNode);
   const isWallNode = getAttr(node, dataIsWallNode);
+  const isBombNode = getAttr(node, dataIsBombNode);
   const nodeH = node;
+
+  if (isStartNode === 'true') { nodeInfoStart.isWallNode = 'true'; return; }
+  if (isTargetNode === 'true') { nodeInfoTarget.isWallNode = 'true'; return; }
+  if (isBombNode === 'true') { nodeInfoBomb.isWallNode = 'true'; return; }
+
   if (isWallNode === 'true') {
     const nodeIndex = wallNodes.indexOf(idx);
     if (nodeIndex !== -1) wallNodes.splice(nodeIndex, 1);

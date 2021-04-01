@@ -1,5 +1,6 @@
 export const mazesKeys = [
-  'None', 'Simple Stair Pattern',
+  'None', 'Basic Random Maze', 'Recursive Division',
+  'Recursive Division (horizontal skew)', 'Recursive Division (vertical skew)', 'Simple Stair Pattern',
 ];
 
 export interface mazesType {
@@ -9,11 +10,10 @@ export interface mazesType {
 }
 
 const mazesAndPatternsOptions = () => {
-  const mazesAndPatterns: mazesType[] = [
-    { key: mazesKeys[0], text: 'None', idx: 0 },
-    { key: mazesKeys[1], text: 'Simple Stair Pattern', idx: 1 },
-    { key: 'maze one', text: 'maze one', idx: 2 },
-  ];
+  const mazesAndPatterns: mazesType[] = [];
+  mazesKeys.forEach((name: string, index: number) => {
+    mazesAndPatterns.push({ key: name, text: name, idx: index });
+  });
 
   return mazesAndPatterns;
 };

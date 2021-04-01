@@ -13,15 +13,17 @@ const MazesPatternSwitchButton = React.forwardRef((
   props: Props, ref: ForwardedRef<HTMLDivElement>,
 ) => {
   const { isSliderChecked, darkModeToggle } = props;
+  const darkMode = <i className="moon icon" />;
+  const lightMode = <i className="sun outline icon" />;
   return (
     <div className="mazes-pattern-label">
       <div style={{ marginRight: '5px' }}>
         <BootstrapSwitchButton
           checked={isSliderChecked}
-          width={110}
-          onlabel="Dark Mode"
+          width={50}
+          onlabel={lightMode as unknown as string}
           onstyle="dark"
-          offlabel="Light mode"
+          offlabel={darkMode as unknown as string}
           offstyle="primary"
           // eslint-disable-next-line react/style-prop-object
           style="border"

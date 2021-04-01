@@ -11,6 +11,7 @@ import {
 } from './App.Functions';
 import { setDarkMode } from './helperFunctions/helperFunctions';
 import { mazesKeys } from './mazesAndPatterns/mazesAndPatternsOptions';
+import basicRandomMaze from './mazesAndPatterns/basicRandomMaze';
 import simpleStairPattern from './mazesAndPatterns/simpleStairPattern';
 import './App.css';
 import { topNav, bottomNav } from './helperFunctions/props';
@@ -136,8 +137,8 @@ function App() {
 
   // mazes and patterns
   const animateMazesAndPatterns = (maze: string, idx: number) => {
-    const index = currentActiveMazeAndPattern;
     clearWalls(nodesRef.current, resetMazesAndPatterns);
+    const index = currentActiveMazeAndPattern;
     currentActiveMazeAndPattern = idx;
     mazesPatternDetailRef.current!!.textContent = maze;
 
@@ -156,6 +157,9 @@ function App() {
         clearWalls(nodesRef.current, resetMazesAndPatterns);
         break;
       case mazesKeys[1]:
+        basicRandomMaze(nodesRef.current, noOfRows, noOfNodes);
+        break;
+      case mazesKeys[5]:
         simpleStairPattern(nodesRef.current, noOfRows, noOfNodes);
         break;
       default:
@@ -165,6 +169,7 @@ function App() {
   };
 
   calculateAndSetDimension.current = () => {
+    resetMazesAndPatterns();
     animateCoverRef.current!!.style.display = 'none';
     clearWalls(nodesRef.current, resetMazesAndPatterns);
     nodesRef.current.length = 0;
