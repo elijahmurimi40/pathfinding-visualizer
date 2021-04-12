@@ -1,7 +1,5 @@
 import { addRemoveWallNode } from '../helperFunctions/helperFunctions';
-
-const randomNumber = (min: number, max: number) => Math.random() * (max - min + 1) + min;
-const randomIntFromInterval = (min: number, max: number) => Math.floor(randomNumber(min, max));
+import { randomIntFromInterval } from './mazesAndPatternsHelper';
 
 const basicRandomMaze = (nodes: HTMLDivElement[], noOfRows: number, noOfNodes: number) => {
   const totalNodes = (noOfRows * noOfNodes);

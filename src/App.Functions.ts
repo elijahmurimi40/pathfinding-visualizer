@@ -158,8 +158,8 @@ export const addBomb = (
     bombIndex = nodeIndex;
   } else {
     const newNode = nodes[getNodeBombInfo().index];
-    if (getNodeBombInfo().isWallNode === 'true') addRemoveWallNode(newNode, getNodeBombInfo().index);
     setAttr(newNode, dataIsBombNode, 'false');
+    if (getNodeBombInfo().isWallNode === 'true') addRemoveWallNode(newNode, getNodeBombInfo().index);
     i?.remove();
 
     addBombElem.textContent = 'Add Bomb';

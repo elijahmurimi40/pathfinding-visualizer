@@ -12,9 +12,11 @@ import {
 import { setDarkMode } from './helperFunctions/helperFunctions';
 import { mazesKeys } from './mazesAndPatterns/mazesAndPatternsOptions';
 import basicRandomMaze from './mazesAndPatterns/basicRandomMaze';
+import recursiveDivision from './mazesAndPatterns/recursiveDivision';
 import simpleStairPattern from './mazesAndPatterns/simpleStairPattern';
 import './App.css';
 import { topNav, bottomNav } from './helperFunctions/props';
+import { clearTimeouts } from './mazesAndPatterns/mazesAndPatternsHelper';
 
 // pf => pathfinding
 let isSliderChecked = false;
@@ -159,6 +161,9 @@ function App() {
       case mazesKeys[1]:
         basicRandomMaze(nodesRef.current, noOfRows, noOfNodes);
         break;
+      case mazesKeys[2]:
+        recursiveDivision(nodesRef.current, noOfRows, noOfNodes);
+        break;
       case mazesKeys[5]:
         simpleStairPattern(nodesRef.current, noOfRows, noOfNodes);
         break;
@@ -169,6 +174,7 @@ function App() {
   };
 
   calculateAndSetDimension.current = () => {
+    clearTimeouts();
     resetMazesAndPatterns();
     animateCoverRef.current!!.style.display = 'none';
     clearWalls(nodesRef.current, resetMazesAndPatterns);
