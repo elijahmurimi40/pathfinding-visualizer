@@ -273,7 +273,12 @@ function App() {
         currentActiveMazeAndPattern={currentActiveMazeAndPattern}
       />
       <div className="cover-div cover-div-error">
-        <div className="error-div">Use Screen of 320px and above</div>
+        <div className="error-div">Use Screen of width 320px and above</div>
+      </div>
+
+      {/* h for height */}
+      <div className="cover-div cover-div-error-h">
+        <div className="error-div">Use Screen of height 320px and above</div>
       </div>
 
       <div className="cover-div" ref={animateCoverRef} />

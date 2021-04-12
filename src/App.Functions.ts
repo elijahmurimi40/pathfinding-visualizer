@@ -3,8 +3,8 @@ import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode, dataIdx,
 } from './helperFunctions/customAttr';
 import {
-  bombNode, createDraggble, getNodeBombInfo, wallNodes, addRemoveWallNode,
-  getAttr, setAttr, getDarkMode,
+  bombNode, createDraggble, getNodeStartInfo, getNodeTargetInfo, getNodeBombInfo,
+  wallNodes, addRemoveWallNode, getAttr, setAttr, getDarkMode,
 } from './helperFunctions/helperFunctions';
 import {
   NodeType, RowsType, RowType,
@@ -102,6 +102,9 @@ export const getNewPfGridWithWallToggled = (
 export const clearWalls = (nodes: HTMLDivElement[], resetMazesAndPatterns: () => void) => {
   if (wallNodes.length === 0) return;
   resetMazesAndPatterns();
+  getNodeStartInfo().isWallNode = 'false';
+  getNodeTargetInfo().isWallNode = 'false';
+  getNodeBombInfo().isWallNode = 'false';
   wallNodes.forEach((idx: number) => {
     const node: HTMLDivElement | null = nodes[idx];
     if (node !== null) {

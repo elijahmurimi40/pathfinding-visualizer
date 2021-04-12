@@ -11,8 +11,8 @@ html, body {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 40px;
-    line-height: 40px;
+    height: 20%;
+    /* line-height: 40px; */
     text-align: center;
     background-color: #eee;
 }
@@ -32,8 +32,19 @@ html, body {
     display: none;
 }
 
+/* h for height */
+.cover-div-error-h {
+    display: none;
+}
+
 @media only screen and (max-width: 319px) {
     .cover-div-error {
+        display: block;
+    }
+}
+
+@media only screen and (max-height: 412px) {
+    .cover-div-error-h {
         display: block;
     }
 }
