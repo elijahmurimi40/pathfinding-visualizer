@@ -137,6 +137,16 @@ function App() {
     currentActiveMazeAndPattern = 0;
   };
 
+  // show cover
+  const showCover = () => {
+    animateCoverRef.current!!.style.display = 'block';
+  };
+
+  // hide cover
+  const hideCover = () => {
+    animateCoverRef.current!!.style.display = 'none';
+  };
+
   // mazes and patterns
   const animateMazesAndPatterns = (maze: string, idx: number) => {
     clearWalls(nodesRef.current, resetMazesAndPatterns);
@@ -159,7 +169,8 @@ function App() {
         clearWalls(nodesRef.current, resetMazesAndPatterns);
         break;
       case mazesKeys[1]:
-        basicRandomMaze(nodesRef.current, noOfRows, noOfNodes);
+        showCover();
+        basicRandomMaze(nodesRef.current, noOfRows, noOfNodes, hideCover);
         break;
       case mazesKeys[2]:
         recursiveDivision(nodesRef.current, noOfRows, noOfNodes);
