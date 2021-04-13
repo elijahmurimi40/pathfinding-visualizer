@@ -1,134 +1,72 @@
-import { getStartNodeIdx, getTargetNodeIdx } from '../App.Functions';
-import {
-  dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode,
-  dataIsFirstCol, dataIsLastCol, dataIsFirstRow, dataIsLastRow,
-} from '../helperFunctions/customAttr';
-import {
-  getAttr, addRemoveWallNode, getNodeStartInfo, getNodeTargetInfo, getNodeBombInfo,
-} from '../helperFunctions/helperFunctions';
-
-// const up = 'up';
-// const right = 'right';
-const down = 'down';
-const left = 'left';
-
-// H for helper
-let nodesH: HTMLDivElement[] = [];
-let noOfRowsH : number = 0;
-let noOfNodesH: number = 0;
-
-const checkAndAddRemoveWallNode = (idx: number) => {
-  console.log(idx);
-  console.log(nodesH[idx]);
-  const isStartNode = getAttr(nodesH[idx], dataIsStartNode);
-  const isTargetNode = getAttr(nodesH[idx], dataIsTargetNode);
-  const isBombNode = getAttr(nodesH[idx], dataIsBombNode);
-  const isFirstCol = getAttr(nodesH[idx], dataIsFirstCol);
-  const isLastCol = getAttr(nodesH[idx], dataIsLastCol);
-  const isFirstRow = getAttr(nodesH[idx], dataIsFirstRow);
-  const isLastRow = getAttr(nodesH[idx], dataIsLastRow);
-
-  if (isStartNode === 'true') getNodeStartInfo().isWallNode = 'true';
-  if (isTargetNode === 'true') getNodeTargetInfo().isWallNode = 'true';
-  if (isBombNode === 'true') getNodeBombInfo().isWallNode = 'true';
-  if (
-    isStartNode !== 'true'
-    && isTargetNode !== 'true'
-    && isBombNode !== 'true'
-    && isFirstCol !== 'true'
-    && isLastCol !== 'true'
-    && isFirstRow !== 'true'
-    && isLastRow !== 'true'
-  ) {
-    addRemoveWallNode(nodesH[idx], idx);
-  }
-};
-
-// direction is [down, left], [down, right], [up, left], [up, right]
-const drawWall = (
-  row: number,
-  column: number,
-  direction: string[],
-  startNodeIdx: number,
-  targetNodeIdx: number,
-) => {
-  let nodeIndex = 0;
-  if (direction[0] === down) {
-    switch (direction[1]) {
-      case left:
-        nodeIndex = (noOfNodesH * (row + 1) + (column - 1));
-        break;
-      default:
-        nodeIndex = (noOfNodesH * (row + 1) + (column + 1));
-    }
-  } else {
-    switch (direction[1]) {
-      case left:
-        nodeIndex = (noOfNodesH * (row - 1) + (column - 1));
-        break;
-      default:
-        nodeIndex = (noOfNodesH * (row - 1) + (column + 1));
-    }
-  }
-
-  const isWallNode = getAttr(nodesH[nodeIndex], dataIsWallNode);
-  if (
-    isWallNode === 'false'
-    && nodeIndex > startNodeIdx
-    && nodeIndex < targetNodeIdx
-  ) checkAndAddRemoveWallNode(nodeIndex);
-
-  if (
-    nodeIndex <= startNodeIdx || nodeIndex >= targetNodeIdx
-  ) checkAndAddRemoveWallNode(nodeIndex);
-};
+import { addRemoveWallNode } from '../helperFunctions/helperFunctions';
+import { resetTimeouts, pushTimer } from './mazesAndPatternsHelper';
 
 const simpleStairPattern = (
   nodes: HTMLDivElement[],
   noOfRows: number,
   noOfNodes: number,
+  hideCover: () => void,
 ) => {
-  nodesH = nodes;
-  noOfRowsH = noOfRows;
-  noOfNodesH = noOfNodes;
-  const initialStartNodeIdx = getStartNodeIdx();
-  const initialTargetNodeIdx = getTargetNodeIdx();
-  const startTargetDiff = Math.floor(Math.abs(initialStartNodeIdx - initialTargetNodeIdx) / 2);
-  const stairLength = startTargetDiff % 2 === 0 ? startTargetDiff : startTargetDiff - 1;
-  const startRow = Math.floor(noOfRowsH / 2) - stairLength;
-  const endRow = startRow + (stairLength * 2);
-  // magic number 2 since we start two nodes from startNode
-  const column = Math.floor(noOfNodesH / 4) + stairLength + 2;
+  const startRow = Math.floor(noOfRows / 2);
+  const startCol = Math.floor(noOfNodes / 2);
+  const startNode = (startRow * noOfNodes) + startCol;
+  const stairLength = Math.floor(noOfRows / 4);
+  // const endColLeft = startCol;
+  const endColRIght = noOfNodes % 2 === 0 ? startCol - 1 : startCol;
+  addRemoveWallNode(nodes[startNode], startNode);
 
-  // two nodes from startNode +2
-  // const initialIndex = initialStartNodeIdx + 2;
-  // checkAndAddRemoveWallNode(initialIndex);
+  // actual startNode
+  const startNodeA = (startRow * noOfNodes) + Math.floor(noOfNodes / 4);
+  // actual targetNode
+  const targetNodeA = (startRow * noOfNodes) + noOfNodes - Math.floor(noOfNodes / 4) - 1;
 
-  const startNodeTopIdx = (noOfNodesH * startRow) + column;
-  const startNodeBottomIdx = (noOfNodesH * endRow) + column;
-  console.log(noOfRowsH);
-  checkAndAddRemoveWallNode(startNodeTopIdx);
-  checkAndAddRemoveWallNode(startNodeBottomIdx);
+  let stairLengthH = 0;
+  let status = 'increment';
+  resetTimeouts([]);
+  const animations: number[] = [];
+  for (let i = 1; i < startCol; i += 1) {
+    if (stairLengthH === stairLength) status = 'decrement';
+    if (stairLengthH === 0) status = 'increment';
+    if (stairLengthH < stairLength && status === 'increment') {
+      stairLengthH += 1;
+    } else {
+      stairLengthH -= 1;
+    }
 
-  // C for copy
-  let startRowC = startRow;
-  let startColC = column;
-  for (let i = 0; i < stairLength * 2; i += 1) {
-    // const nodeIndexLeft = (noOfNodesH * (startRowLeft + 1) + (startEndColLeft - 1));
-    // const isWallNode = getAttr(nodesH[nodeIndexLeft], dataIsWallNode);
-    // if (
-    //   isWallNode === 'false'
-    //   && nodeIndexLeft > initialStartNodeIdx
-    //   && nodeIndexLeft < initialTargetNodeIdx
-    // ) checkAndAddRemoveWallNode(nodeIndexLeft);
+    const upNodeLeftIdx = ((startRow - stairLengthH) * noOfNodes) + (startCol - i);
+    const downNodeLeftIdx = ((startRow + stairLengthH) * noOfNodes) + (startCol - i);
+    const downNodeLeftIdxRow = Math.floor(downNodeLeftIdx / noOfNodes);
+    const upNodeRightIdx = ((startRow - stairLengthH) * noOfNodes) + (startCol + i);
+    const downNodeRightIdx = ((startRow + stairLengthH) * noOfNodes) + (startCol + i);
+    const downNodeRightIdxRow = Math.floor(downNodeRightIdx / noOfNodes);
 
-    // if (
-    //   nodeIndexLeft <= initialStartNodeIdx || nodeIndexLeft >= initialTargetNodeIdx
-    // ) checkAndAddRemoveWallNode(nodeIndexLeft);
-    drawWall(startRowC, startColC, [down, left], initialStartNodeIdx, initialTargetNodeIdx);
+    animations.push(upNodeLeftIdx);
+    if (downNodeLeftIdxRow !== startRow) {
+      animations.push(downNodeLeftIdx);
+    }
+    if (downNodeLeftIdxRow === startRow && downNodeLeftIdx < startNodeA) {
+      animations.push(downNodeLeftIdx);
+    }
 
-    startRowC += 1;
-    startColC -= 1;
+    if (i < endColRIght) {
+      animations.push(upNodeRightIdx);
+      if (downNodeRightIdxRow !== startRow) {
+        animations.push(downNodeRightIdx);
+      }
+      if (downNodeRightIdxRow === startRow && downNodeRightIdx > targetNodeA) {
+        animations.push(downNodeRightIdx);
+      }
+    }
+  }
+
+  for (let i = 0; i < animations.length; i += 1) {
+    const timer = window.setTimeout(() => {
+      const nodeIdx = animations[i];
+      addRemoveWallNode(nodes[nodeIdx], nodeIdx);
+      if (i === animations.length - 1) hideCover();
+    }, i * 20);
+
+    pushTimer(timer);
   }
 };
 

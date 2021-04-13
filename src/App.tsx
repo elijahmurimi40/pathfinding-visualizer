@@ -176,7 +176,8 @@ function App() {
         recursiveDivision(nodesRef.current, noOfRows, noOfNodes);
         break;
       case mazesKeys[5]:
-        simpleStairPattern(nodesRef.current, noOfRows, noOfNodes);
+        showCover();
+        simpleStairPattern(nodesRef.current, noOfRows, noOfNodes, hideCover);
         break;
       default:
         return 0;
