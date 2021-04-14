@@ -11,7 +11,7 @@ import {
 } from './helperFunctions/types';
 
 let nodeIdx = 0;
-let bombIndex = 0;
+let bombIndex = -1;
 let i: HTMLElement | null = null;
 
 let startNodeIdx = 0;
@@ -25,7 +25,7 @@ export const getBombIndex = () => bombIndex;
 
 // generate a pfGrid
 export const generatePfGrid = (noOfRows: number, noOfNodes: number): RowsType => {
-  bombIndex = 0;
+  bombIndex = -1;
   i?.remove();
 
   const rows: RowsType = [];
@@ -131,7 +131,7 @@ export const addBomb = (
   let nodeIndex = row + column;
   let node = nodes[nodeIndex];
 
-  if (bombIndex === 0) {
+  if (bombIndex === -1) {
     // loop checking if its start or target node to skip the node
     for (let j = 0; j < 2; j += 1) {
       const isStartNode = getAttr(node, dataIsStartNode);
@@ -166,6 +166,6 @@ export const addBomb = (
     i?.remove();
 
     addBombElem.textContent = 'Add Bomb';
-    bombIndex = 0;
+    bombIndex = -1;
   }
 };

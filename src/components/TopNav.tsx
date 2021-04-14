@@ -1,11 +1,14 @@
 import React, { ForwardedRef } from 'react';
 import { Menu } from 'semantic-ui-react';
-import pathfindingAlgorithmsOptions from '../pathfindingAlgorihms/pathfindingAlgorithmsOptions';
+import { Alert } from 'react-bootstrap';
+import pathfindingAlgorithmsOptions, { algorithms } from '../pathfindingAlgorihms/pathfindingAlgorithmsOptions';
 import Nav from './Nav';
 import { arrowDown, NavProps, topNav } from '../helperFunctions/props';
 import './Nav.css';
 
 const TopNav = React.forwardRef((props: NavProps, ref: ForwardedRef<HTMLDivElement>) => {
+  const [showAlert, setShowAlert] = React.useState(false);
+
   const options = [];
   const pathFindingAlgorithmsOptions = pathfindingAlgorithmsOptions();
   for (let i = 0; i < pathFindingAlgorithmsOptions.length; i += 1) {
@@ -16,6 +19,23 @@ const TopNav = React.forwardRef((props: NavProps, ref: ForwardedRef<HTMLDivEleme
       </option>,
     );
   }
+
+  let timer = 0;
+  const visualize = (e: any) => {
+    e.preventDefault();
+    const dropdown = (ref as React.RefObject<HTMLDivElement>).current?.childNodes[1].childNodes[0];
+    const { value } = (dropdown as HTMLSelectElement);
+    switch (value) {
+      case algorithms[0]:
+        break;
+      default:
+        setShowAlert(true);
+        if (timer) clearTimeout(timer);
+        timer = window.setTimeout(() => {
+          setShowAlert(false);
+        }, 2000);
+    }
+  };
 
   return (
     <>
@@ -45,11 +65,29 @@ const TopNav = React.forwardRef((props: NavProps, ref: ForwardedRef<HTMLDivEleme
           <a
             href="/visualize"
             className="ui fluid blue submit button"
+            onClick={(e) => { visualize(e); }}
           >
             Go
           </a>
         </Menu.Item>
       </div>
+      <Alert
+        style={{
+          position: 'fixed',
+          width: '315px',
+          right: 0,
+          left: 0,
+          margin: 'auto',
+          zIndex: 9999,
+        }}
+        variant="danger"
+        show={showAlert}
+        dismissible
+        onClose={() => { setShowAlert(false); }}
+        transition={false}
+      >
+        Select a Pathfinding Algorihm.
+      </Alert>
     </>
   );
 });

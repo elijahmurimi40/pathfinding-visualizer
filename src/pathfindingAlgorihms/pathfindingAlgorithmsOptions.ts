@@ -1,6 +1,8 @@
+export const algorithms = ['A* Search'];
+
 const pathfindingAlgorithmsOptions = () => {
   const pathfindingAlgorithms = [
-    { key: 'algo one', text: 'algo one', value: 'algo one' },
+    { key: algorithms[0], text: algorithms[0], value: algorithms[0] },
   ];
 
   return pathfindingAlgorithms;
