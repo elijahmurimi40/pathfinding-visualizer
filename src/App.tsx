@@ -100,7 +100,7 @@ function App() {
       semanticUILightMode(openSideNavRef.current!!);
       nodesRef.current[getStartNodeIdx()].children[0].classList.remove('inverted');
       nodesRef.current[getTargetNodeIdx()].children[0].classList.remove('inverted');
-      if (getBombIndex() !== 0) {
+      if (getBombIndex() !== -1) {
         nodesRef.current[getBombIndex()].children[0].classList.remove('inverted');
       }
       setDarkMode(isChecked);

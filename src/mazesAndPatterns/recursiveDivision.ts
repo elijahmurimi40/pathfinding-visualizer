@@ -1,5 +1,8 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
-import { dataIsStartNode, dataIsTargetNode, dataIsBombNode } from '../helperFunctions/customAttr';
+import {
+  dataIsStartNode, dataIsTargetNode, dataIsBombNode, dataIsWallNode,
+} from '../helperFunctions/customAttr';
 import { getAttr, addRemoveWallNode } from '../helperFunctions/helperFunctions';
 import {
   drawSideWalls, wallSideUp, wallSideRightLeft, wallSideDown,
@@ -32,6 +35,11 @@ interface boundsType {
   column: number;
 }
 
+interface offSetType {
+  x: number;
+  y: number;
+}
+
 let upLeftBounds: boundsType = { row: 0, column: 0 };
 let upRightBounds = { row: 0, column: 0 };
 let downLeftBounds = { row: 0, column: 0 };
@@ -42,7 +50,6 @@ const addToAnimations = (
   nodeIdx: number, animations: number[], i: number, length: number, tempAnimations: number[],
 ) => {
   if (Number.isNaN(nodeIdx)) return;
-  console.log(nodeIdx);
   const isStartNode = getAttr(nodesH[nodeIdx], dataIsStartNode);
   const isTargetNode = getAttr(nodesH[nodeIdx], dataIsTargetNode);
   const isBombNode = getAttr(nodesH[nodeIdx], dataIsBombNode);
@@ -116,13 +123,17 @@ const divide2 = (
 };
 
 const divide = (
-  init: number, startPos: number, length: number,
-  orientation: string, animations: number[],
+  startPos: number, length: number,
+  orientation: string, animations: number[], offset: offSetType,
 ) => {
   const tempAnimations: number[] = [];
-  for (let i = init - 1; i <= length + 1; i += 1) {
-    const nodeIdx = orientation === horizontal ? (startPos * noOfNodesH) + i
-      : (i * noOfNodesH) + startPos;
+  let isGapIndex = false;
+  let gapIndex = 0;
+  const { x, y } = offset;
+  const yH = orientation !== horizontal && y === 0 ? 1 : 0;
+  for (let i = 1; i < length + 1; i += 1) {
+    const nodeIdx = orientation === horizontal ? ((startPos + y) * noOfNodesH) + i + x
+      : (i * noOfNodesH * yH) + startPos + x;
     addRemoveWallNode(nodesH[nodeIdx], nodeIdx);
     const isStartNode = getAttr(nodesH[nodeIdx], dataIsStartNode);
     const isTargetNode = getAttr(nodesH[nodeIdx], dataIsTargetNode);
@@ -132,14 +143,46 @@ const divide = (
       tempAnimations.push(nodeIdx);
     }
 
-    if (i === length) {
+    if (i === 1) {
+      const nodeIndex = orientation === horizontal ? nodeIdx - 1 : nodeIdx - noOfNodesH;
+      const row = Math.floor(nodeIndex / noOfNodesH);
+      const col = nodeIndex - (row * noOfNodesH);
+      const rowIdx = gapRow.indexOf(row);
+      const colIdx = gapColumn.indexOf(col);
+      const rowColIdx = orientation === horizontal ? colIdx : rowIdx;
+      const isWallNode = getAttr(nodesH[nodeIndex], dataIsWallNode);
+      if (rowColIdx !== -1 && isWallNode === 'false') {
+        isGapIndex = true;
+        gapIndex = nodeIndex;
+      }
+    }
+
+    if (i === length - 1) {
+      const nodeIndex = orientation === horizontal ? nodeIdx + 1 : nodeIdx + noOfNodesH;
+      const row = Math.floor(nodeIndex / noOfNodesH);
+      const col = nodeIndex - (row * noOfNodesH);
+      const rowIdx = gapRow.indexOf(row);
+      const colIdx = gapColumn.indexOf(col);
+      const rowColIdx = orientation === horizontal ? colIdx : rowIdx;
+      const isWallNode = getAttr(nodesH[nodeIndex], dataIsWallNode);
+      if (rowColIdx !== -1 && isWallNode === 'false') {
+        isGapIndex = true;
+        gapIndex = nodeIndex;
+      }
+      if (gapIndex !== 0) {
+        addRemoveWallNode(nodesH[gapIndex], gapIndex);
+        const animationsNodeIndex = animations.indexOf(gapIndex);
+        if (animationsNodeIndex !== -1) animations.splice(animationsNodeIndex, 1);
+      }
+    }
+
+    if (i === length - 1 && !isGapIndex) {
       const randomIdx = randomIndex(tempAnimations.length);
       const nodeIndex = tempAnimations[randomIdx];
       tempAnimations.splice(randomIdx, 1);
       addRemoveWallNode(nodesH[nodeIndex], nodeIndex);
       const row = Math.floor(nodeIndex / noOfNodesH);
       const col = nodeIndex - (row * noOfNodesH);
-      console.log(`${row}-${col}`);
       const rowIdx = gapRow.indexOf(row);
       const colIdx = gapColumn.indexOf(col);
       if (rowIdx === -1) gapRow.push(row);
@@ -152,29 +195,67 @@ const divide = (
   initialGap = 0;
 };
 
+const getStartXY = (length: number, type: string) => {
+  const startXOptions = [];
+  const startYOptions = [];
+  for (let i = 2; i < length; i += 1) {
+    if (type === 'X') {
+      startXOptions.push(i);
+    }
+    if (type === 'Y') {
+      startYOptions.push(i);
+    }
+  }
+
+  if (type === 'X' && startXOptions.length !== 0) {
+    const startXIdx = randomIndex(startXOptions.length);
+    return startXOptions[startXIdx];
+  }
+  const startYIdx = randomIndex(startYOptions.length);
+  return startYOptions[startYIdx];
+};
+
 let pol = 0;
 const recursiveDivisionHelper = (
-  upLeft: boundsType, upRight: boundsType,
-  downLeft: boundsType, downRight: boundsType,
-  orientation: string, animations: number[],
+  height: number, width: number,
+  orientation: string, animations: number[], offset: offSetType,
 ) => {
-  // if (pol === 140) return;
-  // going left to right
-  const startX = randomIntFromInterval(
-    upLeft.row + initialGap, downLeft.row - initialGap,
-  );
-  // going up to down
-  const startY = randomIntFromInterval(
-    upLeft.column + initialGap, upRight.column - initialGap,
-  );
-  // console.log(startY);
-  // console.log(downRight.column);
-  const init = upLeft.row;
+  const startX = getStartXY(height, 'X');
+  const startY = getStartXY(width, 'Y');
   const startPos = orientation === horizontal ? startX : startY;
-  const length = orientation === horizontal ? upRight.column : downRight.row;
+  const length = orientation === horizontal ? width : height;
 
-  divide(init, startPos, length, orientation, animations);
   pol += 1;
+  console.log(`height Width - ${height}-${width}-${pol}`);
+  console.log(`startXY - ${startX}-${startY}-${pol}`);
+  console.log('--------------------------------');
+  if (width < 2 || height < 2) return;
+
+  if (orientation === horizontal && typeof startX !== 'undefined') {
+    divide(startPos, length, orientation, animations, offset);
+    const heightUp = startX - 1;
+    const heightDown = height - startX;
+    recursiveDivisionHelper(
+      heightUp, width,
+      chooseOrientation(heightUp, width), animations, offset,
+    );
+    recursiveDivisionHelper(
+      heightDown, width,
+      chooseOrientation(heightDown, width), animations, { x: offset.x, y: offset.y + startX },
+    );
+  } else if (orientation !== horizontal && typeof startY !== 'undefined') {
+    divide(startPos, length, orientation, animations, offset);
+    const widthLeft = startY - 1;
+    const widthRight = width - startY;
+    recursiveDivisionHelper(
+      height, widthLeft,
+      chooseOrientation(height, widthLeft), animations, offset,
+    );
+    recursiveDivisionHelper(
+      height, widthRight,
+      chooseOrientation(height, widthRight), animations, { x: offset.x + startY, y: offset.y },
+    );
+  }
 };
 
 const recursiveDivision = (nodes: HTMLDivElement[], noOfRows: number, noOfNodes: number) => {
@@ -188,28 +269,25 @@ const recursiveDivision = (nodes: HTMLDivElement[], noOfRows: number, noOfNodes:
 
   const startY = randomIntFromInterval(noOfNodesH + 4, (noOfNodesH * 2) - 5);
   // magic number 8 for 4 nodes up and 4 nodes down
-  const lengths = noOfRowsH - 8;
-  const startXOptions = [];
-  for (let i = 0; i < lengths; i += 1) {
-    const startX = ((i + 4) * noOfNodesH) + 1;
-    startXOptions.push(startX);
-  }
-  const startXIdx = randomIndex(startXOptions.length);
-  const startX = startXOptions[startXIdx];
-  upLeftBounds = { row: 2, column: 2 };
-  upRightBounds = { row: 2, column: noOfNodesH - 3 };
-  downLeftBounds = { row: noOfRows - 3, column: 2 };
-  downRightBounds = { row: noOfRows - 3, column: noOfNodesH - 3 };
-  console.log(`upLeft ${JSON.stringify(upLeftBounds)}`);
-  console.log(`upRight ${JSON.stringify(upRightBounds)}`);
-  console.log(`downLeft ${JSON.stringify(downLeftBounds)}`);
-  console.log(`downRight ${JSON.stringify(downRightBounds)}`);
+  // const lengths = noOfRowsH - 8;
+  // const startXOptions = [];
+  // for (let i = 0; i < lengths; i += 1) {
+  //   const startX = ((i + 4) * noOfNodesH) + 1;
+  //   startXOptions.push(startX);
+  // }
+  // const startXIdx = randomIndex(startXOptions.length);
+  // const startX = startXOptions[startXIdx];
 
   recursiveDivisionHelper(
-    upLeftBounds, upRightBounds,
-    downLeftBounds, downRightBounds,
-    chooseOrientation(3, 4), recursiveDivisionAnimations,
+    noOfRows - 2, noOfNodesH - 2,
+    chooseOrientation(4, 4), recursiveDivisionAnimations, { x: 0, y: 0 },
   );
+
+  // recursiveDivisionHelper(
+  //   upLeftBounds, upRightBounds,
+  //   downLeftBounds, downRightBounds,
+  //   chooseOrientation(3, 4), recursiveDivisionAnimations,
+  // );
 
   // let animations: (number | number[])[] = [];
   // // up

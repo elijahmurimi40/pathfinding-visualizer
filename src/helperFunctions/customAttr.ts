@@ -10,3 +10,4 @@ export const dataIsFirstCol = 'data-is-first-col';
 export const dataIsLastCol = 'data-is-last-col';
 export const dataIsFirstRow = 'data-is-first-row';
 export const dataIsLastRow = 'data-is-last-row';
+export const dataIsGapNode = 'data-is-gap-node';

@@ -62,7 +62,7 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
         marginLeft: '60px',
       }}
     >
-      <div className="pf-grid-node-holder" style={{ marginTop }}>
+      <div className="pf-grid-node-holder" style={{ marginTop: Math.floor(marginTop / 2) }}>
         {
           pfGridRows.length === 0 ? ''
             : pfGridRows.map((row: RowType, idxC: number) => (
@@ -97,6 +97,8 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
                         data-is-last-col={isNodeInLastCol}
                         data-is-first-row={isNodeInFirstRow}
                         data-is-last-row={isNodeInLastRow}
+                        // gap node for mazes
+                        data-is-gap-node={false}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           onMouseDown(nodesRef.current!![idx]);

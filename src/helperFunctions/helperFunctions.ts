@@ -4,7 +4,7 @@ import { Draggable } from 'gsap/Draggable';
 import { NodeInfoType } from './types';
 import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode, dataIdx,
-  dataIsFirstCol, dataIsLastCol, dataIsFirstRow, dataIsLastRow,
+  dataIsFirstCol, dataIsLastCol, dataIsFirstRow, dataIsLastRow, dataIsGapNode,
 } from './customAttr';
 import { transparent, wallNodeColor } from './color';
 
@@ -104,6 +104,8 @@ export const getAttr = (node: HTMLDivElement, attr: string) => {
       return node.getAttribute(attr);
     case dataIsLastRow:
       return node.getAttribute(attr);
+    case dataIsGapNode:
+      return node.getAttribute(attr);
     default:
       return node.getAttribute('');
   }
@@ -122,6 +124,9 @@ export const setAttr = (node: HTMLDivElement, attr: string, value: any) => {
       node.setAttribute(attr, value);
       break;
     case dataIsBombNode:
+      node.setAttribute(attr, value);
+      break;
+    case dataIsGapNode:
       node.setAttribute(attr, value);
       break;
     default:
