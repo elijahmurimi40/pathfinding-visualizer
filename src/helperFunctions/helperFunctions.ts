@@ -65,6 +65,9 @@ export const setDarkMode = (darkMode: boolean) => {
   isDarkMode = darkMode;
 };
 
+// gap nodes array
+export const gapNodes: number[] = [];
+
 // wall nodes array
 export const wallNodes: number[] = [];
 
@@ -132,6 +135,12 @@ export const setAttr = (node: HTMLDivElement, attr: string, value: any) => {
     default:
       node.setAttribute('', '');
   }
+};
+
+// add gapNode
+export const addGapNode = (node: HTMLDivElement, idx: number) => {
+  gapNodes.push(idx);
+  setAttr(node, dataIsGapNode, 'true');
 };
 
 // add remove wall node

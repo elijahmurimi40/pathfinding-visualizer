@@ -173,7 +173,8 @@ function App() {
         basicRandomMaze(nodesRef.current, noOfRows, noOfNodes, hideCover);
         break;
       case mazesKeys[2]:
-        recursiveDivision(nodesRef.current, noOfRows, noOfNodes);
+        showCover();
+        recursiveDivision(nodesRef.current, noOfRows, noOfNodes, hideCover);
         break;
       case mazesKeys[5]:
         showCover();

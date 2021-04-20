@@ -1,10 +1,11 @@
 import { transparent } from './helperFunctions/color';
 import {
-  dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode, dataIdx,
+  dataIsStartNode, dataIsTargetNode, dataIsWallNode,
+  dataIsBombNode, dataIdx, dataIsGapNode,
 } from './helperFunctions/customAttr';
 import {
   bombNode, createDraggble, getNodeStartInfo, getNodeTargetInfo, getNodeBombInfo,
-  wallNodes, addRemoveWallNode, getAttr, setAttr, getDarkMode,
+  wallNodes, addRemoveWallNode, getAttr, setAttr, getDarkMode, gapNodes,
 } from './helperFunctions/helperFunctions';
 import {
   NodeType, RowsType, RowType,
@@ -98,9 +99,19 @@ export const getNewPfGridWithWallToggled = (
   addRemoveWallNode(node, idx);
 };
 
+// clear gap nodes
+const clearGapNodes = (nodes: HTMLDivElement[]) => {
+  gapNodes.forEach((idx: number) => {
+    const node: HTMLDivElement | null = nodes[idx];
+    if (node !== null) setAttr(node, dataIsGapNode, 'false');
+  });
+  gapNodes.length = 0;
+};
+
 // clear wall nodes
 export const clearWalls = (nodes: HTMLDivElement[], resetMazesAndPatterns: () => void) => {
   if (wallNodes.length === 0) return;
+  clearGapNodes(nodes);
   resetMazesAndPatterns();
   getNodeStartInfo().isWallNode = 'false';
   getNodeTargetInfo().isWallNode = 'false';

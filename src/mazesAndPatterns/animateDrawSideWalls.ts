@@ -44,6 +44,12 @@ export const drawSideWalls = (
 
 export const animateDrawWalls = (
   animations: (number | number[])[], nodes: HTMLDivElement[], noOfNodes: number,
+  recursiveDivisionAnimations: number[], hideCover: () => void,
+  animateRecursiveDivision: (
+    // H for helper
+    // eslint-disable-next-line no-unused-vars
+    nodesH: HTMLDivElement[], animationsH: number[], hideCoverH: () => void,
+  ) => void,
 ) => {
   resetTimeouts([]);
 
@@ -57,6 +63,10 @@ export const animateDrawWalls = (
         addRemoveWallNode(nodes[rightIdx], rightIdx);
       } else {
         addRemoveWallNode(nodes[idx as number], idx as number);
+      }
+
+      if (i === animations.length - 1) {
+        animateRecursiveDivision(nodes, recursiveDivisionAnimations, hideCover);
       }
     }, i * 20);
 
