@@ -6,7 +6,9 @@ import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode, dataIdx,
   dataIsFirstCol, dataIsLastCol, dataIsFirstRow, dataIsLastRow, dataIsGapNode,
 } from './customAttr';
-import { transparent, wallNodeColor } from './color';
+import {
+  shortestPathNodeColor, transparent, visitedNodeColor, visitedNodeColorToBomb, wallNodeColor,
+} from './color';
 
 gsap.registerPlugin(Draggable);
 
@@ -64,6 +66,13 @@ export const getDarkMode = () => isDarkMode;
 export const setDarkMode = (darkMode: boolean) => {
   isDarkMode = darkMode;
 };
+
+// visited nodes array
+export const visitedNodesBomb: number[] = [];
+export const visitedNodesTarget: number[] = [];
+
+// path nodes array
+export const pathNodes: number[] = [];
 
 // gap nodes array
 export const gapNodes: number[] = [];
@@ -137,6 +146,26 @@ export const setAttr = (node: HTMLDivElement, attr: string, value: any) => {
   }
 };
 
+// add visited nodes
+export const addVisitedNode = (node: HTMLDivElement, toTarget: string, idx: number) => {
+  const nodeH = node;
+  if (toTarget === 'BOMB') {
+    visitedNodesBomb.push(idx);
+    nodeH.style.backgroundColor = visitedNodeColorToBomb;
+  } else {
+    visitedNodesTarget.push(idx);
+    nodeH.style.backgroundColor = visitedNodeColor;
+  }
+};
+
+// add path node
+export const addPathNode = (node: HTMLDivElement, idx: number) => {
+  pathNodes.push(idx);
+  const nodeH = node;
+  nodeH.classList.remove('pf-grid-node-border-color');
+  nodeH.style.backgroundColor = shortestPathNodeColor;
+};
+
 // add gapNode
 export const addGapNode = (node: HTMLDivElement, idx: number) => {
   gapNodes.push(idx);
@@ -160,10 +189,12 @@ export const addRemoveWallNode = (node: HTMLDivElement, idx: number) => {
     if (nodeIndex !== -1) wallNodes.splice(nodeIndex, 1);
     nodeH.style.backgroundColor = transparent;
     setAttr(nodeH, dataIsWallNode, 'false');
+    nodeH.classList.add('pf-grid-node-border-color');
   } else {
     wallNodes.push(idx);
     nodeH.style.backgroundColor = wallNodeColor;
     setAttr(nodeH, dataIsWallNode, 'true');
+    nodeH.classList.remove('pf-grid-node-border-color');
   }
 };
 

@@ -1,4 +1,5 @@
-import { transparent } from './helperFunctions/color';
+/* eslint-disable no-unused-vars */
+import { shortestPathNodeColor, transparent } from './helperFunctions/color';
 import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode,
   dataIsBombNode, dataIdx, dataIsGapNode,
@@ -6,6 +7,7 @@ import {
 import {
   bombNode, createDraggble, getNodeStartInfo, getNodeTargetInfo, getNodeBombInfo,
   wallNodes, addRemoveWallNode, getAttr, setAttr, getDarkMode, gapNodes,
+  addPathNode, addVisitedNode, pathNodes, visitedNodesBomb, visitedNodesTarget,
 } from './helperFunctions/helperFunctions';
 import {
   NodeType, RowsType, RowType,
@@ -99,6 +101,33 @@ export const getNewPfGridWithWallToggled = (
   addRemoveWallNode(node, idx);
 };
 
+// clear visited nodes
+const clearVisitedNodes = (nodes: HTMLDivElement[]) => {
+  visitedNodesBomb.forEach((idx: number) => {
+    const node: HTMLDivElement | null = nodes[idx];
+    if (node !== null) node.style.backgroundColor = transparent;
+  });
+  visitedNodesTarget.forEach((idx: number) => {
+    const node: HTMLDivElement | null = nodes[idx];
+    if (node !== null) node.style.backgroundColor = transparent;
+  });
+  visitedNodesBomb.length = 0;
+  visitedNodesTarget.length = 0;
+};
+
+// clear path nodes
+export const clearPathNodes = (nodes: HTMLDivElement[]) => {
+  clearVisitedNodes(nodes);
+  pathNodes.forEach((idx: number) => {
+    const node: HTMLDivElement | null = nodes[idx];
+    if (node !== null) {
+      node.style.backgroundColor = transparent;
+      node.classList.add('pf-grid-node-border-color');
+    }
+  });
+  pathNodes.length = 0;
+};
+
 // clear gap nodes
 const clearGapNodes = (nodes: HTMLDivElement[]) => {
   gapNodes.forEach((idx: number) => {
@@ -110,7 +139,8 @@ const clearGapNodes = (nodes: HTMLDivElement[]) => {
 
 // clear wall nodes
 export const clearWalls = (nodes: HTMLDivElement[], resetMazesAndPatterns: () => void) => {
-  if (wallNodes.length === 0) return;
+  // if (wallNodes.length === 0) return;
+  clearPathNodes(nodes);
   clearGapNodes(nodes);
   resetMazesAndPatterns();
   getNodeStartInfo().isWallNode = 'false';
@@ -121,6 +151,7 @@ export const clearWalls = (nodes: HTMLDivElement[], resetMazesAndPatterns: () =>
     if (node !== null) {
       node.style.backgroundColor = transparent;
       setAttr(node, dataIsWallNode, 'false');
+      node.classList.add('pf-grid-node-border-color');
     }
   });
   wallNodes.length = 0;

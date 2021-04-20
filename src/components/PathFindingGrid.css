@@ -10,10 +10,13 @@
 }
 
 .pf-grid-node {
-    border-top: 1px solid #007bff;
-    border-right: 1px solid #007bff;
     width: 25px;
     height: 25px;
+}
+
+.pf-grid-node-border-color {
+    border-top: 1px solid #007bff;
+    border-right: 1px solid #007bff;
 }
 
 .first-col-node {

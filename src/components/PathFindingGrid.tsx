@@ -80,7 +80,9 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
 
                     return (
                       <div
-                        className={`pf-grid-node ${firstColNode} ${lastRowNode} ${wallNode}`}
+                        className={
+                          `pf-grid-node pf-grid-node-border-color ${firstColNode} ${lastRowNode} ${wallNode}`
+                        }
                         // eslint-disable-next-line react/no-array-index-key
                         key={idxR}
                         ref={(element: HTMLDivElement) => {

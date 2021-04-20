@@ -100,7 +100,7 @@ export const SideNav = React.forwardRef((
           <span className="menu-item-name">Reset Board</span>
         </Menu.Item>
 
-        <Menu.Item className="menu-item">
+        <Menu.Item className="menu-item" onClick={props.clearPathNodes}>
           <Icon name="close" />
           <span className="menu-item-name">Clear Path</span>
         </Menu.Item>

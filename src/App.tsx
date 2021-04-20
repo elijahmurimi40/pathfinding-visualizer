@@ -7,7 +7,7 @@ import PathFindingGrid from './components/PathFindingGrid';
 import { RowsType } from './helperFunctions/types';
 import {
   generatePfGrid, getNewPfGridWithWallToggled, clearWalls, addBomb,
-  getStartNodeIdx, getTargetNodeIdx, getBombIndex,
+  getStartNodeIdx, getTargetNodeIdx, getBombIndex, clearPathNodes,
 } from './App.Functions';
 import { setDarkMode } from './helperFunctions/helperFunctions';
 import { mazesKeys } from './mazesAndPatterns/mazesAndPatternsOptions';
@@ -257,6 +257,7 @@ function App() {
           // eslint-disable-next-line max-len
           () => { addBomb(noOfNodes, nodesRef.current, sideNavRef.current); }
         }
+        clearPathNodes={() => { clearPathNodes(nodesRef.current); }}
         clearWalls={() => { clearWalls(nodesRef.current, resetMazesAndPatterns); }}
       />
 

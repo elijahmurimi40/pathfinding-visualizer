@@ -37,5 +37,6 @@ export interface OpenSideNavProps extends SideNavProps {
 // side nav div props
 export interface SideNavDivProps extends SideNavProps {
   addBomb: () => void;
+  clearPathNodes: () => void;
   clearWalls: () => void;
 }
