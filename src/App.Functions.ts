@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
-import { shortestPathNodeColor, transparent } from './helperFunctions/color';
+import { gsap } from 'gsap';
+import { transparent } from './helperFunctions/color';
 import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode,
   dataIsBombNode, dataIdx, dataIsGapNode,
@@ -7,7 +7,7 @@ import {
 import {
   bombNode, createDraggble, getNodeStartInfo, getNodeTargetInfo, getNodeBombInfo,
   wallNodes, addRemoveWallNode, getAttr, setAttr, getDarkMode, gapNodes,
-  addPathNode, addVisitedNode, pathNodes, visitedNodesBomb, visitedNodesTarget,
+  pathNodes, visitedNodesBomb, visitedNodesTarget, startNode, targetNode,
 } from './helperFunctions/helperFunctions';
 import {
   NodeType, RowsType, RowType,
@@ -33,7 +33,8 @@ export const generatePfGrid = (noOfRows: number, noOfNodes: number): RowsType =>
 
   const rows: RowsType = [];
   const startRow = Math.floor(noOfRows / 2);
-  const startNode = Math.floor(noOfNodes / 4);
+  // H for Helper
+  const startNodeH = Math.floor(noOfNodes / 4);
   for (let row = 0; row < noOfRows; row += 1) {
     const currentRow: RowType = [];
     for (let node = 0; node < noOfNodes; node += 1) {
@@ -46,8 +47,8 @@ export const generatePfGrid = (noOfRows: number, noOfNodes: number): RowsType =>
         isNodeInLastCol: col === noOfNodes - 1,
         isNodeInFirstRow: row === 0,
         isNodeInLastRow: row === noOfRows - 1,
-        isStartNode: row === startRow && col === startNode,
-        isTargetNode: row === startRow && col === noOfNodes - startNode - 1,
+        isStartNode: row === startRow && col === startNodeH,
+        isTargetNode: row === startRow && col === noOfNodes - startNodeH - 1,
         isWallNode: false,
         isBombNode: false,
         idx: nodeIdx,
@@ -155,6 +156,23 @@ export const clearWalls = (nodes: HTMLDivElement[], resetMazesAndPatterns: () =>
     }
   });
   wallNodes.length = 0;
+};
+
+export const resetBoard = (
+  nodes: HTMLDivElement[], resetMazesAndPatterns: () => void, sideNav: HTMLDivElement | null,
+) => {
+  if (bombIndex !== -1) {
+    const sideNavAddBomb = sideNav?.children[0];
+    const addBombElem = sideNavAddBomb!!.children[1];
+    const newNode = nodes[getNodeBombInfo().index];
+    setAttr(newNode, dataIsBombNode, 'false');
+    i?.remove();
+    addBombElem.textContent = 'Add Bomb';
+    bombIndex = -1;
+  }
+  gsap.to(`.${startNode}`, { x: 0, y: 0 });
+  gsap.to(`.${targetNode}`, { x: 0, y: 0 });
+  clearWalls(nodes, resetMazesAndPatterns);
 };
 
 // add bomb node
