@@ -18,6 +18,7 @@ import './App.css';
 import { topNav, bottomNav } from './helperFunctions/props';
 import { clearTimeouts } from './mazesAndPatterns/mazesAndPatternsHelper';
 import recursiveDivisionHorizontalSkew from './mazesAndPatterns/recursiveDivisionHorizontalSkew';
+import recursiveDivisionVerticalSkew from './mazesAndPatterns/recursiveDivisionVerticalSkew';
 
 // pf => pathfinding
 let isSliderChecked = false;
@@ -180,6 +181,10 @@ function App() {
       case mazesKeys[3]:
         showCover();
         recursiveDivisionHorizontalSkew(nodesRef.current, noOfRows, noOfNodes, hideCover);
+        break;
+      case mazesKeys[4]:
+        showCover();
+        recursiveDivisionVerticalSkew(nodesRef.current, noOfRows, noOfNodes, hideCover);
         break;
       case mazesKeys[5]:
         showCover();
