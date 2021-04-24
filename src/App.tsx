@@ -7,9 +7,11 @@ import PathFindingGrid from './components/PathFindingGrid';
 import { RowsType } from './helperFunctions/types';
 import {
   generatePfGrid, getNewPfGridWithWallToggled, clearWalls, addBomb,
-  getStartNodeIdx, getTargetNodeIdx, getBombIndex, clearPathNodes, resetBoard,
+  getBombIndex, clearPathNodes, resetBoard,
 } from './App.Functions';
-import { setDarkMode } from './helperFunctions/helperFunctions';
+import {
+  getNodeBombInfo, getNodeStartInfo, getNodeTargetInfo, setDarkMode,
+} from './helperFunctions/helperFunctions';
 import { mazesKeys } from './mazesAndPatterns/mazesAndPatternsOptions';
 import basicRandomMaze from './mazesAndPatterns/basicRandomMaze';
 import recursiveDivision from './mazesAndPatterns/recursiveDivision';
@@ -88,10 +90,10 @@ function App() {
       semanticUIDarkMode(bottomNavRef.current!!);
       semanticUIDarkMode(sideNavRef.current!!);
       semanticUIDarkMode(openSideNavRef.current!!);
-      nodesRef.current[getStartNodeIdx()].children[0].classList.add('inverted');
-      nodesRef.current[getTargetNodeIdx()].children[0].classList.add('inverted');
+      nodesRef.current[getNodeStartInfo().index].children[0].classList.add('inverted');
+      nodesRef.current[getNodeTargetInfo().index].children[0].classList.add('inverted');
       if (getBombIndex() !== -1) {
-        nodesRef.current[getBombIndex()].children[0].classList.add('inverted');
+        nodesRef.current[getNodeBombInfo().index].children[0].classList.add('inverted');
       }
       setDarkMode(isChecked);
     } else {
@@ -100,10 +102,10 @@ function App() {
       semanticUILightMode(bottomNavRef.current!!);
       semanticUILightMode(sideNavRef.current!!);
       semanticUILightMode(openSideNavRef.current!!);
-      nodesRef.current[getStartNodeIdx()].children[0].classList.remove('inverted');
-      nodesRef.current[getTargetNodeIdx()].children[0].classList.remove('inverted');
+      nodesRef.current[getNodeStartInfo().index].children[0].classList.remove('inverted');
+      nodesRef.current[getNodeTargetInfo().index].children[0].classList.remove('inverted');
       if (getBombIndex() !== -1) {
-        nodesRef.current[getBombIndex()].children[0].classList.remove('inverted');
+        nodesRef.current[getNodeBombInfo().index].children[0].classList.remove('inverted');
       }
       setDarkMode(isChecked);
     }
@@ -268,7 +270,11 @@ function App() {
           () => { addBomb(noOfNodes, nodesRef.current, sideNavRef.current); }
         }
         resetBoard={
-          () => { resetBoard(nodesRef.current, resetMazesAndPatterns, sideNavRef.current); }
+          () => {
+            resetBoard(
+              nodesRef.current, noOfRows, noOfNodes, resetMazesAndPatterns, sideNavRef.current,
+            );
+          }
         }
         clearPathNodes={() => { clearPathNodes(nodesRef.current); }}
         clearWalls={() => { clearWalls(nodesRef.current, resetMazesAndPatterns); }}

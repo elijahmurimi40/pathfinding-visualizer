@@ -1,4 +1,3 @@
-import { gsap } from 'gsap';
 import { transparent } from './helperFunctions/color';
 import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode,
@@ -7,7 +6,7 @@ import {
 import {
   bombNode, createDraggble, getNodeStartInfo, getNodeTargetInfo, getNodeBombInfo,
   wallNodes, addRemoveWallNode, getAttr, setAttr, getDarkMode, gapNodes,
-  pathNodes, visitedNodesBomb, visitedNodesTarget, startNode, targetNode,
+  pathNodes, visitedNodesBomb, visitedNodesTarget,
 } from './helperFunctions/helperFunctions';
 import {
   NodeType, RowsType, RowType,
@@ -16,12 +15,6 @@ import {
 let nodeIdx = 0;
 let bombIndex = -1;
 let i: HTMLElement | null = null;
-
-let startNodeIdx = 0;
-let targetNodeIdx = 0;
-
-export const getStartNodeIdx = () => startNodeIdx;
-export const getTargetNodeIdx = () => targetNodeIdx;
 
 // get bombIndex
 export const getBombIndex = () => bombIndex;
@@ -53,8 +46,6 @@ export const generatePfGrid = (noOfRows: number, noOfNodes: number): RowsType =>
         isBombNode: false,
         idx: nodeIdx,
       };
-      if (currentNode.isStartNode) startNodeIdx = currentNode.idx;
-      if (currentNode.isTargetNode) targetNodeIdx = currentNode.idx;
       nodeIdx += 1;
       currentRow.push(currentNode);
     }
@@ -159,7 +150,8 @@ export const clearWalls = (nodes: HTMLDivElement[], resetMazesAndPatterns: () =>
 };
 
 export const resetBoard = (
-  nodes: HTMLDivElement[], resetMazesAndPatterns: () => void, sideNav: HTMLDivElement | null,
+  nodes: HTMLDivElement[], noOfRows: number, noOfNodes: number,
+  resetMazesAndPatterns: () => void, sideNav: HTMLDivElement | null,
 ) => {
   if (bombIndex !== -1) {
     const sideNavAddBomb = sideNav?.children[0];
@@ -168,10 +160,27 @@ export const resetBoard = (
     setAttr(newNode, dataIsBombNode, 'false');
     i?.remove();
     addBombElem.textContent = 'Add Bomb';
+    getNodeBombInfo().index = -1;
     bombIndex = -1;
   }
-  gsap.to(`.${startNode}`, { x: 0, y: 0 });
-  gsap.to(`.${targetNode}`, { x: 0, y: 0 });
+
+  setAttr(nodes[getNodeStartInfo().index], dataIsStartNode, 'false');
+  setAttr(nodes[getNodeTargetInfo().index], dataIsTargetNode, 'false');
+  const startRow = Math.floor(noOfRows / 2);
+  // H for Helper
+  const startNodeH = Math.floor(noOfNodes / 4);
+  const startIdx = (noOfNodes * startRow) + startNodeH;
+  const targetIdx = (noOfNodes * startRow) + (noOfNodes - startNodeH - 1);
+  setAttr(nodes[startIdx], dataIsStartNode, 'true');
+  setAttr(nodes[targetIdx], dataIsTargetNode, 'true');
+
+  const startIcon = nodes[getNodeStartInfo().index].children[0];
+  const targetIcon = nodes[getNodeTargetInfo().index].children[0];
+  nodes[startIdx].appendChild(startIcon);
+  nodes[targetIdx].appendChild(targetIcon);
+  getNodeStartInfo().index = startIdx;
+  getNodeTargetInfo().index = targetIdx;
+
   clearWalls(nodes, resetMazesAndPatterns);
 };
 

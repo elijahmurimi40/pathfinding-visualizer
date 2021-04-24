@@ -14,30 +14,31 @@ gsap.registerPlugin(Draggable);
 
 let initialIndex = 0;
 let isDarkMode = false;
+let prevIndex = 0;
 
 let nodeInfoStart: NodeInfoType = {
-  index: 0,
+  index: -1,
   isWallNode: 'false',
   x: 0,
   y: 0,
 };
 
 let nodeInfoTarget: NodeInfoType = {
-  index: 0,
+  index: -1,
   isWallNode: 'false',
   x: 0,
   y: 0,
 };
 
 let nodeInfoBomb: NodeInfoType = {
-  index: 0,
+  index: -1,
   isWallNode: 'false',
   x: 0,
   y: 0,
 };
 
 let nodeInfo: NodeInfoType = {
-  index: 0,
+  index: -1,
   isWallNode: 'false',
   x: 0,
   y: 0,
@@ -52,11 +53,13 @@ let nodeInfo: NodeInfoType = {
  * row is 0 so initial row is 9 * 0;
  * row is 4 so inital row is 9 * 4;
  */
-const calculateNodeNewIndex = (params: number[]) => {
+const calculateNodeNewIndex = (params: number[], type: string = '') => {
   const initialRow = Math.floor(params[0] / params[1]) * params[1];
   const row = ((params[3] / 25) * params[1]) + initialRow;
   const column = (params[2] / 25) + (params[0] % params[1]);
+  if (type === 'prevIndex') return row + column;
   nodeInfo.index = row + column;
+  return 0;
 };
 
 // get is dark mode
@@ -233,14 +236,14 @@ export const createDraggble = (
         nodeInfo = JSON.parse(JSON.stringify(nodeInfoBomb));
         if (nodes !== null) setAttr(nodes[nodeInfo.index], dataIsBombNode, 'false');
       }
-      initialIndex = nodeInfo.index === 0 ? nodeIndex : nodeInfo.index;
+      initialIndex = nodeInfo.index === -1 ? nodeIndex : nodeInfo.index;
     },
     onDrag() {
       if (nodes === null) return;
       if (nodeInfo.isWallNode === 'true') {
         addRemoveWallNode(nodes[nodeInfo.index], nodeInfo.index);
       }
-      calculateNodeNewIndex([nodeIndex, noOfNodes, this.x, this.y]);
+      calculateNodeNewIndex([initialIndex, noOfNodes, this.x, this.y]);
 
       const node = nodes[nodeInfo.index];
       const isStartNode = getAttr(node, dataIsStartNode);
@@ -255,18 +258,21 @@ export const createDraggble = (
       if (className === startNode && isTargetNode === 'false' && isBombNode === 'false') {
         nodeInfo.x = this.x;
         nodeInfo.y = this.y;
+        prevIndex = nodeInfo.index;
       }
 
       // dragging tagetNode
       if (className === targetNode && isStartNode === 'false' && isBombNode === 'false') {
         nodeInfo.x = this.x;
         nodeInfo.y = this.y;
+        prevIndex = nodeInfo.index;
       }
 
       // dragging bombNode
       if (className === bombNode && isStartNode === 'false' && isTargetNode === 'false') {
         nodeInfo.x = this.x;
         nodeInfo.y = this.y;
+        prevIndex = nodeInfo.index;
       }
     },
     onDragEnd() {
@@ -278,14 +284,16 @@ export const createDraggble = (
       // while dragging start node
       // when the end position is occupied.
       if (isStartNode === 'true' || isTargetNode === 'true' || isBombNode === 'true') {
-        calculateNodeNewIndex([nodeIndex, noOfNodes, nodeInfo.x, nodeInfo.y]);
-        const isWallNode = getAttr(nodes[nodeInfo.index], dataIsWallNode);
+        // calculateNodeNewIndex([nodeInfo.index, noOfNodes, nodeInfo.x, nodeInfo.y]);
+        const isWallNode = getAttr(nodes[prevIndex], dataIsWallNode);
         nodeInfo.isWallNode = isWallNode;
+        nodeInfo.index = prevIndex;
         if (isWallNode === 'true') {
-          addRemoveWallNode(nodes[nodeInfo.index], nodeInfo.index);
+          addRemoveWallNode(nodes[prevIndex], nodeInfo.index);
         }
+
         // TweenLite.to(`.${className}`, { x: nodeInfo.x, y: nodeInfo.y });
-        gsap.to(`.${className}`, { x: nodeInfo.x, y: nodeInfo.y });
+        // gsap.to(`.${className}`, { x: nodeInfo.x, y: nodeInfo.y });
       }
 
       // dragging startNode
@@ -308,6 +316,9 @@ export const createDraggble = (
         setAttr(nodes[initialIndex], dataIsBombNode, 'false');
         setAttr(nodes[nodeInfo.index], dataIsBombNode, 'true');
       }
+
+      gsap.set(`.${className}`, { x: 0, y: 0 });
+      nodes[nodeInfo.index].appendChild(this.target);
     },
   });
 };
