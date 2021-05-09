@@ -165,7 +165,7 @@ export const addVisitedNode = (node: HTMLDivElement, toTarget: string, idx: numb
 export const addPathNode = (node: HTMLDivElement, idx: number) => {
   pathNodes.push(idx);
   const nodeH = node;
-  nodeH.classList.remove('pf-grid-node-border-color');
+  // nodeH.classList.remove('pf-grid-node-border-color');
   nodeH.style.backgroundColor = shortestPathNodeColor;
 };
 

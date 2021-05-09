@@ -3,11 +3,14 @@ import { Menu } from 'semantic-ui-react';
 import { Alert } from 'react-bootstrap';
 import pathfindingAlgorithmsOptions, { algorithms } from '../pathfindingAlgorihms/pathfindingAlgorithmsOptions';
 import Nav from './Nav';
-import { arrowDown, NavProps, topNav } from '../helperFunctions/props';
+import { arrowDown, topNav, TopNavProps } from '../helperFunctions/props';
 import './Nav.css';
+import aStar from '../pathfindingAlgorihms/aStar';
+import { clearPathNodes } from '../App.Functions';
 
-const TopNav = React.forwardRef((props: NavProps, ref: ForwardedRef<HTMLDivElement>) => {
+const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivElement>) => {
   const [showAlert, setShowAlert] = React.useState(false);
+  const [showNoPath, setShowNoPath] = React.useState(false);
 
   const options = [];
   const pathFindingAlgorithmsOptions = pathfindingAlgorithmsOptions();
@@ -20,13 +23,26 @@ const TopNav = React.forwardRef((props: NavProps, ref: ForwardedRef<HTMLDivEleme
     );
   }
 
+  let noPathTimer = 0;
+  // F for function
+  const showNoPathF = () => {
+    setShowNoPath(true);
+    if (noPathTimer) clearTimeout(noPathTimer);
+    noPathTimer = window.setTimeout(() => {
+      setShowNoPath(false);
+    }, 4000);
+  };
+
   let timer = 0;
   const visualize = (e: any) => {
     e.preventDefault();
+    clearPathNodes(props.nodes.current!!);
     const dropdown = (ref as React.RefObject<HTMLDivElement>).current?.childNodes[1].childNodes[0];
     const { value } = (dropdown as HTMLSelectElement);
     switch (value) {
       case algorithms[0]:
+        props.showCover();
+        aStar(props.nodes.current!!, props.noOfRows, props.noOfNodes, props.hideCover, showNoPathF);
         break;
       default:
         setShowAlert(true);
@@ -87,6 +103,24 @@ const TopNav = React.forwardRef((props: NavProps, ref: ForwardedRef<HTMLDivEleme
         transition={false}
       >
         Select a Pathfinding Algorihm.
+      </Alert>
+
+      <Alert
+        style={{
+          position: 'fixed',
+          width: '315px',
+          right: 0,
+          left: 0,
+          margin: 'auto',
+          zIndex: 9999,
+        }}
+        variant="danger"
+        show={showNoPath}
+        dismissible
+        onClose={() => { setShowNoPath(false); }}
+        transition={false}
+      >
+        No Path Found.
       </Alert>
     </>
   );

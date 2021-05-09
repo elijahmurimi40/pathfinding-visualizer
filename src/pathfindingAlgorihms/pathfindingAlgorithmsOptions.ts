@@ -8,4 +8,6 @@ const pathfindingAlgorithmsOptions = () => {
   return pathfindingAlgorithms;
 };
 
+export const timer = 50;
+
 export default pathfindingAlgorithmsOptions;

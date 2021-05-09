@@ -23,6 +23,15 @@ export interface NavProps {
   animateMazesAndPatterns: (maze: string, idx: number) => void;
 }
 
+// top Nav props
+export interface TopNavProps extends NavProps {
+  nodes: RefObject<HTMLDivElement[]>;
+  noOfRows: number;
+  noOfNodes: number;
+  showCover: () => void;
+  hideCover: () => void;
+}
+
 // side nav props
 interface SideNavProps {
   top: number;

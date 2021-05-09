@@ -252,6 +252,11 @@ function App() {
         animateMazesAndPatterns={animateMazesAndPatterns}
         mazesPatternButtonsRef={[mazesPatternButtonsRefTop, mazesPatternButtonsRefBottom]}
         currentActiveMazeAndPattern={currentActiveMazeAndPattern}
+        nodes={nodesRef}
+        noOfRows={noOfRows}
+        noOfNodes={noOfNodes}
+        showCover={showCover}
+        hideCover={hideCover}
       />
 
       <OpenSideNav

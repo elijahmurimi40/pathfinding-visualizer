@@ -97,11 +97,13 @@ export const getNewPfGridWithWallToggled = (
 const clearVisitedNodes = (nodes: HTMLDivElement[]) => {
   visitedNodesBomb.forEach((idx: number) => {
     const node: HTMLDivElement | null = nodes[idx];
-    if (node !== null) node.style.backgroundColor = transparent;
+    const isWallNode = getAttr(node, dataIsWallNode);
+    if (node !== null && isWallNode === 'false') node.style.backgroundColor = transparent;
   });
   visitedNodesTarget.forEach((idx: number) => {
     const node: HTMLDivElement | null = nodes[idx];
-    if (node !== null) node.style.backgroundColor = transparent;
+    const isWallNode = getAttr(node, dataIsWallNode);
+    if (node !== null && isWallNode === 'false') node.style.backgroundColor = transparent;
   });
   visitedNodesBomb.length = 0;
   visitedNodesTarget.length = 0;
@@ -112,7 +114,8 @@ export const clearPathNodes = (nodes: HTMLDivElement[]) => {
   clearVisitedNodes(nodes);
   pathNodes.forEach((idx: number) => {
     const node: HTMLDivElement | null = nodes[idx];
-    if (node !== null) {
+    const isWallNode = getAttr(node, dataIsWallNode);
+    if (node !== null && isWallNode === 'false') {
       node.style.backgroundColor = transparent;
       node.classList.add('pf-grid-node-border-color');
     }
