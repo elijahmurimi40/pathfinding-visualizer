@@ -28,6 +28,7 @@ export interface TopNavProps extends NavProps {
   nodes: RefObject<HTMLDivElement[]>;
   noOfRows: number;
   noOfNodes: number;
+  sideNav: RefObject<HTMLDivElement>;
   showCover: () => void;
   hideCover: () => void;
 }

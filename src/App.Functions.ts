@@ -15,6 +15,12 @@ import {
 let nodeIdx = 0;
 let bombIndex = -1;
 let i: HTMLElement | null = null;
+let typeOfSearchAlgorithm = '';
+
+// set
+export const setTtypeOfSearchAlgorithm = (type: string) => {
+  typeOfSearchAlgorithm = type;
+};
 
 // get bombIndex
 export const getBombIndex = () => bombIndex;
@@ -193,6 +199,7 @@ export const addBomb = (
   nodes: HTMLDivElement[],
   sideNav: HTMLDivElement | null,
 ) => {
+  if (typeOfSearchAlgorithm === 'Bidirectional Algorithm') return;
   const sideNavAddBomb = sideNav?.children[0];
   const addBombElem = sideNavAddBomb!!.children[1];
 

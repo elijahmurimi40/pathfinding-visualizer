@@ -6,7 +6,9 @@ import Nav from './Nav';
 import { arrowDown, topNav, TopNavProps } from '../helperFunctions/props';
 import './Nav.css';
 import aStar from '../pathfindingAlgorihms/aStar';
-import { clearPathNodes } from '../App.Functions';
+import {
+  addBomb, clearPathNodes, getBombIndex, setTtypeOfSearchAlgorithm,
+} from '../App.Functions';
 
 const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivElement>) => {
   const [showAlert, setShowAlert] = React.useState(false);
@@ -44,6 +46,16 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
         props.showCover();
         aStar(props.nodes.current!!, props.noOfRows, props.noOfNodes, props.hideCover, showNoPathF);
         break;
+      case algorithms[1]:
+        break;
+      case algorithms[2]:
+        break;
+      case algorithms[3]:
+        break;
+      case algorithms[4]:
+        break;
+      case algorithms[5]:
+        break;
       default:
         setShowAlert(true);
         if (timer) clearTimeout(timer);
@@ -51,6 +63,20 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
           setShowAlert(false);
         }, 2000);
     }
+  };
+
+  // select on change
+  const selectOnChange = () => {
+    const dropdown = (ref as React.RefObject<HTMLDivElement>).current?.childNodes[1].childNodes[0];
+    const { value } = (dropdown as HTMLSelectElement);
+    const sideNavAddBomb = props.sideNav?.current?.children[0];
+    if (value === algorithms[1] && getBombIndex() !== -1) {
+      addBomb(props.noOfNodes, props.nodes.current!!, props.sideNav.current);
+      sideNavAddBomb!!.classList.add('disabled');
+    } else {
+      sideNavAddBomb!!.classList.remove('disabled');
+    }
+    setTtypeOfSearchAlgorithm(value);
   };
 
   return (
@@ -71,8 +97,9 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
             name="sorting_algorithms"
             className="ui selection fluid dropdown"
             defaultValue=""
+            onChange={selectOnChange}
           >
-            <option value="" disabled>Select Pathfinding Algo</option>
+            <option value="" disabled>Select Pathfinding Algo .....</option>
             {options}
           </select>
         </Menu.Item>

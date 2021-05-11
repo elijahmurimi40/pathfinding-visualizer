@@ -255,6 +255,7 @@ function App() {
         nodes={nodesRef}
         noOfRows={noOfRows}
         noOfNodes={noOfNodes}
+        sideNav={sideNavRef}
         showCover={showCover}
         hideCover={hideCover}
       />
