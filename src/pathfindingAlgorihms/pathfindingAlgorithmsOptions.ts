@@ -1,3 +1,8 @@
+import {
+  dataIsFirstCol, dataIsFirstRow, dataIsLastCol, dataIsLastRow,
+} from '../helperFunctions/customAttr';
+import { getAttr } from '../helperFunctions/helperFunctions';
+
 export const algorithms = [
   'A* Search', 'Bidirectional Algorithm', 'Breadth-first Search',
   'Depth-first Search', 'Dijkstra\'s Algorithm',
@@ -16,5 +21,55 @@ const pathfindingAlgorithmsOptions = () => {
 };
 
 export const timer = 50;
+
+export const size = (map: Map<any, any>) => {
+  let c = 0;
+  map.forEach(() => { c += 1; });
+  return c;
+};
+
+const isNodeInFirstCol = (node: HTMLDivElement) => getAttr(node, dataIsFirstCol);
+const isNodeInLastCol = (node: HTMLDivElement) => getAttr(node, dataIsLastCol);
+const isNodeInFirstRow = (node: HTMLDivElement) => getAttr(node, dataIsFirstRow);
+const isNodeInLastRow = (node: HTMLDivElement) => getAttr(node, dataIsLastRow);
+
+export const conditionUp = (node: HTMLDivElement) => (
+  (isNodeInFirstCol(node) === 'false' && isNodeInFirstRow(node) === 'false')
+  || (isNodeInLastCol(node) === 'false' && isNodeInFirstRow(node) === 'false')
+);
+
+export const conditionDown = (node: HTMLDivElement) => (
+  (isNodeInFirstCol(node) === 'false' && isNodeInLastRow(node) === 'false')
+  || (isNodeInLastCol(node) === 'false' && isNodeInLastRow(node) === 'false')
+);
+
+export const conditionLeft = (node: HTMLDivElement) => isNodeInFirstCol(node) === 'false';
+
+export const conditionRight = (node: HTMLDivElement) => isNodeInLastCol(node) === 'false';
+
+export const findOptimalPath = (
+  auxPath: number[],
+  path: number[],
+  start: number,
+  target: number,
+  closedNodes: Map<number, any>,
+  reverseNodes: boolean,
+) => {
+  if (start === target) {
+    if (reverseNodes) {
+      for (let i = 0; i < auxPath.length; i += 1) {
+        path.push(auxPath[i]);
+      }
+    } else {
+      for (let i = auxPath.length - 1; i >= 0; i -= 1) {
+        path.push(auxPath[i]);
+      }
+    }
+    return;
+  }
+  const node = closedNodes.get(target);
+  auxPath.unshift(node!!.nodeIdxParent);
+  findOptimalPath(auxPath, path, start, node!!.nodeIdxParent, closedNodes, reverseNodes);
+};
 
 export default pathfindingAlgorithmsOptions;

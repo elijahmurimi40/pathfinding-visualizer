@@ -9,6 +9,7 @@ import aStar from '../pathfindingAlgorihms/aStar';
 import {
   addBomb, clearPathNodes, getBombIndex, setTtypeOfSearchAlgorithm,
 } from '../App.Functions';
+import bidirectionalSearch from '../pathfindingAlgorihms/bidirectionalSearch';
 
 const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivElement>) => {
   const [showAlert, setShowAlert] = React.useState(false);
@@ -47,14 +48,16 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
         aStar(props.nodes.current!!, props.noOfRows, props.noOfNodes, props.hideCover, showNoPathF);
         break;
       case algorithms[1]:
+        props.showCover();
+        bidirectionalSearch(
+          props.nodes.current!!, props.noOfRows, props.noOfNodes, props.hideCover, showNoPathF,
+        );
         break;
       case algorithms[2]:
         break;
       case algorithms[3]:
         break;
       case algorithms[4]:
-        break;
-      case algorithms[5]:
         break;
       default:
         setShowAlert(true);
