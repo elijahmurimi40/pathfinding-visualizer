@@ -10,6 +10,7 @@ import {
   addBomb, clearPathNodes, getBombIndex, setTtypeOfSearchAlgorithm,
 } from '../App.Functions';
 import bidirectionalSearch from '../pathfindingAlgorihms/bidirectionalSearch';
+import dijkstras from '../pathfindingAlgorihms/dijkstras';
 
 const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivElement>) => {
   const [showAlert, setShowAlert] = React.useState(false);
@@ -58,6 +59,10 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
       case algorithms[3]:
         break;
       case algorithms[4]:
+        props.showCover();
+        dijkstras(
+          props.nodes.current!!, props.noOfRows, props.noOfNodes, props.hideCover, showNoPathF,
+        );
         break;
       default:
         setShowAlert(true);

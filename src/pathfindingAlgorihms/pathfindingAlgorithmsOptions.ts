@@ -1,7 +1,8 @@
 import {
   dataIsFirstCol, dataIsFirstRow, dataIsLastCol, dataIsLastRow,
 } from '../helperFunctions/customAttr';
-import { getAttr } from '../helperFunctions/helperFunctions';
+import { addPathNode, addVisitedNode, getAttr } from '../helperFunctions/helperFunctions';
+import { pushTimer, resetTimeouts } from '../mazesAndPatterns/mazesAndPatternsHelper';
 
 export const algorithms = [
   'A* Search', 'Bidirectional Algorithm', 'Breadth-first Search',
@@ -70,6 +71,62 @@ export const findOptimalPath = (
   const node = closedNodes.get(target);
   auxPath.unshift(node!!.nodeIdxParent);
   findOptimalPath(auxPath, path, start, node!!.nodeIdxParent, closedNodes, reverseNodes);
+};
+
+const animatePath = (
+  nodes: HTMLDivElement[], animations: number[], hideCover: () => void,
+) => {
+  for (let i = 0; i < animations.length; i += 1) {
+    const timerH = window.setTimeout(() => {
+      const nodeIdx = animations[i];
+      addPathNode(nodes[nodeIdx], nodeIdx);
+      if (i === animations.length - 1) hideCover();
+    }, i * timer);
+    pushTimer(timerH);
+  }
+};
+
+const animateTargetNode = (
+  nodes: HTMLDivElement[], animations: number[], pathAniamtions: number[],
+  hideCover: () => void, showError: () => void, isPathFound: boolean,
+) => {
+  for (let i = 0; i < animations.length; i += 1) {
+    const timerH = window.setTimeout(() => {
+      const nodeIdx = animations[i];
+      addVisitedNode(nodes[nodeIdx], 'target', nodeIdx);
+      if (i === animations.length - 1 && !isPathFound) { showError(); hideCover(); }
+      if (i === animations.length - 1 && isPathFound) {
+        animatePath(nodes, pathAniamtions, hideCover);
+      }
+    }, i * timer);
+
+    pushTimer(timerH);
+  }
+};
+
+export const animateBombNode = (
+  nodes: HTMLDivElement[], bombAnimations: number[], targetAnimations: number[],
+  pathAnimations: number[], hideCover: () => void, showError: () => void,
+  bombNode: number, isPathFound: boolean, isBombPathFound: boolean,
+) => {
+  resetTimeouts([]);
+  if (bombNode === -1) {
+    animateTargetNode(nodes, targetAnimations, pathAnimations, hideCover, showError, isPathFound);
+  } else {
+    for (let i = 0; i < bombAnimations.length; i += 1) {
+      const timerH = window.setTimeout(() => {
+        const nodeIdx = bombAnimations[i];
+        addVisitedNode(nodes[nodeIdx], 'BOMB', nodeIdx);
+        if (i === bombAnimations.length - 1 && !isBombPathFound) { showError(); hideCover(); }
+        if (i === bombAnimations.length - 1 && isBombPathFound) {
+          animateTargetNode(
+            nodes, targetAnimations, pathAnimations, hideCover, showError, isPathFound,
+          );
+        }
+      }, i * timer);
+      pushTimer(timerH);
+    }
+  }
 };
 
 export default pathfindingAlgorithmsOptions;
