@@ -25,6 +25,7 @@ let targetNode = getNodeTargetInfo();
 let bombNode = getBombIndex();
 let stopLoop = false;
 let isPathFound = true;
+let isBombPathFound = true;
 // H for helper
 let nodesH: HTMLDivElement[] = [];
 let noOfNodesH: number = 0;
@@ -78,8 +79,8 @@ const animateBombNode = (
       const timerH = window.setTimeout(() => {
         const nodeIdx = bombAnimations[i];
         addVisitedNode(nodes[nodeIdx], 'BOMB', nodeIdx);
-        if (i === bombAnimations.length - 1 && !isPathFound) { showError(); hideCover(); }
-        if (i === bombAnimations.length - 1 && isPathFound) {
+        if (i === bombAnimations.length - 1 && !isBombPathFound) { showError(); hideCover(); }
+        if (i === bombAnimations.length - 1 && isBombPathFound) {
           animateTargetNode(nodes, targetAnimations, pathAnimations, hideCover, showError);
         }
       }, i * timer);
@@ -130,7 +131,8 @@ const getNeighbour = (
 };
 
 const findNode = (
-  nodeTarget: number, targetCol: number, targetRow: number, animations: number[],
+  nodeTarget: number, targetCol: number, targetRow: number,
+  animations: number[], targetType: string,
 ) => {
   while (!stopLoop) {
     const minFCostArr: NodeType[] = [];
@@ -161,8 +163,12 @@ const findNode = (
     openNodes.delete(minFCostNode.nodeIdx);
 
     if (minFCostNode.nodeIdx === nodeTarget) { animations.push(minFCostNode.nodeIdx); break; }
-    if (size(openNodes) === 0 && minFCostArr.length === 0) {
+    if (size(openNodes) === 0 && minFCostArr.length === 0 && targetType === '') {
       isPathFound = false;
+      break;
+    }
+    if (size(openNodes) === 0 && minFCostArr.length === 0 && targetType !== '') {
+      isBombPathFound = false;
       break;
     }
 
@@ -273,6 +279,7 @@ const aStar = (
   bombNode = getBombIndex();
   stopLoop = false;
   isPathFound = true;
+  isBombPathFound = true;
 
   const bombIndex = getNodeBombInfo();
   const bombRow = Math.floor(bombIndex.index / noOfNodes);
@@ -294,8 +301,8 @@ const aStar = (
   const optimalPath: number[] = [];
   if (bombNode !== -1) {
     bombAnimations.push(startNode.index);
-    findNode(bombIndex.index, bombCol, bombRow, bombAnimations);
-    if (isPathFound) {
+    findNode(bombIndex.index, bombCol, bombRow, bombAnimations, 'B');
+    if (isBombPathFound) {
       const auxPath = [];
       auxPath.push(bombIndex.index);
       findOptimalPath(auxPath, optimalPath, startNode.index, bombIndex.index);
@@ -311,18 +318,20 @@ const aStar = (
       nodeIdxParent: 0,
     });
 
-    if (isPathFound) {
+    if (isBombPathFound) {
       targetAnimations.push(bombIndex.index);
-      findNode(targetNode.index, targetCol, targetRow, targetAnimations);
-      const auxPath = [];
-      auxPath.push(targetNode.index);
-      findOptimalPath(auxPath, optimalPath, bombIndex.index, targetNode.index);
+      findNode(targetNode.index, targetCol, targetRow, targetAnimations, '');
+      if (isPathFound) {
+        const auxPath = [];
+        auxPath.push(targetNode.index);
+        findOptimalPath(auxPath, optimalPath, bombIndex.index, targetNode.index);
+      }
     }
   }
 
   if (bombNode === -1) {
     targetAnimations.push(startNode.index);
-    findNode(targetNode.index, targetCol, targetRow, targetAnimations);
+    findNode(targetNode.index, targetCol, targetRow, targetAnimations, '');
     if (isPathFound) {
       const auxPath = [];
       auxPath.push(targetNode.index);

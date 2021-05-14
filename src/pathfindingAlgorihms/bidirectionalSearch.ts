@@ -60,21 +60,14 @@ const getMinimumHCost = (minHCostArr: NodeType[]): NodeType => {
     nodeIdx: -1,
     nodeIdxParent: -1,
   };
-  if (minHCostArr.length === 1) [minHCostNode] = minHCostArr;
-  if (minHCostArr.length > 1) {
-    let minHCost = -1;
-    minHCostArr.forEach((node: NodeType) => {
-      if (minHCost === -1) { minHCost = node.hCost; minHCostNode = node; }
-      if (node.hCost < minHCost) { minHCost = node.hCost; minHCostNode = node; }
-    });
-  }
+  if (minHCostArr.length >= 1) [minHCostNode] = minHCostArr;
 
   return minHCostNode;
 };
 
 const getNodeNeighbour = (
-  condition: boolean, nodeIdx: number, parentCol: number, parentRow: number,
-  targetCol: number, targetRow: number, minHCostNode: NodeType, nodeNeighbours: NodeType[],
+  condition: boolean, nodeIdx: number, targetCol: number,
+  targetRow: number, minHCostNode: NodeType, nodeNeighbours: NodeType[],
 ) => {
   if (condition) {
     const isWallNode = getAttr(nodesH[nodeIdx], dataIsWallNode);
@@ -99,36 +92,33 @@ const getNeighbour = (
   animations.push(minHCostNode.nodeIdx);
   const nodeNeighbours: NodeType[] = [];
 
-  const parentRow = Math.floor(minHCostNode.nodeIdx / noOfNodesH);
-  const parentCol = minHCostNode.nodeIdx % noOfNodesH;
-
   let nodeIdx = 0;
 
   // neighbour up
   nodeIdx = minHCostNode.nodeIdx - noOfNodesH;
   getNodeNeighbour(
-    conditionUp(nodesH[minHCostNode.nodeIdx]), nodeIdx, parentCol, parentRow,
+    conditionUp(nodesH[minHCostNode.nodeIdx]), nodeIdx,
     targetCol, targetRow, minHCostNode, nodeNeighbours,
   );
 
   // neighbour down
   nodeIdx = minHCostNode.nodeIdx + noOfNodesH;
   getNodeNeighbour(
-    conditionDown(nodesH[minHCostNode.nodeIdx]), nodeIdx, parentCol, parentRow,
+    conditionDown(nodesH[minHCostNode.nodeIdx]), nodeIdx,
     targetCol, targetRow, minHCostNode, nodeNeighbours,
   );
 
   // neighbour left
   nodeIdx = minHCostNode.nodeIdx - 1;
   getNodeNeighbour(
-    conditionLeft(nodesH[minHCostNode.nodeIdx]), nodeIdx, parentCol, parentRow,
+    conditionLeft(nodesH[minHCostNode.nodeIdx]), nodeIdx,
     targetCol, targetRow, minHCostNode, nodeNeighbours,
   );
 
   // neighbour right
   nodeIdx = minHCostNode.nodeIdx + 1;
   getNodeNeighbour(
-    conditionRight(nodesH[minHCostNode.nodeIdx]), nodeIdx, parentCol, parentRow,
+    conditionRight(nodesH[minHCostNode.nodeIdx]), nodeIdx,
     targetCol, targetRow, minHCostNode, nodeNeighbours,
   );
 
