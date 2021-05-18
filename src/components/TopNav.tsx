@@ -11,6 +11,7 @@ import {
 } from '../App.Functions';
 import bidirectionalSearch from '../pathfindingAlgorihms/bidirectionalSearch';
 import dijkstras from '../pathfindingAlgorihms/dijkstras';
+import breadthFirstSearch from '../pathfindingAlgorihms/breadthFirstSearch';
 
 const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivElement>) => {
   const [showAlert, setShowAlert] = React.useState(false);
@@ -55,6 +56,10 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
         );
         break;
       case algorithms[2]:
+        props.showCover();
+        breadthFirstSearch(
+          props.nodes.current!!, props.noOfRows, props.noOfNodes, props.hideCover, showNoPathF,
+        );
         break;
       case algorithms[3]:
         break;
