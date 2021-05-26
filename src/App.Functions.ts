@@ -200,7 +200,7 @@ export const addBomb = (
   sideNav: HTMLDivElement | null,
 ) => {
   if (typeOfSearchAlgorithm === 'Bidirectional Algorithm') return;
-  const sideNavAddBomb = sideNav?.children[0];
+  const sideNavAddBomb = sideNav?.children[1];
   const addBombElem = sideNavAddBomb!!.children[1];
 
   // multiply by 2 for node to be in 3rd row

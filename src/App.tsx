@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import TopNav from './components/TopNav';
 import BottomNav from './components/BottomNav';
-import { OpenSideNav, SideNav } from './components/SideNav';
+import SideNav from './components/SideNav';
 import MazesPatternSwitchButton from './components/MazesPatternSwitchButton';
 import PathFindingGrid from './components/PathFindingGrid';
 import { RowsType } from './helperFunctions/types';
@@ -52,6 +52,7 @@ function App() {
   const nodesRef = useRef<Array<HTMLDivElement>>([]);
   const animateCoverRef = useRef<HTMLDivElement>(null);
   const mazesPatternDetailRef = useRef<HTMLDivElement>(null);
+  const speedSideNavRef = useRef<HTMLDivElement>(null);
   // bottom and top ref for putting active item
   const mazesPatternButtonsRefTop = useRef<Array<HTMLButtonElement>>([]);
   const mazesPatternButtonsRefBottom = useRef<Array<HTMLButtonElement>>([]);
@@ -96,6 +97,7 @@ function App() {
         nodesRef.current[getNodeBombInfo().index].children[0].classList.add('inverted');
       }
       setDarkMode(isChecked);
+      speedSideNavRef.current?.classList.add('speed-menu-inverted', 'inverted');
     } else {
       document.body.style.backgroundColor = '#ffffff';
       semanticUILightMode(topNavRef.current!!);
@@ -108,6 +110,7 @@ function App() {
         nodesRef.current[getNodeBombInfo().index].children[0].classList.remove('inverted');
       }
       setDarkMode(isChecked);
+      speedSideNavRef.current?.classList.remove('speed-menu-inverted', 'inverted');
     }
   };
 
@@ -205,7 +208,7 @@ function App() {
     clearWalls(nodesRef.current, resetMazesAndPatterns);
     nodesRef.current.length = 0;
 
-    const sideNavAddBomb = sideNavRef.current?.children[0];
+    const sideNavAddBomb = sideNavRef.current?.children[1];
     const addBombElem = sideNavAddBomb!!.children[1];
     addBombElem.textContent = 'Add Bomb';
 
@@ -260,12 +263,12 @@ function App() {
         hideCover={hideCover}
       />
 
-      <OpenSideNav
+      {/* <OpenSideNav
         ref={openSideNavRef}
         top={pfGridRef.current === null ? 0 : pfGridRef.current!!.offsetTop}
         height={0}
         sideNavRef={sideNavRef}
-      />
+      /> */}
 
       <SideNav
         ref={sideNavRef}
@@ -284,6 +287,8 @@ function App() {
         }
         clearPathNodes={() => { clearPathNodes(nodesRef.current); }}
         clearWalls={() => { clearWalls(nodesRef.current, resetMazesAndPatterns); }}
+        speedSideNavRef={speedSideNavRef}
+        openSideNavRef={openSideNavRef}
       />
 
       <MazesPatternSwitchButton

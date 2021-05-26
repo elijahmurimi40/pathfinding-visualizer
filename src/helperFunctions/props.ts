@@ -50,4 +50,6 @@ export interface SideNavDivProps extends SideNavProps {
   resetBoard: () => void;
   clearPathNodes: () => void;
   clearWalls: () => void;
+  speedSideNavRef: RefObject<HTMLDivElement> | null;
+  openSideNavRef: RefObject<HTMLDivElement> | null;
 }

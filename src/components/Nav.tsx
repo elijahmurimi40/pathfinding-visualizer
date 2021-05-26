@@ -13,7 +13,7 @@ function Nav(props: NavProps) {
 
   return (
     <>
-      <Menu.Item href="/path-finding" header>Pathfinding</Menu.Item>
+      <Menu.Item href="/" header>Pathfinding Visualizer</Menu.Item>
       <Menu.Item>
         <DropdownButton
           drop={arrowDirection === arrowDown ? 'down' : 'up'}

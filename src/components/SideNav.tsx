@@ -1,12 +1,50 @@
-import React, { ForwardedRef, RefObject } from 'react';
-import { Menu, Icon, Dropdown } from 'semantic-ui-react';
+import React, { ForwardedRef, RefObject, useState } from 'react';
+import { Menu, Icon } from 'semantic-ui-react';
 import {
   shortestPathNodeColor, transparent, visitedNodeColor, visitedNodeColorToBomb, wallNodeColor,
 } from '../helperFunctions/color';
-import { OpenSideNavProps, SideNavDivProps } from '../helperFunctions/props';
+import { getDarkMode } from '../helperFunctions/helperFunctions';
+import { SideNavDivProps } from '../helperFunctions/props';
+import { setTimer } from '../pathfindingAlgorihms/pathfindingAlgorithmsOptions';
 import './SideNav.css';
 
-const animateSideNavRefWidth = (sideNavRef: RefObject<HTMLDivElement> | null) => {
+const FAST = 'Fast';
+const AVERAGE = 'Average';
+const SLOW = 'Slow';
+
+const speedOnClick = (
+  // eslint-disable-next-line no-unused-vars
+  type: String, setActive: (active: number) => void, sideNavRef: RefObject<HTMLDivElement> | null,
+  // eslint-disable-next-line no-unused-vars
+  setDisplay: (display: string) => void,
+) => {
+  const speedMenu = sideNavRef?.current?.children[0];
+  const speedText = speedMenu?.children[1].children[0];
+  if (type === FAST) {
+    speedText!!.textContent = ` ${FAST}`;
+    setTimer(20);
+    setActive(0);
+  }
+
+  if (type === AVERAGE) {
+    speedText!!.textContent = ` ${AVERAGE}`;
+    setTimer(100);
+    setActive(1);
+  }
+
+  if (type === SLOW) {
+    speedText!!.textContent = ` ${SLOW}`;
+    setTimer(500);
+    setActive(2);
+  }
+
+  setDisplay('none');
+};
+
+const animateSideNavRefWidth = (
+  // eslint-disable-next-line no-unused-vars
+  sideNavRef: RefObject<HTMLDivElement> | null, setLeft: (left: number) => void,
+) => {
   // H for helper
   const sideNavRefH = sideNavRef!!.current!!;
   const sideNavRefHWidth = sideNavRefH.style.width;
@@ -17,10 +55,12 @@ const animateSideNavRefWidth = (sideNavRef: RefObject<HTMLDivElement> | null) =>
     sideNavRefH.classList.remove('side-nav');
     sideNavRefH.classList.add('side-nav-open');
     sideNavRefH.style.width = '200px';
+    setLeft(205);
   } else {
     sideNavRefH.classList.remove('side-nav-open');
     sideNavRefH.classList.add('side-nav');
     sideNavRefH.style.width = '50px';
+    setLeft(55);
   }
 };
 
@@ -36,50 +76,98 @@ const infoOnClick = (sideNavRef: RefObject<HTMLDivElement>) => {
   }
 };
 
-export const OpenSideNav = React.forwardRef((
-  props: OpenSideNavProps, ref: ForwardedRef<HTMLDivElement>,
-) => (
-  <div
-    style={{
-      width: '50px',
-      height: '50px',
-      position: 'absolute',
-      top: `${props.top}px`,
-    }}
-    className="ui vertical menu open-side-nav"
-    ref={ref}
-  >
-    <Menu.Item
-      className="open-menu-item"
-      onClick={() => { animateSideNavRefWidth(props.sideNavRef); }}
-    >
-      <Icon name="grid layout" />
-    </Menu.Item>
-  </div>
-));
+// export const OpenSideNav = React.forwardRef((
+//   props: OpenSideNavProps, ref: ForwardedRef<HTMLDivElement>,
+// ) => (
+//   <div
+//     style={{
+//       width: '50px',
+//       height: '50px',
+//       position: 'absolute',
+//       top: `${props.top}px`,
+//     }}
+//     className="ui vertical menu open-side-nav"
+//     ref={ref}
+//   >
+//     <Menu.Item
+//       className="open-menu-item"
+//       onClick={() => { animateSideNavRefWidth(props.sideNavRef); }}
+//     >
+//       <Icon name="grid layout" />
+//     </Menu.Item>
+//   </div>
+// ));
 
-export const SideNav = React.forwardRef((
+const SideNav = React.forwardRef((
   props: SideNavDivProps, ref: ForwardedRef<HTMLDivElement>,
 ) => {
-  console.log('p');
+  const [left, setLeft] = useState(55);
+  const [display, setDisplay] = useState('none');
+  const [active, setActive] = useState(0);
+  const setLeftHelper = (leftHelper: number) => { setLeft(leftHelper); };
+  // const setActiveHelper = (activeHelper: number) => { setActive(activeHelper); };
+  const className = getDarkMode()
+    ? 'ui vertical menu speed-menu speed-menu-inverted inverted'
+    : 'ui vertical menu speed-menu';
   return (
     <>
-      {/* <Menu secondary vertical>
+      {/* open side nav */}
+      <div
+        style={{
+          width: '50px',
+          height: '50px',
+          position: 'absolute',
+          top: `${props.top}px`,
+        }}
+        className="ui vertical menu open-side-nav"
+        ref={props.openSideNavRef}
+      >
         <Menu.Item
-          name="account"
-        />
+          className="open-menu-item"
+          onClick={() => {
+            animateSideNavRefWidth(ref as RefObject<HTMLDivElement>, setLeftHelper);
+          }}
+        >
+          <Icon name="grid layout" />
+        </Menu.Item>
+      </div>
+
+      {/* speed menu */}
+      <div
+        ref={props.speedSideNavRef}
+        style={{
+          left: `${left}px`,
+          top: `${props.top + 55}px`,
+          display,
+        }}
+        className={className}
+      >
         <Menu.Item
-          name="settings"
-        />
-        <Dropdown item text="Display Options">
-          <Dropdown.Menu>
-            <Dropdown.Header>Text Size</Dropdown.Header>
-            <Dropdown.Item>Small</Dropdown.Item>
-            <Dropdown.Item>Medium</Dropdown.Item>
-            <Dropdown.Item>Large</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </Menu> */}
+          className={active === 0 ? 'active' : ''}
+          onClick={
+            () => speedOnClick(FAST, setActive, ref as RefObject<HTMLDivElement>, setDisplay)
+          }
+        >
+          {FAST}
+        </Menu.Item>
+        <Menu.Item
+          className={active === 1 ? 'active' : ''}
+          onClick={
+            () => speedOnClick(AVERAGE, setActive, ref as RefObject<HTMLDivElement>, setDisplay)
+          }
+        >
+          {AVERAGE}
+        </Menu.Item>
+        <Menu.Item
+          className={active === 2 ? 'active' : ''}
+          onClick={
+            () => speedOnClick(SLOW, setActive, ref as RefObject<HTMLDivElement>, setDisplay)
+          }
+        >
+          {SLOW}
+        </Menu.Item>
+      </div>
+
       <div
         style={{
           width: '50px',
@@ -90,6 +178,23 @@ export const SideNav = React.forwardRef((
         className="ui vertical menu side-nav"
         ref={ref}
       >
+        <Menu.Item
+          className="menu-item"
+          onClick={() => {
+            if (display === 'none') {
+              setDisplay('block');
+            } else {
+              setDisplay('none');
+            }
+          }}
+        >
+          <Icon name="lightning" />
+          <span className="menu-item-name">
+            Speed:
+            <span style={{ fontWeight: 'bold' }}> Fast</span>
+          </span>
+        </Menu.Item>
+
         <Menu.Item className="menu-item" onClick={props.addBomb}>
           <Icon name="bomb" />
           <span className="menu-item-name">Add Bomb</span>
@@ -108,14 +213,6 @@ export const SideNav = React.forwardRef((
         <Menu.Item className="menu-item" onClick={props.clearWalls}>
           <Icon name="window close" />
           <span className="menu-item-name">Clear Walls</span>
-        </Menu.Item>
-
-        <Menu.Item className="menu-item" onClick={() => {}}>
-          <Icon name="lightning" />
-          <span className="menu-item-name">
-            Speed:
-            <span style={{ fontWeight: 'bold' }}> Fast</span>
-          </span>
         </Menu.Item>
 
         <Menu.Item className="menu-item" onClick={() => { infoOnClick(ref as RefObject<HTMLDivElement>); }}>
@@ -166,66 +263,9 @@ export const SideNav = React.forwardRef((
             </span>
           </div>
         </Menu.Item>
-
-        <Dropdown item text="D">
-          <Dropdown.Menu>
-            <Dropdown.Header>Text Size</Dropdown.Header>
-            <Dropdown.Item>Small</Dropdown.Item>
-            <Dropdown.Item>Medium</Dropdown.Item>
-            <Dropdown.Item>Large</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-
-        {/* <div className="ui active visible dropdown item">
-          <i className="dropdown icon" />
-          D
-          <div className="menu transition visible">
-            <div className="header">Text Size</div>
-            <a href="p" className="item">Small</a>
-            <a href="p" className="item">Medium</a>
-            <a href="p" className="item">Large</a>
-          </div>
-        </div> */}
       </div>
-
-      {/* <div
-        style={{
-          width: '50px',
-          position: 'absolute',
-          height: `${props.height - 55}px`,
-          top: `${props.top + 55}px`,
-          left: '50px',
-        }}
-        className="ui vertical menu side-nav2"
-      >
-        <Dropdown item text="Display Options">
-          <Dropdown.Menu>
-            <Dropdown.Header>Text Size</Dropdown.Header>
-            <Dropdown.Item>Small</Dropdown.Item>
-            <Dropdown.Item>Medium</Dropdown.Item>
-            <Dropdown.Item>Large</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-
-        <Menu.Item className="menu-item" onClick={() => {}}>
-          <Icon name="bomb" />
-        </Menu.Item>
-        <Menu.Item className="menu-item" onClick={() => {}}>
-          <Icon name="bomb" />
-        </Menu.Item>
-        <Menu.Item className="menu-item" onClick={() => {}}>
-          <Icon name="bomb" />
-        </Menu.Item>
-        <Menu.Item className="menu-item" onClick={() => {}}>
-          <Icon name="bomb" />
-        </Menu.Item>
-        <Menu.Item className="menu-item" onClick={() => {}}>
-          <Icon name="bomb" />
-        </Menu.Item>
-        <Menu.Item className="menu-item" onClick={() => {}}>
-          <Icon name="bomb" />
-        </Menu.Item>
-      </div> */}
     </>
   );
 });
+
+export default SideNav;

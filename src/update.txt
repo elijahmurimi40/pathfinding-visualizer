@@ -1,0 +1,6 @@
+-animate while searching for node
+-- add touch support
+- add tutorial screen when page is first visited
+- if path was found and a node is dragged calculate the path
+-- the closing and opening of sidenav i.e close sidenav if anything is clicked aprt from side nav
+-- loading icon to show when loading

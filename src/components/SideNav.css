@@ -23,8 +23,8 @@
     /* align-items: center !important; */
     margin-top: 0 !important;
     border-radius: 0px !important;
-    /* overflow-x: hidden;
-    overflow-y: auto; */
+    overflow-x: hidden;
+    overflow-y: auto;
     scrollbar-width: thin;
     z-index: 5;
 }
@@ -86,4 +86,16 @@
     width: 15px;
     height: 15px;
     border: 1px solid #007bff;
+}
+
+.speed-menu {
+    position: absolute;
+    z-index: 5;
+    text-align: center;
+    width: 80px !important;
+    margin-top: 0 !important;
+}
+
+.speed-menu-inverted {
+    border: 1px solid #767676 !important;
 }
