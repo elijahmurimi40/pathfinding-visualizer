@@ -22,7 +22,7 @@ const pathfindingAlgorithmsOptions = () => {
 };
 
 // eslint-disable-next-line import/no-mutable-exports
-export let timer = 20;
+export let timer = 100;
 
 export const setTimer = (time: number) => {
   timer = time;

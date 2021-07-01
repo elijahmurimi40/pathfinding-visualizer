@@ -103,7 +103,7 @@ const SideNav = React.forwardRef((
 ) => {
   const [left, setLeft] = useState(55);
   const [display, setDisplay] = useState('none');
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(1);
   const setLeftHelper = (leftHelper: number) => { setLeft(leftHelper); };
   // const setActiveHelper = (activeHelper: number) => { setActive(activeHelper); };
   const className = getDarkMode()
