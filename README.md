@@ -2,7 +2,7 @@
 
 A visualization tool for various pathfinding algorithms.
 
-[https://fortie40.github.io/pathfinding-visualizer/](https://fortie40.github.io/pathfinding-visualizer/)
+[https://elijahmurimi40.github.io/pathfinding-visualizer/](https://elijahmurimi40.github.io/pathfinding-visualizer/)
 
 ## License
 
