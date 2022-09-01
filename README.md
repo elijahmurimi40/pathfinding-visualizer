@@ -4,6 +4,11 @@ A visualization tool for various pathfinding algorithms.
 
 [https://elijahmurimi40.github.io/pathfinding-visualizer/](https://elijahmurimi40.github.io/pathfinding-visualizer/)
 
+### Demo
+<img 
+	src="demo/pfv40.gif" 
+	alt="Demo" hspace="20" />
+
 ## License
 
 MIT License
