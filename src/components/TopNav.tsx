@@ -87,12 +87,19 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
   const selectOnChange = () => {
     const dropdown = (ref as React.RefObject<HTMLDivElement>).current?.childNodes[1].childNodes[0];
     const { value } = (dropdown as HTMLSelectElement);
-    const sideNavAddBomb = props.sideNav?.current?.children[0];
-    if (value === algorithms[1] && getBombIndex() !== -1) {
-      addBomb(props.noOfNodes, props.nodes.current!!, props.sideNav.current);
+    const sideNavAddBomb = props.sideNav?.current?.children[1];
+    // Remove bomb node
+    if (value === algorithms[1]) {
       sideNavAddBomb!!.classList.add('disabled');
     } else {
       sideNavAddBomb!!.classList.remove('disabled');
+    }
+
+    if (value === algorithms[1] && getBombIndex() !== -1) {
+      addBomb(props.noOfNodes, props.nodes.current!!, props.sideNav.current);
+      // sideNavAddBomb!!.classList.add('disabled');
+    } else {
+      // sideNavAddBomb!!.classList.remove('disabled');
     }
     setTtypeOfSearchAlgorithm(value);
   };

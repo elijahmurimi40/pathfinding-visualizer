@@ -191,7 +191,7 @@ const SideNav = React.forwardRef((
           <Icon name="lightning" />
           <span className="menu-item-name">
             Speed:
-            <span style={{ fontWeight: 'bold' }}> Fast</span>
+            <span style={{ fontWeight: 'bold' }}> Average</span>
           </span>
         </Menu.Item>
 
