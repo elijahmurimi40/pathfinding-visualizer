@@ -2,7 +2,7 @@
 
 A visualization tool for various pathfinding algorithms.
 
-[https://elijahmurimi40.github.io/pathfinding-visualizer/](https://elijahmurimi40.github.io/pathfinding-visualizer/)
+[https://pfv.elijahmurimi.dev/](https://pfv.elijahmurimi.dev/)
 
 ### Demo
 <img 
