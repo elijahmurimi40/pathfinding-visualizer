@@ -1,5 +1,5 @@
 import React, { ForwardedRef } from 'react';
-import { Menu } from 'semantic-ui-react';
+import { Menu, MenuMenu } from 'semantic-ui-react';
 import { Alert } from 'react-bootstrap';
 import pathfindingAlgorithmsOptions, { algorithms } from '../pathfindingAlgorihms/pathfindingAlgorithmsOptions';
 import Nav from './Nav';
@@ -129,15 +129,17 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
           </select>
         </Menu.Item>
 
-        <Menu.Item>
-          <a
-            href="/visualize"
-            className="ui fluid blue submit button"
-            onClick={(e) => { visualize(e); }}
-          >
-            Go
-          </a>
-        </Menu.Item>
+        <MenuMenu position="right">
+          <Menu.Item>
+            <a
+              href="/visualize"
+              className="ui fluid blue submit button"
+              onClick={(e) => { visualize(e); }}
+            >
+              Go
+            </a>
+          </Menu.Item>
+        </MenuMenu>
       </div>
       <Alert
         style={{
