@@ -65,7 +65,11 @@ function App() {
     element.classList.add('inverted');
 
     if (element === topNavRef.current!!) {
-      elementH.style.borderBottom = '1px solid #767676';
+      const topNavParentDiv = topNavRef.current!!.parentElement;
+      topNavParentDiv?.classList.add('inverted');
+      topNavParentDiv!!.style.borderBottom = '1px solid #767676';
+      elementH.style.borderLeft = '1px solid #2d2e2f';
+      elementH.style.borderRight = '1px solid #2d2e2f';
     } else if (element === bottomNavRef.current!!) {
       elementH.style.borderTop = '1px solid #767676';
     } else {
@@ -80,6 +84,14 @@ function App() {
     const elementH = element;
     element.classList.remove('inverted');
     elementH.style.border = '1px solid rgba(34, 36, 38, .15)';
+
+    if (elementH === topNavRef.current!!) {
+      elementH.style.borderBottom = '1px solid transparent';
+      elementH.style.borderTop = '1px solid transparent';
+      const topNavParentDiv = topNavRef.current!!.parentElement;
+      topNavParentDiv?.classList.remove('inverted');
+      topNavParentDiv!!.style.borderBottom = '1px solid rgba(34, 36, 38, .15)';
+    }
   };
 
   const darkModeToggle = (checked: boolean) => {

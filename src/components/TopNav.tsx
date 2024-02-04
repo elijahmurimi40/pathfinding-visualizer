@@ -106,40 +106,48 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
 
   return (
     <>
-      <div ref={ref} className="ui menu ui-menu">
-        <span className="show-for-large">
-          <Nav
-            navType={topNav}
-            arrowDirection={arrowDown}
-            animateMazesAndPatterns={props.animateMazesAndPatterns}
-            mazesPatternButtonsRef={props.mazesPatternButtonsRef}
-            currentActiveMazeAndPattern={props.currentActiveMazeAndPattern}
-          />
-        </span>
-        <Menu.Item>
-          <select
-            style={{ padding: '5px 5px' }}
-            name="sorting_algorithms"
-            className="ui selection fluid dropdown"
-            defaultValue=""
-            onChange={selectOnChange}
-          >
-            <option value="" disabled>Select Pathfinding Algo .....</option>
-            {options}
-          </select>
-        </Menu.Item>
-
-        <MenuMenu position="right">
+      <div
+        className="ui menu"
+      >
+        <div
+          ref={ref}
+          className="ui menu ui-menu"
+          style={{}}
+        >
+          <span className="show-for-large">
+            <Nav
+              navType={topNav}
+              arrowDirection={arrowDown}
+              animateMazesAndPatterns={props.animateMazesAndPatterns}
+              mazesPatternButtonsRef={props.mazesPatternButtonsRef}
+              currentActiveMazeAndPattern={props.currentActiveMazeAndPattern}
+            />
+          </span>
           <Menu.Item>
-            <a
-              href="/visualize"
-              className="ui fluid blue submit button"
-              onClick={(e) => { visualize(e); }}
+            <select
+              style={{ padding: '5px 5px' }}
+              name="sorting_algorithms"
+              className="ui selection fluid dropdown"
+              defaultValue=""
+              onChange={selectOnChange}
             >
-              Go
-            </a>
+              <option value="" disabled>Select Pathfinding Algo .....</option>
+              {options}
+            </select>
           </Menu.Item>
-        </MenuMenu>
+
+          <MenuMenu position="right">
+            <Menu.Item>
+              <a
+                href="/visualize"
+                className="ui fluid blue submit button"
+                onClick={(e) => { visualize(e); }}
+              >
+                Go
+              </a>
+            </Menu.Item>
+          </MenuMenu>
+        </div>
       </div>
       <Alert
         style={{
