@@ -216,6 +216,15 @@ function App() {
   calculateAndSetDimension.current = () => {
     clearTimeouts();
     resetMazesAndPatterns();
+
+    const { innerWidth } = window;
+    if (innerWidth < 1250) {
+      pfGridRef.current!!.style.marginLeft = '60px';
+      pfGridRef.current!!.style.marginRight = '10px';
+    } else {
+      pfGridRef.current!!.style.margin = '0 auto';
+    }
+
     animateCoverRef.current!!.style.display = 'none';
     clearWalls(nodesRef.current, resetMazesAndPatterns);
     nodesRef.current.length = 0;
