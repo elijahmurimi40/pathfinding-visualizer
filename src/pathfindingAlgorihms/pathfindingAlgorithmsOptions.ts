@@ -137,6 +137,7 @@ export const animateBombNode = (
         if (getFinishButtonStatus()) {
           finishAnimation(nodes, bombAnimations, targetAnimations, pathAnimations);
           hideCover();
+          if (!isPathFound) { showError(); hideCover(); }
           if (!isBombPathFound) { showError(); hideCover(); }
         } else {
           addVisitedNode(nodes[nodeIdx], 'BOMB', nodeIdx);
