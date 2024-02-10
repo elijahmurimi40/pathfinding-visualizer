@@ -47,31 +47,33 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
     const { value } = (dropdown as HTMLSelectElement);
     switch (value) {
       case algorithms[0]:
-        props.showCover();
-        aStar(props.nodes.current!!, props.noOfRows, props.noOfNodes, props.hideCover, showNoPathF);
+        aStar(
+          props.nodes.current!!, props.noOfRows, props.noOfNodes,
+          props.showCover, props.hideCover, showNoPathF,
+        );
         break;
       case algorithms[1]:
-        props.showCover();
         bidirectionalSearch(
-          props.nodes.current!!, props.noOfRows, props.noOfNodes, props.hideCover, showNoPathF,
+          props.nodes.current!!, props.noOfRows, props.noOfNodes,
+          props.showCover, props.hideCover, showNoPathF,
         );
         break;
       case algorithms[2]:
-        props.showCover();
         breadthFirstSearch(
-          props.nodes.current!!, props.noOfRows, props.noOfNodes, props.hideCover, showNoPathF,
+          props.nodes.current!!, props.noOfRows, props.noOfNodes,
+          props.showCover, props.hideCover, showNoPathF,
         );
         break;
       case algorithms[3]:
-        props.showCover();
         depthFirstSearch(
-          props.nodes.current!!, props.noOfRows, props.noOfNodes, props.hideCover, showNoPathF,
+          props.nodes.current!!, props.noOfRows, props.noOfNodes,
+          props.showCover, props.hideCover, showNoPathF,
         );
         break;
       case algorithms[4]:
-        props.showCover();
         dijkstras(
-          props.nodes.current!!, props.noOfRows, props.noOfNodes, props.hideCover, showNoPathF,
+          props.nodes.current!!, props.noOfRows, props.noOfNodes,
+          props.showCover, props.hideCover, showNoPathF,
         );
         break;
       default:

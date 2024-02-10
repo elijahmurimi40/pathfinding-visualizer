@@ -9,6 +9,7 @@ import {
 import {
   shortestPathNodeColor, transparent, visitedNodeColor, visitedNodeColorToBomb, wallNodeColor,
 } from './color';
+import { clearTimeouts } from '../mazesAndPatterns/mazesAndPatternsHelper';
 
 gsap.registerPlugin(Draggable);
 
@@ -61,6 +62,41 @@ const calculateNodeNewIndex = (params: number[], type: string = '') => {
   nodeInfo.index = row + column;
   return 0;
 };
+
+// function to finish animation when finish button is pressed
+export const finishAnimation = (
+  nodes: HTMLDivElement[], bombAnimations: number[] | null,
+  targetAnimations: number[] | null, pathAniamtions: number[] | null,
+) => {
+  clearTimeouts();
+  setFinishButtonStatus(false);
+
+  if (bombAnimations != null) {
+    for (let i = 0; i < bombAnimations.length; i += 1) {
+      const nodeIdx = bombAnimations[i];
+      addVisitedNode(nodes[nodeIdx], 'BOMB', nodeIdx);
+    }
+  }
+
+  if (targetAnimations != null) {
+    for (let i = 0; i < targetAnimations.length; i += 1) {
+      const nodeIdx = targetAnimations[i];
+      addVisitedNode(nodes[nodeIdx], 'target', nodeIdx);
+    }
+  }
+
+  if (pathAniamtions != null) {
+    for (let i = 0; i < pathAniamtions.length; i += 1) {
+      const nodeIdx = pathAniamtions[i];
+      addPathNode(nodes[nodeIdx], nodeIdx);
+    }
+  }
+};
+
+// finish button has been pressed
+let finishButtonPressed = false;
+export const getFinishButtonStatus = () => finishButtonPressed;
+export const setFinishButtonStatus = (status: boolean) => { finishButtonPressed = status; };
 
 // get is dark mode
 export const getDarkMode = () => isDarkMode;

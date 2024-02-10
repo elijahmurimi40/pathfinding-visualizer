@@ -29,7 +29,8 @@ export interface TopNavProps extends NavProps {
   noOfRows: number;
   noOfNodes: number;
   sideNav: RefObject<HTMLDivElement>;
-  showCover: () => void;
+  // eslint-disable-next-line no-unused-vars
+  showCover: (hideMazesPattern: boolean) => void;
   hideCover: () => void;
 }
 

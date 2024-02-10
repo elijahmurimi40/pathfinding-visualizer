@@ -132,6 +132,8 @@ const dijkstras = (
   nodes: HTMLDivElement[],
   noOfRows: number,
   noOfNodes: number,
+  // eslint-disable-next-line no-unused-vars
+  showCover: (arg: boolean) => void,
   hideCover: () => void,
   showError: () => void,
 ) => {
@@ -145,6 +147,7 @@ const dijkstras = (
   isPathFound = true;
   isBombPathFound = true;
 
+  showCover(false);
   const bombIndex = getNodeBombInfo();
   const bombAnimations: number[] = [];
   const targetAnimations: number[] = [];
@@ -191,6 +194,8 @@ const dijkstras = (
     }
   }
 
+  hideCover();
+  showCover(true);
   animateBombNode(
     nodes, bombAnimations, targetAnimations, optimalPath,
     hideCover, showError, bombNode, isPathFound, isBombPathFound,

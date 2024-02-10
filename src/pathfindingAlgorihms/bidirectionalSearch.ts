@@ -1,7 +1,8 @@
 // Bidirectional guarantees shortest path
 import { dataIsWallNode } from '../helperFunctions/customAttr';
 import {
-  addPathNode, addVisitedNode, getAttr, getNodeStartInfo, getNodeTargetInfo,
+  addPathNode, addVisitedNode, finishAnimation, getAttr,
+  getFinishButtonStatus, getNodeStartInfo, getNodeTargetInfo,
 } from '../helperFunctions/helperFunctions';
 import { pushTimer, resetTimeouts } from '../mazesAndPatterns/mazesAndPatternsHelper';
 import {
@@ -36,8 +37,13 @@ const animatePath = (optimalPath: number[], nodes: HTMLDivElement[], hideCover: 
     for (let i = 0; i < optimalPath.length; i += 1) {
       const timerH = window.setTimeout(() => {
         const nodeIdx = optimalPath[i];
-        addPathNode(nodes[nodeIdx], nodeIdx);
-        if (i === optimalPath.length - 1) hideCover();
+        if (getFinishButtonStatus()) {
+          finishAnimation(nodes, null, null, optimalPath);
+          hideCover();
+        } else {
+          addPathNode(nodes[nodeIdx], nodeIdx);
+          if (i === optimalPath.length - 1) hideCover();
+        }
       }, i * timer);
       pushTimer(timerH);
     }
@@ -187,6 +193,8 @@ const bidirectionalSearch = (
   nodes: HTMLDivElement[],
   noOfRows: number,
   noOfNodes: number,
+  // eslint-disable-next-line no-unused-vars
+  showCover: (arg: boolean) => void,
   hideCover: () => void,
   showError: () => void,
 ) => {
@@ -201,6 +209,7 @@ const bidirectionalSearch = (
   noOfNodesH = noOfNodes;
   meetingPoint = -1;
 
+  showCover(false);
   targetRowOfStartNode = Math.floor(targetNode.index / noOfNodes);
   targetColOfStartNode = targetNode.index % noOfNodes;
   targetRowOfTargetNode = Math.floor(startNode.index / noOfNodes);
@@ -227,14 +236,22 @@ const bidirectionalSearch = (
     findOptimalPath([], optimalPath, targetNode.index, meetingPoint, closedNodesTarget, false);
   }
 
+  hideCover();
+  showCover(true);
   resetTimeouts([]);
   for (let i = 0; i < animations.length; i += 1) {
     // eslint-disable-next-line no-loop-func
     const timerH = window.setTimeout(() => {
       const nodeIdx = animations[i];
-      addVisitedNode(nodes[nodeIdx], '', nodeIdx);
-      if (i === animations.length - 1 && !isPathFound) { showError(); hideCover(); }
-      if (i === animations.length - 1) animatePath(optimalPath, nodes, hideCover);
+      if (getFinishButtonStatus()) {
+        finishAnimation(nodes, null, animations, optimalPath);
+        hideCover();
+        if (!isPathFound) { showError(); hideCover(); }
+      } else {
+        addVisitedNode(nodes[nodeIdx], '', nodeIdx);
+        if (i === animations.length - 1 && !isPathFound) { showError(); hideCover(); }
+        if (i === animations.length - 1) animatePath(optimalPath, nodes, hideCover);
+      }
     }, i * timer);
     pushTimer(timerH);
   }

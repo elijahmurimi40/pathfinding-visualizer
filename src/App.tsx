@@ -10,7 +10,7 @@ import {
   getBombIndex, clearPathNodes, resetBoard,
 } from './App.Functions';
 import {
-  getNodeBombInfo, getNodeStartInfo, getNodeTargetInfo, setDarkMode,
+  setFinishButtonStatus, getNodeBombInfo, getNodeStartInfo, getNodeTargetInfo, setDarkMode,
 } from './helperFunctions/helperFunctions';
 import { mazesKeys } from './mazesAndPatterns/mazesAndPatternsOptions';
 import basicRandomMaze from './mazesAndPatterns/basicRandomMaze';
@@ -56,6 +56,7 @@ function App() {
   // bottom and top ref for putting active item
   const mazesPatternButtonsRefTop = useRef<Array<HTMLButtonElement>>([]);
   const mazesPatternButtonsRefBottom = useRef<Array<HTMLButtonElement>>([]);
+  const finishButtonRef = useRef<HTMLAnchorElement>(null);
 
   const calculateAndSetDimension = useRef(() => {});
 
@@ -157,13 +158,25 @@ function App() {
   };
 
   // show cover
-  const showCover = () => {
+  const showCover = (hideMazesPattern: boolean) => {
     animateCoverRef.current!!.style.display = 'block';
+    if (hideMazesPattern) {
+      const label = mazesPatternDetailRef.current!!.parentElement;
+      const { parentElement } = label!!;
+      parentElement!!.style.visibility = 'hidden';
+
+      finishButtonRef.current!!.style.visibility = 'visible';
+    } else {
+      finishButtonRef.current!!.style.visibility = 'hidden';
+    }
   };
 
   // hide cover
   const hideCover = () => {
     animateCoverRef.current!!.style.display = 'none';
+    const label = mazesPatternDetailRef.current!!.parentElement;
+    const { parentElement } = label!!;
+    parentElement!!.style.visibility = 'visible';
   };
 
   // mazes and patterns
@@ -188,23 +201,23 @@ function App() {
         clearWalls(nodesRef.current, resetMazesAndPatterns);
         break;
       case mazesKeys[1]:
-        showCover();
+        showCover(false);
         basicRandomMaze(nodesRef.current, noOfRows, noOfNodes, hideCover);
         break;
       case mazesKeys[2]:
-        showCover();
+        showCover(false);
         recursiveDivision(nodesRef.current, noOfRows, noOfNodes, hideCover);
         break;
       case mazesKeys[3]:
-        showCover();
+        showCover(false);
         recursiveDivisionHorizontalSkew(nodesRef.current, noOfRows, noOfNodes, hideCover);
         break;
       case mazesKeys[4]:
-        showCover();
+        showCover(false);
         recursiveDivisionVerticalSkew(nodesRef.current, noOfRows, noOfNodes, hideCover);
         break;
       case mazesKeys[5]:
-        showCover();
+        showCover(false);
         simpleStairPattern(nodesRef.current, noOfRows, noOfNodes, hideCover);
         break;
       default:
@@ -346,7 +359,23 @@ function App() {
         <div className="error-div">Use Screen of height 320px and above</div>
       </div>
 
-      <div className="cover-div" ref={animateCoverRef} />
+      <div className="cover-div" ref={animateCoverRef}>
+        <a
+          ref={finishButtonRef}
+          style={{
+            width: '80px',
+            margin: '83px auto',
+          }}
+          href="/finish"
+          className="ui fluid blue submit button"
+          onClick={(e) => {
+            e.preventDefault();
+            setFinishButtonStatus(true);
+          }}
+        >
+          Finish
+        </a>
+      </div>
     </div>
   );
 }

@@ -140,6 +140,8 @@ const depthFirstSearch = (
   nodes: HTMLDivElement[],
   noOfRows: number,
   noOfNodes: number,
+  // eslint-disable-next-line no-unused-vars
+  showCover: (arg: boolean) => void,
   hideCover: () => void,
   showError: () => void,
 ) => {
@@ -153,6 +155,7 @@ const depthFirstSearch = (
   closedNodes.clear();
   openNodes.clear();
 
+  showCover(false);
   const bombIndex = getNodeBombInfo();
   const bombAnimations: number[] = [];
   const targetAnimations: number[] = [];
@@ -209,6 +212,8 @@ const depthFirstSearch = (
     }
   }
 
+  hideCover();
+  showCover(true);
   animateBombNode(
     nodes, bombAnimations, targetAnimations, optimalPath,
     hideCover, showError, bombNode, isPathFound, isBombPathFound,

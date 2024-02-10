@@ -4,7 +4,7 @@ import {
   dataIsFirstCol, dataIsFirstRow, dataIsLastCol, dataIsLastRow, dataIsWallNode,
 } from '../helperFunctions/customAttr';
 import {
-  addPathNode,
+  getFinishButtonStatus, finishAnimation, addPathNode,
   addVisitedNode, getAttr, getNodeBombInfo, getNodeStartInfo, getNodeTargetInfo,
 } from '../helperFunctions/helperFunctions';
 import { pushTimer, resetTimeouts } from '../mazesAndPatterns/mazesAndPatternsHelper';
@@ -40,8 +40,13 @@ const animatePath = (nodes: HTMLDivElement[], animations: number[], hideCover: (
   for (let i = 0; i < animations.length; i += 1) {
     const timerH = window.setTimeout(() => {
       const nodeIdx = animations[i];
-      addPathNode(nodes[nodeIdx], nodeIdx);
-      if (i === animations.length - 1) hideCover();
+      if (getFinishButtonStatus()) {
+        finishAnimation(nodes, null, null, animations);
+        hideCover();
+      } else {
+        addPathNode(nodes[nodeIdx], nodeIdx);
+        if (i === animations.length - 1) hideCover();
+      }
     }, i * timer);
     pushTimer(timerH);
   }
@@ -55,10 +60,16 @@ const animateTargetNode = (
     // eslint-disable-next-line no-loop-func
     const timerH = window.setTimeout(() => {
       const nodeIdx = animations[i];
-      addVisitedNode(nodes[nodeIdx], 'target', nodeIdx);
-      if (i === animations.length - 1 && !isPathFound) { showError(); hideCover(); }
-      if (i === animations.length - 1 && isPathFound) {
-        animatePath(nodes, pathAniamtions, hideCover);
+      if (getFinishButtonStatus()) {
+        finishAnimation(nodes, null, animations, pathAniamtions);
+        if (!isPathFound) { showError(); hideCover(); }
+        hideCover();
+      } else {
+        addVisitedNode(nodes[nodeIdx], 'target', nodeIdx);
+        if (i === animations.length - 1 && !isPathFound) { showError(); hideCover(); }
+        if (i === animations.length - 1 && isPathFound) {
+          animatePath(nodes, pathAniamtions, hideCover);
+        }
       }
     }, i * timer);
 
@@ -78,10 +89,16 @@ const animateBombNode = (
       // eslint-disable-next-line no-loop-func
       const timerH = window.setTimeout(() => {
         const nodeIdx = bombAnimations[i];
-        addVisitedNode(nodes[nodeIdx], 'BOMB', nodeIdx);
-        if (i === bombAnimations.length - 1 && !isBombPathFound) { showError(); hideCover(); }
-        if (i === bombAnimations.length - 1 && isBombPathFound) {
-          animateTargetNode(nodes, targetAnimations, pathAnimations, hideCover, showError);
+        if (getFinishButtonStatus()) {
+          finishAnimation(nodes, bombAnimations, targetAnimations, pathAnimations);
+          hideCover();
+          if (!isBombPathFound) { showError(); hideCover(); }
+        } else {
+          addVisitedNode(nodes[nodeIdx], 'BOMB', nodeIdx);
+          if (i === bombAnimations.length - 1 && !isBombPathFound) { showError(); hideCover(); }
+          if (i === bombAnimations.length - 1 && isBombPathFound) {
+            animateTargetNode(nodes, targetAnimations, pathAnimations, hideCover, showError);
+          }
         }
       }, i * timer);
       pushTimer(timerH);
@@ -267,6 +284,8 @@ const aStar = (
   nodes: HTMLDivElement[],
   noOfRows: number,
   noOfNodes: number,
+  // eslint-disable-next-line no-unused-vars
+  showCover: (arg: boolean) => void,
   hideCover: () => void,
   showError: () => void,
 ) => {
@@ -281,6 +300,7 @@ const aStar = (
   isPathFound = true;
   isBombPathFound = true;
 
+  showCover(false);
   const bombIndex = getNodeBombInfo();
   const bombRow = Math.floor(bombIndex.index / noOfNodes);
   const bombCol = bombIndex.index % noOfNodes;
@@ -339,6 +359,8 @@ const aStar = (
     }
   }
 
+  hideCover();
+  showCover(true);
   animateBombNode(nodes, bombAnimations, targetAnimations, optimalPath, hideCover, showError);
 };
 

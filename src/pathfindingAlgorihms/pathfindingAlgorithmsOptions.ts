@@ -1,7 +1,9 @@
 import {
   dataIsFirstCol, dataIsFirstRow, dataIsLastCol, dataIsLastRow,
 } from '../helperFunctions/customAttr';
-import { addPathNode, addVisitedNode, getAttr } from '../helperFunctions/helperFunctions';
+import {
+  addPathNode, addVisitedNode, finishAnimation, getAttr, getFinishButtonStatus,
+} from '../helperFunctions/helperFunctions';
 import { pushTimer, resetTimeouts } from '../mazesAndPatterns/mazesAndPatternsHelper';
 
 export const algorithms = [
@@ -84,8 +86,13 @@ const animatePath = (
   for (let i = 0; i < animations.length; i += 1) {
     const timerH = window.setTimeout(() => {
       const nodeIdx = animations[i];
-      addPathNode(nodes[nodeIdx], nodeIdx);
-      if (i === animations.length - 1) hideCover();
+      if (getFinishButtonStatus()) {
+        finishAnimation(nodes, null, null, animations);
+        hideCover();
+      } else {
+        addPathNode(nodes[nodeIdx], nodeIdx);
+        if (i === animations.length - 1) hideCover();
+      }
     }, i * timer);
     pushTimer(timerH);
   }
@@ -98,10 +105,16 @@ const animateTargetNode = (
   for (let i = 0; i < animations.length; i += 1) {
     const timerH = window.setTimeout(() => {
       const nodeIdx = animations[i];
-      addVisitedNode(nodes[nodeIdx], 'target', nodeIdx);
-      if (i === animations.length - 1 && !isPathFound) { showError(); hideCover(); }
-      if (i === animations.length - 1 && isPathFound) {
-        animatePath(nodes, pathAniamtions, hideCover);
+      if (getFinishButtonStatus()) {
+        finishAnimation(nodes, null, animations, pathAniamtions);
+        if (!isPathFound) { showError(); hideCover(); }
+        hideCover();
+      } else {
+        addVisitedNode(nodes[nodeIdx], 'target', nodeIdx);
+        if (i === animations.length - 1 && !isPathFound) { showError(); hideCover(); }
+        if (i === animations.length - 1 && isPathFound) {
+          animatePath(nodes, pathAniamtions, hideCover);
+        }
       }
     }, i * timer);
 
@@ -121,12 +134,18 @@ export const animateBombNode = (
     for (let i = 0; i < bombAnimations.length; i += 1) {
       const timerH = window.setTimeout(() => {
         const nodeIdx = bombAnimations[i];
-        addVisitedNode(nodes[nodeIdx], 'BOMB', nodeIdx);
-        if (i === bombAnimations.length - 1 && !isBombPathFound) { showError(); hideCover(); }
-        if (i === bombAnimations.length - 1 && isBombPathFound) {
-          animateTargetNode(
-            nodes, targetAnimations, pathAnimations, hideCover, showError, isPathFound,
-          );
+        if (getFinishButtonStatus()) {
+          finishAnimation(nodes, bombAnimations, targetAnimations, pathAnimations);
+          hideCover();
+          if (!isBombPathFound) { showError(); hideCover(); }
+        } else {
+          addVisitedNode(nodes[nodeIdx], 'BOMB', nodeIdx);
+          if (i === bombAnimations.length - 1 && !isBombPathFound) { showError(); hideCover(); }
+          if (i === bombAnimations.length - 1 && isBombPathFound) {
+            animateTargetNode(
+              nodes, targetAnimations, pathAnimations, hideCover, showError, isPathFound,
+            );
+          }
         }
       }, i * timer);
       pushTimer(timerH);
