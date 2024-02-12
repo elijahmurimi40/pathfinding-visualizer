@@ -163,7 +163,7 @@ export const resetBoard = (
   resetMazesAndPatterns: () => void, sideNav: HTMLDivElement | null,
 ) => {
   if (bombIndex !== -1) {
-    const sideNavAddBomb = sideNav?.children[0];
+    const sideNavAddBomb = sideNav?.children[1];
     const addBombElem = sideNavAddBomb!!.children[1];
     const newNode = nodes[getNodeBombInfo().index];
     setAttr(newNode, dataIsBombNode, 'false');
