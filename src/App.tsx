@@ -64,6 +64,7 @@ function App() {
     // H for helper
     const elementH = element;
     element.classList.add('inverted');
+    elementH.style.backgroundColor = '#2a2b2e';
 
     if (element === topNavRef.current!!) {
       const topNavParentDiv = topNavRef.current!!.parentElement;
@@ -84,6 +85,7 @@ function App() {
     // H for helper
     const elementH = element;
     element.classList.remove('inverted');
+    elementH.style.backgroundColor = '#ffffff';
     elementH.style.border = '1px solid rgba(34, 36, 38, .15)';
 
     if (elementH === topNavRef.current!!) {
@@ -99,7 +101,8 @@ function App() {
     isSliderChecked = checked;
     const isChecked = checked;
     if (isChecked) {
-      document.body.style.backgroundColor = '#1b1c1d';
+      // document.body.style.backgroundColor = '#1b1c1d';
+      document.body.style.backgroundColor = '#2a2b2e';
       semanticUIDarkMode(topNavRef.current!!);
       semanticUIDarkMode(bottomNavRef.current!!);
       semanticUIDarkMode(sideNavRef.current!!);

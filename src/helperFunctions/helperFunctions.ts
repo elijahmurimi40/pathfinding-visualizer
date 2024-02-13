@@ -358,12 +358,12 @@ export const addRemoveWallNode = (node: HTMLDivElement, idx: number) => {
     if (nodeIndex !== -1) wallNodes.splice(nodeIndex, 1);
     nodeH.style.backgroundColor = transparent;
     setAttr(nodeH, dataIsWallNode, 'false');
-    nodeH.classList.add('pf-grid-node-border-color');
+    // nodeH.classList.add('pf-grid-node-border-color');
   } else {
     wallNodes.push(idx);
     nodeH.style.backgroundColor = wallNodeColor;
     setAttr(nodeH, dataIsWallNode, 'true');
-    nodeH.classList.remove('pf-grid-node-border-color');
+    // nodeH.classList.remove('pf-grid-node-border-color');
   }
 };
 
