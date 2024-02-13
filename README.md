@@ -2,9 +2,9 @@
 
 A visualization tool for various pathfinding algorithms.  This project taught me valuable lessons in algorithmic understanding, problem-solving, and optimization
 
-Explore the world of pathfinding algorithms visually! This project aims to simplify the understanding of complex algorithms by providing an interactive visualizer. Dive in and witness the fascinating journey of finding optimal paths. 
+It aims to simplify the understanding of complex algorithms by providing an interactive visualizer. Dive in and witness the fascinating journey of finding optimal paths. 
 
-Explore pathfinding algorithms in action with this interactive visualizer: [https://pfv.elijahmurimi.dev/](https://pfv.elijahmurimi.dev/)
+Explore the world of pathfinding algorithms visually: [https://pfv.elijahmurimi.dev/](https://pfv.elijahmurimi.dev/)
 
 ### Demo
 <img 
