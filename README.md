@@ -1,14 +1,29 @@
 # Pathfinding Visualizer
 
-A visualization tool for various pathfinding algorithms.
+A visualization tool for various pathfinding algorithms.  This project taught me valuable lessons in algorithmic understanding, problem-solving, and optimization
 
-[https://pfv.elijahmurimi.dev/](https://pfv.elijahmurimi.dev/)
+Explore the world of pathfinding algorithms visually! This project aims to simplify the understanding of complex algorithms by providing an interactive visualizer. Dive in and witness the fascinating journey of finding optimal paths. 
+
+Explore pathfinding algorithms in action with this interactive visualizer: [https://pfv.elijahmurimi.dev/](https://pfv.elijahmurimi.dev/)
 
 ### Demo
 <img 
 	src="demo/pfv40.gif" 
 	alt="Demo" hspace="20" />
 
+ ## Local setup.
+ Before diving in, ensure you have Nodejs installed and yarn as your package manager for a seamless setup of the Sorting Algorithm Visualizer. `npm` can also be used. Running the Sorting Algorithm Visualizer locally, first clone the repository.
+
+ 	git clone https://github.com/elijahmurimi40/pathfinding-visualizer.git
+
+  To install all the dependencies of the project.
+
+  	yarn
+Then
+
+	yarn start
+
+ Have fun.
 ## License
 
 MIT License
