@@ -22,19 +22,19 @@ const speedOnClick = (
   const speedText = speedMenu?.children[1].children[0];
   if (type === FAST) {
     speedText!!.textContent = ` ${FAST}`;
-    setTimer(20);
+    setTimer(10);
     setActive(0);
   }
 
   if (type === AVERAGE) {
     speedText!!.textContent = ` ${AVERAGE}`;
-    setTimer(100);
+    setTimer(40);
     setActive(1);
   }
 
   if (type === SLOW) {
     speedText!!.textContent = ` ${SLOW}`;
-    setTimer(500);
+    setTimer(74);
     setActive(2);
   }
 
@@ -103,7 +103,7 @@ const SideNav = React.forwardRef((
 ) => {
   const [left, setLeft] = useState(55);
   const [display, setDisplay] = useState('none');
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(0);
   const setLeftHelper = (leftHelper: number) => { setLeft(leftHelper); };
   // const setActiveHelper = (activeHelper: number) => { setActive(activeHelper); };
   const className = getDarkMode()
