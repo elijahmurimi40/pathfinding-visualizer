@@ -326,6 +326,7 @@ function App() {
     const remaingSpace = height - (height - noOfRows);
     // -1 for border of 1px
     pfGridTopMargin = (remaingSpace / 2) - 1;
+    if (noOfRows > 34) noOfRows = 34;
     const rows: RowsType = generatePfGrid(noOfRows, noOfNodes);
     setPfgridRows(rows);
     clearTimeout(debounceTimer);
