@@ -7,10 +7,11 @@ import PathFindingGrid from './components/PathFindingGrid';
 import { RowsType } from './helperFunctions/types';
 import {
   generatePfGrid, getNewPfGridWithWallToggled, clearWalls, addBomb,
-  getBombIndex, clearPathNodes, resetBoard,
+  getBombIndex, resetBoard, clearVisitedNodes,
 } from './App.Functions';
 import {
-  setFinishButtonStatus, getNodeBombInfo, getNodeStartInfo, getNodeTargetInfo, setDarkMode,
+  setFinishButtonStatus, getNodeBombInfo, getNodeStartInfo,
+  getNodeTargetInfo, setDarkMode, pathNodes, getAttr, setAttr,
 } from './helperFunctions/helperFunctions';
 import { mazesKeys } from './mazesAndPatterns/mazesAndPatternsOptions';
 import basicRandomMaze from './mazesAndPatterns/basicRandomMaze';
@@ -21,6 +22,10 @@ import { topNav, bottomNav } from './helperFunctions/props';
 import { clearTimeouts } from './mazesAndPatterns/mazesAndPatternsHelper';
 import recursiveDivisionHorizontalSkew from './mazesAndPatterns/recursiveDivisionHorizontalSkew';
 import recursiveDivisionVerticalSkew from './mazesAndPatterns/recursiveDivisionVerticalSkew';
+import {
+  dataIsArrowNode, dataIsBombNode, dataIsStartNode, dataIsTargetNode, dataIsWallNode,
+} from './helperFunctions/customAttr';
+import { transparent } from './helperFunctions/color';
 
 // pf => pathfinding
 let isSliderChecked = false;
@@ -109,8 +114,18 @@ function App() {
       semanticUIDarkMode(openSideNavRef.current!!);
       nodesRef.current[getNodeStartInfo().index].children[0].classList.add('inverted');
       nodesRef.current[getNodeTargetInfo().index].children[0].classList.add('inverted');
+      const start = nodesRef.current[getNodeStartInfo().index].children[0] as HTMLElement;
+      const target = nodesRef.current[getNodeTargetInfo().index].children[0] as HTMLElement;
+      if (pathNodes.length === 0) {
+        start.style.color = '#ffffff';
+        target.style.color = '#ffffff';
+      }
       if (getBombIndex() !== -1) {
         nodesRef.current[getNodeBombInfo().index].children[0].classList.add('inverted');
+        const bomb = nodesRef.current[getNodeBombInfo().index].children[0] as HTMLElement;
+        if (pathNodes.length === 0) {
+          bomb.style.color = '#ffffff';
+        }
       }
       setDarkMode(isChecked);
       speedSideNavRef.current?.classList.add('speed-menu-inverted', 'inverted');
@@ -122,8 +137,18 @@ function App() {
       semanticUILightMode(openSideNavRef.current!!);
       nodesRef.current[getNodeStartInfo().index].children[0].classList.remove('inverted');
       nodesRef.current[getNodeTargetInfo().index].children[0].classList.remove('inverted');
+      const start = nodesRef.current[getNodeStartInfo().index].children[0] as HTMLElement;
+      const target = nodesRef.current[getNodeTargetInfo().index].children[0] as HTMLElement;
+      if (pathNodes.length === 0) {
+        start.style.color = '#212529';
+        target.style.color = '#212529';
+      }
       if (getBombIndex() !== -1) {
         nodesRef.current[getNodeBombInfo().index].children[0].classList.remove('inverted');
+        const bomb = nodesRef.current[getNodeBombInfo().index].children[0] as HTMLElement;
+        if (pathNodes.length === 0) {
+          bomb.style.color = '#212529';
+        }
       }
       setDarkMode(isChecked);
       speedSideNavRef.current?.classList.remove('speed-menu-inverted', 'inverted');
@@ -160,6 +185,41 @@ function App() {
     currentActiveMazeAndPattern = 0;
   };
 
+  // clear path nodes
+  const clearPathNodes = (nodes: HTMLDivElement[]) => {
+    clearVisitedNodes(nodes);
+    pathNodes.forEach((idx: number) => {
+      const node: HTMLDivElement | null = nodes[idx];
+      const isWallNode = getAttr(node, dataIsWallNode);
+      const isStartNode = getAttr(node, dataIsStartNode);
+      const isTargetNode = getAttr(node, dataIsTargetNode);
+      const isBombNode = getAttr(node, dataIsBombNode);
+
+      if (node !== null && isWallNode === 'false') {
+        node.style.backgroundColor = transparent;
+        node.classList.add('pf-grid-node-border-color');
+      }
+
+      if (isStartNode === 'true' || isTargetNode === 'true' || isBombNode === 'true') {
+        const child = node.children[0] as HTMLElement;
+        if (isSliderChecked) {
+          child.style.color = '#ffffff';
+        } else {
+          child.style.color = '#212529';
+        }
+      }
+
+      if (isStartNode === 'false' && isTargetNode === 'false' && isBombNode === 'false') {
+        setAttr(node, dataIsArrowNode, 'false');
+        const childrenCollections = node.children;
+        if (childrenCollections.length > 0) {
+          childrenCollections[0].remove();
+        }
+      }
+    });
+    pathNodes.length = 0;
+  };
+
   // show cover
   const showCover = (hideMazesPattern: boolean) => {
     animateCoverRef.current!!.style.display = 'block';
@@ -184,7 +244,7 @@ function App() {
 
   // mazes and patterns
   const animateMazesAndPatterns = (maze: string, idx: number) => {
-    clearWalls(nodesRef.current, resetMazesAndPatterns);
+    clearWalls(nodesRef.current, resetMazesAndPatterns, clearPathNodes);
     const index = currentActiveMazeAndPattern;
     currentActiveMazeAndPattern = idx;
     mazesPatternDetailRef.current!!.textContent = maze;
@@ -201,7 +261,7 @@ function App() {
 
     switch (maze) {
       case mazesKeys[0]:
-        clearWalls(nodesRef.current, resetMazesAndPatterns);
+        clearWalls(nodesRef.current, resetMazesAndPatterns, clearPathNodes);
         break;
       case mazesKeys[1]:
         showCover(false);
@@ -242,7 +302,7 @@ function App() {
     }
 
     animateCoverRef.current!!.style.display = 'none';
-    clearWalls(nodesRef.current, resetMazesAndPatterns);
+    clearWalls(nodesRef.current, resetMazesAndPatterns, clearPathNodes);
     nodesRef.current.length = 0;
 
     const sideNavAddBomb = sideNavRef.current?.children[1];
@@ -298,6 +358,7 @@ function App() {
         sideNav={sideNavRef}
         showCover={showCover}
         hideCover={hideCover}
+        clearPathNodes={clearPathNodes}
       />
 
       {/* <OpenSideNav
@@ -318,12 +379,13 @@ function App() {
         resetBoard={
           () => {
             resetBoard(
-              nodesRef.current, noOfRows, noOfNodes, resetMazesAndPatterns, sideNavRef.current,
+              nodesRef.current, noOfRows, noOfNodes,
+              resetMazesAndPatterns, sideNavRef.current, clearPathNodes,
             );
           }
         }
         clearPathNodes={() => { clearPathNodes(nodesRef.current); }}
-        clearWalls={() => { clearWalls(nodesRef.current, resetMazesAndPatterns); }}
+        clearWalls={() => { clearWalls(nodesRef.current, resetMazesAndPatterns, clearPathNodes); }}
         speedSideNavRef={speedSideNavRef}
         openSideNavRef={openSideNavRef}
       />

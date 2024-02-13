@@ -7,7 +7,7 @@ import { arrowDown, topNav, TopNavProps } from '../helperFunctions/props';
 import './Nav.css';
 import aStar from '../pathfindingAlgorihms/aStar';
 import {
-  addBomb, clearPathNodes, getBombIndex, setTtypeOfSearchAlgorithm,
+  addBomb, getBombIndex, setTtypeOfSearchAlgorithm,
 } from '../App.Functions';
 import bidirectionalSearch from '../pathfindingAlgorihms/bidirectionalSearch';
 import dijkstras from '../pathfindingAlgorihms/dijkstras';
@@ -42,7 +42,7 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
   let timer = 0;
   const visualize = (e: any) => {
     e.preventDefault();
-    clearPathNodes(props.nodes.current!!);
+    props.clearPathNodes(props.nodes.current!!);
     const dropdown = (ref as React.RefObject<HTMLDivElement>).current?.childNodes[1].childNodes[0];
     const { value } = (dropdown as HTMLSelectElement);
     switch (value) {

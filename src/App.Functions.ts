@@ -1,12 +1,12 @@
 import { transparent } from './helperFunctions/color';
 import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode,
-  dataIsBombNode, dataIdx, dataIsGapNode, dataIsArrowNode,
+  dataIsBombNode, dataIdx, dataIsGapNode,
 } from './helperFunctions/customAttr';
 import {
   bombNode, createDraggble, getNodeStartInfo, getNodeTargetInfo, getNodeBombInfo,
   wallNodes, addRemoveWallNode, getAttr, setAttr, getDarkMode, gapNodes,
-  pathNodes, visitedNodesBomb, visitedNodesTarget,
+  visitedNodesBomb, visitedNodesTarget,
 } from './helperFunctions/helperFunctions';
 import {
   NodeType, RowsType, RowType,
@@ -100,7 +100,7 @@ export const getNewPfGridWithWallToggled = (
 };
 
 // clear visited nodes
-const clearVisitedNodes = (nodes: HTMLDivElement[]) => {
+export const clearVisitedNodes = (nodes: HTMLDivElement[]) => {
   visitedNodesBomb.forEach((idx: number) => {
     const node: HTMLDivElement | null = nodes[idx];
     const isWallNode = getAttr(node, dataIsWallNode);
@@ -115,32 +115,6 @@ const clearVisitedNodes = (nodes: HTMLDivElement[]) => {
   visitedNodesTarget.length = 0;
 };
 
-// clear path nodes
-export const clearPathNodes = (nodes: HTMLDivElement[]) => {
-  clearVisitedNodes(nodes);
-  pathNodes.forEach((idx: number) => {
-    const node: HTMLDivElement | null = nodes[idx];
-    const isWallNode = getAttr(node, dataIsWallNode);
-    const isStartNode = getAttr(node, dataIsStartNode);
-    const isTargetNode = getAttr(node, dataIsTargetNode);
-    const isBombNode = getAttr(node, dataIsBombNode);
-
-    if (node !== null && isWallNode === 'false') {
-      node.style.backgroundColor = transparent;
-      node.classList.add('pf-grid-node-border-color');
-    }
-
-    if (isStartNode === 'false' && isTargetNode === 'false' && isBombNode === 'false') {
-      setAttr(node, dataIsArrowNode, 'false');
-      const childrenCollections = node.children;
-      if (childrenCollections.length > 0) {
-        childrenCollections[0].remove();
-      }
-    }
-  });
-  pathNodes.length = 0;
-};
-
 // clear gap nodes
 const clearGapNodes = (nodes: HTMLDivElement[]) => {
   gapNodes.forEach((idx: number) => {
@@ -151,7 +125,11 @@ const clearGapNodes = (nodes: HTMLDivElement[]) => {
 };
 
 // clear wall nodes
-export const clearWalls = (nodes: HTMLDivElement[], resetMazesAndPatterns: () => void) => {
+export const clearWalls = (
+  nodes: HTMLDivElement[], resetMazesAndPatterns: () => void,
+  // eslint-disable-next-line no-unused-vars
+  clearPathNodes: (nodesH: HTMLDivElement[]) => void,
+) => {
   // if (wallNodes.length === 0) return;
   clearPathNodes(nodes);
   clearGapNodes(nodes);
@@ -173,6 +151,8 @@ export const clearWalls = (nodes: HTMLDivElement[], resetMazesAndPatterns: () =>
 export const resetBoard = (
   nodes: HTMLDivElement[], noOfRows: number, noOfNodes: number,
   resetMazesAndPatterns: () => void, sideNav: HTMLDivElement | null,
+  // eslint-disable-next-line no-unused-vars
+  clearPathNodes: (nodesH: HTMLDivElement[]) => void,
 ) => {
   if (bombIndex !== -1) {
     const sideNavAddBomb = sideNav?.children[1];
@@ -202,7 +182,7 @@ export const resetBoard = (
   getNodeStartInfo().index = startIdx;
   getNodeTargetInfo().index = targetIdx;
 
-  clearWalls(nodes, resetMazesAndPatterns);
+  clearWalls(nodes, resetMazesAndPatterns, clearPathNodes);
 };
 
 // add bomb node

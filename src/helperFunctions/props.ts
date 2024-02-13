@@ -32,6 +32,8 @@ export interface TopNavProps extends NavProps {
   // eslint-disable-next-line no-unused-vars
   showCover: (hideMazesPattern: boolean) => void;
   hideCover: () => void;
+  // eslint-disable-next-line no-unused-vars
+  clearPathNodes: (nodesH: HTMLDivElement[]) => void;
 }
 
 // side nav props

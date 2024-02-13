@@ -214,7 +214,12 @@ export const addPathNode = (
   // nodeH.classList.remove('pf-grid-node-border-color');
   nodeH.style.backgroundColor = shortestPathNodeColor;
 
-  if (isStartNode === 'true' || isTargetNode === 'true' || isBombNode === 'true') return;
+  if (isStartNode === 'true' || isTargetNode === 'true' || isBombNode === 'true') {
+    const child = nodeH.children[0] as HTMLElement;
+    child.style.color = '#ff1493';
+    return;
+  }
+
   setAttr(nodeH, dataIsArrowNode, 'true');
 
   if (isArrowNode === 'true') {
