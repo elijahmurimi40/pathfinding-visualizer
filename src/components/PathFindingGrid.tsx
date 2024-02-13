@@ -102,6 +102,7 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
                         data-is-last-row={isNodeInLastRow}
                         // gap node for mazes
                         data-is-gap-node={false}
+                        data-is-arrow-node={false}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           onMouseDown(nodesRef.current!![idx]);

@@ -37,14 +37,17 @@ const size = (map: Map<any, any>) => {
 };
 
 const animatePath = (nodes: HTMLDivElement[], animations: number[], hideCover: () => void) => {
+  const noOfNodesRow = noOfNodesH;
   for (let i = 0; i < animations.length; i += 1) {
     const timerH = window.setTimeout(() => {
       const nodeIdx = animations[i];
       if (getFinishButtonStatus()) {
-        finishAnimation(nodes, null, null, animations);
+        finishAnimation(nodes, null, null, animations, noOfNodesRow);
         hideCover();
       } else {
-        addPathNode(nodes[nodeIdx], nodeIdx);
+        const prevIdx = animations[i - 1];
+        const nextIdx = animations[i + 1];
+        addPathNode(nodes, prevIdx, nodeIdx, nextIdx, noOfNodesRow, '');
         if (i === animations.length - 1) hideCover();
       }
     }, i * timer);
@@ -61,7 +64,7 @@ const animateTargetNode = (
     const timerH = window.setTimeout(() => {
       const nodeIdx = animations[i];
       if (getFinishButtonStatus()) {
-        finishAnimation(nodes, null, animations, pathAniamtions);
+        finishAnimation(nodes, null, animations, pathAniamtions, noOfNodesH);
         if (!isPathFound) { showError(); hideCover(); }
         hideCover();
       } else {
@@ -90,7 +93,7 @@ const animateBombNode = (
       const timerH = window.setTimeout(() => {
         const nodeIdx = bombAnimations[i];
         if (getFinishButtonStatus()) {
-          finishAnimation(nodes, bombAnimations, targetAnimations, pathAnimations);
+          finishAnimation(nodes, bombAnimations, targetAnimations, pathAnimations, noOfNodesH);
           hideCover();
           if (!isPathFound) { showError(); hideCover(); }
           if (!isBombPathFound) { showError(); hideCover(); }

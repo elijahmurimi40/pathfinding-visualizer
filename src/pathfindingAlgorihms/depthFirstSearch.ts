@@ -216,7 +216,7 @@ const depthFirstSearch = (
   showCover(true);
   animateBombNode(
     nodes, bombAnimations, targetAnimations, optimalPath,
-    hideCover, showError, bombNode, isPathFound, isBombPathFound,
+    hideCover, showError, bombNode, isPathFound, isBombPathFound, noOfNodesH,
   );
 };
 

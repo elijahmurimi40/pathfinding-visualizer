@@ -4,7 +4,7 @@ import { Draggable } from 'gsap/Draggable';
 import { NodeInfoType } from './types';
 import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode, dataIdx,
-  dataIsFirstCol, dataIsLastCol, dataIsFirstRow, dataIsLastRow, dataIsGapNode,
+  dataIsFirstCol, dataIsLastCol, dataIsFirstRow, dataIsLastRow, dataIsGapNode, dataIsArrowNode,
 } from './customAttr';
 import {
   shortestPathNodeColor, transparent, visitedNodeColor, visitedNodeColorToBomb, wallNodeColor,
@@ -67,6 +67,7 @@ const calculateNodeNewIndex = (params: number[], type: string = '') => {
 export const finishAnimation = (
   nodes: HTMLDivElement[], bombAnimations: number[] | null,
   targetAnimations: number[] | null, pathAniamtions: number[] | null,
+  noOfNodesRow: number,
 ) => {
   clearTimeouts();
   setFinishButtonStatus(false);
@@ -88,7 +89,9 @@ export const finishAnimation = (
   if (pathAniamtions != null) {
     for (let i = 0; i < pathAniamtions.length; i += 1) {
       const nodeIdx = pathAniamtions[i];
-      addPathNode(nodes[nodeIdx], nodeIdx);
+      const prevIdx = pathAniamtions[i - 1];
+      const nextIdx = pathAniamtions[i + 1];
+      addPathNode(nodes, prevIdx, nodeIdx, nextIdx, noOfNodesRow, '');
     }
   }
 };
@@ -158,7 +161,7 @@ export const getAttr = (node: HTMLDivElement, attr: string) => {
     case dataIsGapNode:
       return node.getAttribute(attr);
     default:
-      return node.getAttribute('');
+      return node.getAttribute(attr);
   }
 };
 
@@ -181,7 +184,7 @@ export const setAttr = (node: HTMLDivElement, attr: string, value: any) => {
       node.setAttribute(attr, value);
       break;
     default:
-      node.setAttribute('', '');
+      node.setAttribute(attr, value);
   }
 };
 
@@ -198,11 +201,138 @@ export const addVisitedNode = (node: HTMLDivElement, toTarget: string, idx: numb
 };
 
 // add path node
-export const addPathNode = (node: HTMLDivElement, idx: number) => {
+export const addPathNode = (
+  nodes: HTMLDivElement[], prevIdx: number, idx: number, nextIdx: number, noOfNodesRow: number,
+  p: string,
+) => {
   pathNodes.push(idx);
-  const nodeH = node;
+  const nodeH = nodes[idx];
+  const isStartNode = getAttr(nodeH, dataIsStartNode);
+  const isTargetNode = getAttr(nodeH, dataIsTargetNode);
+  const isBombNode = getAttr(nodeH, dataIsBombNode);
+  const isArrowNode = getAttr(nodeH, dataIsArrowNode);
   // nodeH.classList.remove('pf-grid-node-border-color');
   nodeH.style.backgroundColor = shortestPathNodeColor;
+
+  if (isStartNode === 'true' || isTargetNode === 'true' || isBombNode === 'true') return;
+  setAttr(nodeH, dataIsArrowNode, 'true');
+
+  if (isArrowNode === 'true') {
+    console.log(p);
+    return;
+  }
+
+  drawArrows(nodeH, prevIdx, idx, nextIdx, noOfNodesRow);
+};
+
+// show directional arrows.
+const drawArrows = (
+  nodeH: HTMLDivElement, prevIdx: number, idx: number, nextIdx: number, noOfNodesRow: number,
+) => {
+  const arrow = document.createElement('i');
+
+  // ######## start of clockwise direction ########
+  // up to right
+  if (prevIdx - idx === noOfNodesRow && nextIdx - idx === 1) {
+    arrow.classList.add('share', 'icon');
+    arrow.style.marginLeft = '8px';
+    arrow.style.marginTop = '3px';
+    nodeH.appendChild(arrow);
+    return;
+  }
+
+  // right to down
+  if (nextIdx - idx === noOfNodesRow && idx - prevIdx === 1) {
+    arrow.classList.add('share', 'clockwise', 'rotated', 'icon');
+    arrow.style.marginLeft = '6px';
+    arrow.style.marginTop = '9px';
+    nodeH.appendChild(arrow);
+    return;
+  }
+
+  // down to left
+  if (idx - prevIdx === noOfNodesRow && idx - nextIdx === 1) {
+    arrow.classList.add('reply', 'vertically', 'flipped', 'icon');
+    arrow.style.marginRight = '5px';
+    arrow.style.marginTop = '7px';
+    nodeH.appendChild(arrow);
+    return;
+  }
+
+  // left to up
+  if (idx - nextIdx === noOfNodesRow && prevIdx - idx === 1) {
+    arrow.classList.add('share', 'counterclockwise', 'rotated', 'icon');
+    arrow.style.marginLeft = '2px';
+    arrow.style.marginTop = '2px';
+    nodeH.appendChild(arrow);
+    return;
+  }
+  // ######## end of clockwise direction ########
+
+  // ######## start of counter clockwise direction ########
+  // left to down
+  if (nextIdx - idx === noOfNodesRow && prevIdx - idx === 1) {
+    arrow.classList.add('reply', 'counterclockwise', 'rotated', 'icon');
+    arrow.style.marginLeft = '2px';
+    arrow.style.marginTop = '9px';
+    nodeH.appendChild(arrow);
+    return;
+  }
+
+  // down to right
+  if (idx - prevIdx === noOfNodesRow && nextIdx - idx === 1) {
+    arrow.classList.add('share', 'vertically', 'flipped', 'icon');
+    arrow.style.marginLeft = '8px';
+    arrow.style.marginTop = '7px';
+    nodeH.appendChild(arrow);
+    return;
+  }
+
+  // right to up
+  if (idx - nextIdx === noOfNodesRow && idx - prevIdx === 1) {
+    arrow.classList.add('reply', 'clockwise', 'rotated', 'icon');
+    arrow.style.marginLeft = '7px';
+    arrow.style.marginTop = '1px';
+    nodeH.appendChild(arrow);
+    return;
+  }
+
+  // up to left
+  if (prevIdx - idx === noOfNodesRow && idx - nextIdx === 1) {
+    arrow.classList.add('reply', 'icon');
+    arrow.style.marginRight = '2px';
+    arrow.style.marginTop = '2px';
+    nodeH.appendChild(arrow);
+    return;
+  }
+  // ######## end of counter clockwise direction ########
+
+  // going right
+  if (idx - prevIdx === 1) {
+    arrow.classList.add('long', 'arrow', 'alternate', 'right', 'large', 'icon');
+    nodeH.appendChild(arrow);
+    return;
+  }
+
+  // going left
+  if (prevIdx - idx === 1) {
+    arrow.classList.add('long', 'arrow', 'alternate', 'left', 'large', 'icon');
+    nodeH.appendChild(arrow);
+    return;
+  }
+
+  // going up
+  if (idx - nextIdx === noOfNodesRow) {
+    arrow.classList.add('long', 'arrow', 'alternate', 'up', 'large', 'icon');
+    nodeH.appendChild(arrow);
+    return;
+  }
+
+  // going down
+  if (nextIdx - idx === noOfNodesRow) {
+    arrow.classList.add('long', 'arrow', 'alternate', 'down', 'large', 'icon');
+    nodeH.appendChild(arrow);
+  }
 };
 
 // add gapNode

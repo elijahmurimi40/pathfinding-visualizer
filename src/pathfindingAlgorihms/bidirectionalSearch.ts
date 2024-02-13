@@ -34,14 +34,17 @@ interface NodeType {
 const animatePath = (optimalPath: number[], nodes: HTMLDivElement[], hideCover: () => void) => {
   if (isPathFound) {
     resetTimeouts([]);
+    const noOfNodesRow = noOfNodesH;
     for (let i = 0; i < optimalPath.length; i += 1) {
       const timerH = window.setTimeout(() => {
         const nodeIdx = optimalPath[i];
         if (getFinishButtonStatus()) {
-          finishAnimation(nodes, null, null, optimalPath);
+          finishAnimation(nodes, null, null, optimalPath, noOfNodesRow);
           hideCover();
         } else {
-          addPathNode(nodes[nodeIdx], nodeIdx);
+          const prevIdx = optimalPath[i - 1];
+          const nextIdx = optimalPath[i + 1];
+          addPathNode(nodes, prevIdx, nodeIdx, nextIdx, noOfNodesRow, '');
           if (i === optimalPath.length - 1) hideCover();
         }
       }, i * timer);
@@ -244,7 +247,7 @@ const bidirectionalSearch = (
     const timerH = window.setTimeout(() => {
       const nodeIdx = animations[i];
       if (getFinishButtonStatus()) {
-        finishAnimation(nodes, null, animations, optimalPath);
+        finishAnimation(nodes, null, animations, optimalPath, noOfNodesH);
         hideCover();
         if (!isPathFound) { showError(); hideCover(); }
       } else {

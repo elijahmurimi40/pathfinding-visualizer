@@ -1,7 +1,7 @@
 import { transparent } from './helperFunctions/color';
 import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode,
-  dataIsBombNode, dataIdx, dataIsGapNode,
+  dataIsBombNode, dataIdx, dataIsGapNode, dataIsArrowNode,
 } from './helperFunctions/customAttr';
 import {
   bombNode, createDraggble, getNodeStartInfo, getNodeTargetInfo, getNodeBombInfo,
@@ -121,9 +121,21 @@ export const clearPathNodes = (nodes: HTMLDivElement[]) => {
   pathNodes.forEach((idx: number) => {
     const node: HTMLDivElement | null = nodes[idx];
     const isWallNode = getAttr(node, dataIsWallNode);
+    const isStartNode = getAttr(node, dataIsStartNode);
+    const isTargetNode = getAttr(node, dataIsTargetNode);
+    const isBombNode = getAttr(node, dataIsBombNode);
+
     if (node !== null && isWallNode === 'false') {
       node.style.backgroundColor = transparent;
       node.classList.add('pf-grid-node-border-color');
+    }
+
+    if (isStartNode === 'false' && isTargetNode === 'false' && isBombNode === 'false') {
+      setAttr(node, dataIsArrowNode, 'false');
+      const childrenCollections = node.children;
+      if (childrenCollections.length > 0) {
+        childrenCollections[0].remove();
+      }
     }
   });
   pathNodes.length = 0;
