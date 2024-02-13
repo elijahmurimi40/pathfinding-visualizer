@@ -180,7 +180,7 @@ export const resetBoard = (
     const newNode = nodes[getNodeBombInfo().index];
     setAttr(newNode, dataIsBombNode, 'false');
     i?.remove();
-    addBombElem.textContent = 'Add Bomb';
+    addBombElem.textContent = 'Add Pin';
     getNodeBombInfo().index = -1;
     bombIndex = -1;
   }
@@ -243,12 +243,12 @@ export const addBomb = (
     setAttr(node, dataIsBombNode, 'true');
     i = document.createElement('i');
     const addDarkMode = getDarkMode() ? 'inverted' : 'NA';
-    i.classList.add('large', 'bomb', 'icon', bombNode, addDarkMode);
+    i.classList.add('large', 'map', 'pin', 'icon', bombNode, addDarkMode);
     node.appendChild(i);
 
     createDraggble(bombNode, nodeIndex, noOfNodes, nodes);
 
-    addBombElem.textContent = 'Remove Bomb';
+    addBombElem.textContent = 'Remove Pin';
     bombIndex = nodeIndex;
   } else {
     const newNode = nodes[getNodeBombInfo().index];
@@ -256,7 +256,7 @@ export const addBomb = (
     if (getNodeBombInfo().isWallNode === 'true') addRemoveWallNode(newNode, getNodeBombInfo().index);
     i?.remove();
 
-    addBombElem.textContent = 'Add Bomb';
+    addBombElem.textContent = 'Add Pin';
     bombIndex = -1;
   }
 };

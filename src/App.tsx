@@ -247,7 +247,7 @@ function App() {
 
     const sideNavAddBomb = sideNavRef.current?.children[1];
     const addBombElem = sideNavAddBomb!!.children[1];
-    addBombElem.textContent = 'Add Bomb';
+    addBombElem.textContent = 'Add Pin';
 
     const windowHeight = window.innerHeight;
     const pfGridOffset = pfGridRef.current!!.offsetTop;

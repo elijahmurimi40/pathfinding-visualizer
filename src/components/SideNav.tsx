@@ -196,8 +196,8 @@ const SideNav = React.forwardRef((
         </Menu.Item>
 
         <Menu.Item className="menu-item" onClick={props.addBomb}>
-          <Icon name="bomb" />
-          <span className="menu-item-name">Add Bomb</span>
+          <Icon name="map pin" />
+          <span className="menu-item-name">Add Pin</span>
         </Menu.Item>
 
         <Menu.Item className="menu-item" onClick={props.resetBoard}>
@@ -221,20 +221,20 @@ const SideNav = React.forwardRef((
 
           <div style={{ marginTop: '5px' }} className="info-div">
             <span>
-              <Icon name="chevron right" />
+              <Icon name="bullseye" />
               Start Node
             </span>
 
             <br />
             <span>
-              <Icon name="bullseye" />
+              <Icon name="map marker alternate" />
               Target Node
             </span>
 
             <br />
             <span>
-              <Icon name="bomb" />
-              Bomb Node
+              <Icon name="map pin" />
+              Pin Node
             </span>
 
             <br />

@@ -41,12 +41,12 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
     iNode[nodeIndex] = document.createElement('i');
     const addDarkMode = getDarkMode() ? 'inverted' : 'NA';
     if (type === startNode) {
-      iNode[nodeIndex].classList.add('large', 'chevron', 'right', 'icon', addDarkMode, type);
+      iNode[nodeIndex].classList.add('large', 'bullseye', 'icon', addDarkMode, type);
       node?.appendChild(iNode[nodeIndex]);
     }
 
     if (type === targetNode) {
-      iNode[nodeIndex].classList.add('large', 'bullseye', 'icon', addDarkMode, type);
+      iNode[nodeIndex].classList.add('large', 'map', 'marker', 'alternate', 'icon', addDarkMode, type);
       node?.appendChild(iNode[nodeIndex]);
     }
     createDraggble(type, nodeIndex, noOfNodes, nodesRef.current);
