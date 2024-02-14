@@ -209,6 +209,26 @@ function App() {
         }
       }
 
+      const start = nodesRef.current[getNodeStartInfo().index].children[0] as HTMLElement;
+      const target = nodesRef.current[getNodeTargetInfo().index].children[0] as HTMLElement;
+      if (isSliderChecked) {
+        start.style.color = '#ffffff';
+        target.style.color = '#ffffff';
+      } else {
+        start.style.color = '#212529';
+        target.style.color = '#212529';
+      }
+
+      if (getBombIndex() !== -1) {
+        nodesRef.current[getNodeBombInfo().index].children[0].classList.add('inverted');
+        const bomb = nodesRef.current[getNodeBombInfo().index].children[0] as HTMLElement;
+        if (isSliderChecked) {
+          bomb.style.color = '#ffffff';
+        } else {
+          bomb.style.color = '#212529';
+        }
+      }
+
       if (isStartNode === 'false' && isTargetNode === 'false' && isBombNode === 'false') {
         setAttr(node, dataIsArrowNode, 'false');
         const childrenCollections = node.children;
