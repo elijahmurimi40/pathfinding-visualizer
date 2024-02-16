@@ -12,3 +12,4 @@ export const dataIsFirstRow = 'data-is-first-row';
 export const dataIsLastRow = 'data-is-last-row';
 export const dataIsGapNode = 'data-is-gap-node';
 export const dataIsArrowNode = 'data-is-arrow-node';
+export const dataIsPathNode = 'data-is-path-node';

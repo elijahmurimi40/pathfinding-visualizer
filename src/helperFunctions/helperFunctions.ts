@@ -3,8 +3,8 @@ import { Draggable } from 'gsap/Draggable';
 // import { TweenLite } from 'gsap/all';
 import { NodeInfoType } from './types';
 import {
-  dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode, dataIdx,
-  dataIsFirstCol, dataIsLastCol, dataIsFirstRow, dataIsLastRow, dataIsGapNode, dataIsArrowNode,
+  dataIsStartNode, dataIsTargetNode, dataIsWallNode, dataIsBombNode, dataIdx, dataIsFirstCol,
+  dataIsLastCol, dataIsFirstRow, dataIsLastRow, dataIsGapNode, dataIsArrowNode, dataIsPathNode,
 } from './customAttr';
 import {
   shortestPathNodeColor, transparent, visitedNodeColor, visitedNodeColorToBomb, wallNodeColor,
@@ -16,6 +16,7 @@ gsap.registerPlugin(Draggable);
 let initialIndex = 0;
 let isDarkMode = false;
 let prevIndex = 0;
+let isStartTargetPinNode = false;
 
 let nodeInfoStart: NodeInfoType = {
   index: -1,
@@ -211,30 +212,50 @@ export const addPathNode = (
   const isTargetNode = getAttr(nodeH, dataIsTargetNode);
   const isBombNode = getAttr(nodeH, dataIsBombNode);
   const isArrowNode = getAttr(nodeH, dataIsArrowNode);
+  const isPathNode = getAttr(nodeH, dataIsPathNode);
   // nodeH.classList.remove('pf-grid-node-border-color');
   nodeH.style.backgroundColor = shortestPathNodeColor;
 
   if (isStartNode === 'true' || isTargetNode === 'true' || isBombNode === 'true') {
     const child = nodeH.children[0] as HTMLElement;
     child.style.color = '#ff1493';
+    if (isPathNode === 'false') {
+      isStartTargetPinNode = true;
+    }
+    setAttr(nodeH, dataIsPathNode, 'true');
     return;
   }
 
+  setAttr(nodeH, dataIsPathNode, 'true');
   setAttr(nodeH, dataIsArrowNode, 'true');
 
   if (isArrowNode === 'true') {
     console.log(p);
-    return;
+    isStartTargetPinNode = false;
+    // return;
   }
 
-  drawArrows(nodeH, prevIdx, idx, nextIdx, noOfNodesRow);
+  drawArrows(nodes, nodeH, prevIdx, idx, nextIdx, noOfNodesRow);
+};
+
+const drawStartArrow = (element: HTMLElement) => {
+  const elementH = element;
+  elementH.style.color = '#ff1493';
+  isStartTargetPinNode = false;
 };
 
 // show directional arrows.
 const drawArrows = (
-  nodeH: HTMLDivElement, prevIdx: number, idx: number, nextIdx: number, noOfNodesRow: number,
+  nodes: HTMLDivElement[], nodeH: HTMLDivElement, prevIdx: number, idx: number,
+  nextIdx: number, noOfNodesRow: number,
 ) => {
   const arrow = document.createElement('i');
+  const isTargetNode = getAttr(nodes[nextIdx], dataIsTargetNode);
+  const isBombNode = getAttr(nodes[nextIdx], dataIsBombNode);
+
+  if (isStartTargetPinNode || isTargetNode === 'true' || isBombNode === 'true') {
+    drawStartArrow(arrow);
+  }
 
   // ######## start of clockwise direction ########
   // up to right

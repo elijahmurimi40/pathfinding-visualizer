@@ -30,3 +30,21 @@
 .wall-node {
     background-color: #016936;
 }
+
+.top-icon-left-right {
+    margin-top: -3px !important;
+    height: 0px !important;
+    display: block !important;
+    margin-bottom: 8px !important;
+}
+
+.up-down-f {
+    height: 0px !important;
+    display: block !important;
+    margin-left: -5px !important;
+    margin-top: 1px !important;
+}
+
+.up-down-l {
+    margin-left: 5px !important;
+}

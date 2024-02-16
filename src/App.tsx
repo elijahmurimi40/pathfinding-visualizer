@@ -23,7 +23,8 @@ import { clearTimeouts } from './mazesAndPatterns/mazesAndPatternsHelper';
 import recursiveDivisionHorizontalSkew from './mazesAndPatterns/recursiveDivisionHorizontalSkew';
 import recursiveDivisionVerticalSkew from './mazesAndPatterns/recursiveDivisionVerticalSkew';
 import {
-  dataIsArrowNode, dataIsBombNode, dataIsStartNode, dataIsTargetNode, dataIsWallNode,
+  dataIsArrowNode, dataIsBombNode, dataIsPathNode,
+  dataIsStartNode, dataIsTargetNode, dataIsWallNode,
 } from './helperFunctions/customAttr';
 import { transparent } from './helperFunctions/color';
 
@@ -236,6 +237,8 @@ function App() {
           childrenCollections[0].remove();
         }
       }
+
+      setAttr(node, dataIsPathNode, 'false');
     });
     pathNodes.length = 0;
   };
