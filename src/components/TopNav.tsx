@@ -91,13 +91,16 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
     const { value } = (dropdown as HTMLSelectElement);
     const sideNavAddBomb = props.sideNav?.current?.children[1];
     // Remove bomb node
-    if (value === algorithms[1]) {
+    if (value === algorithms[1] || value === algorithms[3]) {
       sideNavAddBomb!!.classList.add('disabled');
     } else {
       sideNavAddBomb!!.classList.remove('disabled');
     }
 
-    if (value === algorithms[1] && getBombIndex() !== -1) {
+    if (
+      (value === algorithms[1] || value === algorithms[3])
+      && getBombIndex() !== -1
+    ) {
       addBomb(props.noOfNodes, props.nodes.current!!, props.sideNav.current);
       // sideNavAddBomb!!.classList.add('disabled');
     } else {

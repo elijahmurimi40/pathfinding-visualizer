@@ -191,7 +191,12 @@ export const addBomb = (
   nodes: HTMLDivElement[],
   sideNav: HTMLDivElement | null,
 ) => {
-  if (typeOfSearchAlgorithm === 'Bidirectional Algorithm') return;
+  if (
+    typeOfSearchAlgorithm === 'Bidirectional Algorithm'
+    || typeOfSearchAlgorithm === 'Depth-first Search'
+  ) {
+    return;
+  }
   const sideNavAddBomb = sideNav?.children[1];
   const addBombElem = sideNavAddBomb!!.children[1];
 
