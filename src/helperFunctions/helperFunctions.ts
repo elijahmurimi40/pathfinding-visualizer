@@ -435,6 +435,7 @@ export const createDraggble = (
       if (nodeInfo.isWallNode === 'true') {
         addRemoveWallNode(nodes[nodeInfo.index], nodeInfo.index);
       }
+      prevIndex = nodeInfo.index;
       calculateNodeNewIndex([initialIndex, noOfNodes, this.x, this.y]);
 
       const node = nodes[nodeInfo.index];
