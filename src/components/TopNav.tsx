@@ -5,19 +5,12 @@ import pathfindingAlgorithmsOptions, { algorithms } from '../pathfindingAlgorihm
 import Nav from './Nav';
 import { arrowDown, topNav, TopNavProps } from '../helperFunctions/props';
 import './Nav.css';
-import aStar from '../pathfindingAlgorihms/aStar';
 import {
   addBomb, getBombIndex, setTtypeOfSearchAlgorithm,
 } from '../App.Functions';
-import bidirectionalSearch from '../pathfindingAlgorihms/bidirectionalSearch';
-import dijkstras from '../pathfindingAlgorihms/dijkstras';
-import breadthFirstSearch from '../pathfindingAlgorihms/breadthFirstSearch';
-import depthFirstSearch from '../pathfindingAlgorihms/depthFirstSearch';
 
 const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivElement>) => {
-  const [showAlert, setShowAlert] = React.useState(false);
-  const [showNoPath, setShowNoPath] = React.useState(false);
-
+  const { noAlgoRef, noPathRef } = props;
   const options = [];
   const pathFindingAlgorithmsOptions = pathfindingAlgorithmsOptions();
   for (let i = 0; i < pathFindingAlgorithmsOptions.length; i += 1) {
@@ -29,60 +22,9 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
     );
   }
 
-  let noPathTimer = 0;
-  // F for function
-  const showNoPathF = () => {
-    setShowNoPath(true);
-    if (noPathTimer) clearTimeout(noPathTimer);
-    noPathTimer = window.setTimeout(() => {
-      setShowNoPath(false);
-    }, 4000);
-  };
-
-  let timer = 0;
   const visualize = (e: any) => {
     e.preventDefault();
-    props.clearPathNodes(props.nodes.current!!);
-    const dropdown = (ref as React.RefObject<HTMLDivElement>).current?.childNodes[1].childNodes[0];
-    const { value } = (dropdown as HTMLSelectElement);
-    switch (value) {
-      case algorithms[0]:
-        aStar(
-          props.nodes.current!!, props.noOfRows, props.noOfNodes,
-          props.showCover, props.hideCover, showNoPathF,
-        );
-        break;
-      case algorithms[1]:
-        bidirectionalSearch(
-          props.nodes.current!!, props.noOfRows, props.noOfNodes,
-          props.showCover, props.hideCover, showNoPathF,
-        );
-        break;
-      case algorithms[2]:
-        breadthFirstSearch(
-          props.nodes.current!!, props.noOfRows, props.noOfNodes,
-          props.showCover, props.hideCover, showNoPathF,
-        );
-        break;
-      case algorithms[3]:
-        depthFirstSearch(
-          props.nodes.current!!, props.noOfRows, props.noOfNodes,
-          props.showCover, props.hideCover, showNoPathF,
-        );
-        break;
-      case algorithms[4]:
-        dijkstras(
-          props.nodes.current!!, props.noOfRows, props.noOfNodes,
-          props.showCover, props.hideCover, showNoPathF,
-        );
-        break;
-      default:
-        setShowAlert(true);
-        if (timer) clearTimeout(timer);
-        timer = window.setTimeout(() => {
-          setShowAlert(false);
-        }, 2000);
-    }
+    props.visualize(false);
   };
 
   // select on change
@@ -101,7 +43,7 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
       (value === algorithms[1] || value === algorithms[3])
       && getBombIndex() !== -1
     ) {
-      addBomb(props.noOfNodes, props.nodes.current!!, props.sideNav.current);
+      addBomb(props.noOfNodes, props.nodes.current!!, props.sideNav.current, props.visualize);
       // sideNavAddBomb!!.classList.add('disabled');
     } else {
       // sideNavAddBomb!!.classList.remove('disabled');
@@ -155,6 +97,7 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
         </div>
       </div>
       <Alert
+        ref={props.noAlgoRef}
         style={{
           position: 'fixed',
           width: '315px',
@@ -164,15 +107,15 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
           zIndex: 9999,
         }}
         variant="danger"
-        show={showAlert}
         dismissible
-        onClose={() => { setShowAlert(false); }}
+        onClose={() => { noAlgoRef.current!!.style.display = 'none'; }}
         transition={false}
       >
         Select a Pathfinding Algorihm.
       </Alert>
 
       <Alert
+        ref={props.noPathRef}
         style={{
           position: 'fixed',
           width: '315px',
@@ -182,9 +125,8 @@ const TopNav = React.forwardRef((props: TopNavProps, ref: ForwardedRef<HTMLDivEl
           zIndex: 9999,
         }}
         variant="danger"
-        show={showNoPath}
         dismissible
-        onClose={() => { setShowNoPath(false); }}
+        onClose={() => { noPathRef.current!!.style.display = 'none'; }}
         transition={false}
       >
         No Path Found.

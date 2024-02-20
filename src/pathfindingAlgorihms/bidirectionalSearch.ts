@@ -200,6 +200,7 @@ const bidirectionalSearch = (
   showCover: (arg: boolean) => void,
   hideCover: () => void,
   showError: () => void,
+  finish: boolean = false,
 ) => {
   openNodesStart.clear();
   openNodesTarget.clear();
@@ -241,6 +242,13 @@ const bidirectionalSearch = (
 
   hideCover();
   showCover(true);
+  if (finish) {
+    showCover(false);
+    finishAnimation(nodes, null, animations, optimalPath, noOfNodesH);
+    hideCover();
+    if (!isPathFound) { showError(); hideCover(); }
+    return;
+  }
   resetTimeouts([]);
   for (let i = 0; i < animations.length; i += 1) {
     // eslint-disable-next-line no-loop-func

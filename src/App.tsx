@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import TopNav from './components/TopNav';
 import BottomNav from './components/BottomNav';
 import SideNav from './components/SideNav';
@@ -11,7 +11,7 @@ import {
 } from './App.Functions';
 import {
   setFinishButtonStatus, getNodeBombInfo, getNodeStartInfo,
-  getNodeTargetInfo, setDarkMode, pathNodes, getAttr, setAttr,
+  getNodeTargetInfo, setDarkMode, pathNodes, getAttr, setAttr, setIsSearchAlgoUsed,
 } from './helperFunctions/helperFunctions';
 import { mazesKeys } from './mazesAndPatterns/mazesAndPatternsOptions';
 import basicRandomMaze from './mazesAndPatterns/basicRandomMaze';
@@ -27,6 +27,12 @@ import {
   dataIsStartNode, dataIsTargetNode, dataIsWallNode,
 } from './helperFunctions/customAttr';
 import { transparent } from './helperFunctions/color';
+import aStar from './pathfindingAlgorihms/aStar';
+import { algorithms } from './pathfindingAlgorihms/pathfindingAlgorithmsOptions';
+import bidirectionalSearch from './pathfindingAlgorihms/bidirectionalSearch';
+import breadthFirstSearch from './pathfindingAlgorihms/breadthFirstSearch';
+import depthFirstSearch from './pathfindingAlgorihms/depthFirstSearch';
+import dijkstras from './pathfindingAlgorihms/dijkstras';
 
 // pf => pathfinding
 let isSliderChecked = false;
@@ -63,6 +69,8 @@ function App() {
   const mazesPatternButtonsRefTop = useRef<Array<HTMLButtonElement>>([]);
   const mazesPatternButtonsRefBottom = useRef<Array<HTMLButtonElement>>([]);
   const finishButtonRef = useRef<HTMLAnchorElement>(null);
+  const noAlgoRef = useRef<HTMLDivElement>(null);
+  const noPathRef = useRef<HTMLDivElement>(null);
 
   const calculateAndSetDimension = useRef(() => {});
 
@@ -188,6 +196,7 @@ function App() {
 
   // clear path nodes
   const clearPathNodes = (nodes: HTMLDivElement[]) => {
+    setIsSearchAlgoUsed(false);
     clearVisitedNodes(nodes);
     pathNodes.forEach((idx: number) => {
       const node: HTMLDivElement | null = nodes[idx];
@@ -316,6 +325,9 @@ function App() {
     clearTimeouts();
     resetMazesAndPatterns();
 
+    noAlgoRef.current!!.style.display = 'none';
+    noPathRef.current!!.style.display = 'none';
+
     const { innerWidth } = window;
     if (innerWidth < 1250) {
       pfGridRef.current!!.style.marginLeft = '60px';
@@ -355,6 +367,64 @@ function App() {
     clearTimeout(debounceTimer);
   };
 
+  let noPathTimer = 0;
+  // F for function
+  const showNoPathF = () => {
+    noPathRef.current!!.style.display = 'block';
+    if (noPathTimer) clearTimeout(noPathTimer);
+    noPathTimer = window.setTimeout(() => {
+      noPathRef.current!!.style.display = 'none';
+    }, 4000);
+  };
+
+  // when the visualize button is pressed
+  let timer = 0;
+  const visualize = (finish: boolean) => {
+    clearPathNodes(nodesRef.current!!);
+    setIsSearchAlgoUsed(true);
+    const dropdown = (topNavRef as React.RefObject<HTMLDivElement>)
+      .current?.childNodes[1].childNodes[0];
+    const { value } = (dropdown as HTMLSelectElement);
+    switch (value) {
+      case algorithms[0]:
+        aStar(
+          nodesRef.current!!, noOfRows, noOfNodes,
+          showCover, hideCover, showNoPathF, finish,
+        );
+        break;
+      case algorithms[1]:
+        bidirectionalSearch(
+          nodesRef.current!!, noOfRows, noOfNodes,
+          showCover, hideCover, showNoPathF, finish,
+        );
+        break;
+      case algorithms[2]:
+        breadthFirstSearch(
+          nodesRef.current!!, noOfRows, noOfNodes,
+          showCover, hideCover, showNoPathF, finish,
+        );
+        break;
+      case algorithms[3]:
+        depthFirstSearch(
+          nodesRef.current!!, noOfRows, noOfNodes,
+          showCover, hideCover, showNoPathF, finish,
+        );
+        break;
+      case algorithms[4]:
+        dijkstras(
+          nodesRef.current!!, noOfRows, noOfNodes,
+          showCover, hideCover, showNoPathF, finish,
+        );
+        break;
+      default:
+        noAlgoRef.current!!.style.display = 'block';
+        if (timer) clearTimeout(timer);
+        timer = window.setTimeout(() => {
+          noAlgoRef.current!!.style.display = 'none';
+        }, 2000);
+    }
+  };
+
   useEffect(() => {
     // effect
     calculateAndSetDimension.current();
@@ -377,12 +447,11 @@ function App() {
         mazesPatternButtonsRef={[mazesPatternButtonsRefTop, mazesPatternButtonsRefBottom]}
         currentActiveMazeAndPattern={currentActiveMazeAndPattern}
         nodes={nodesRef}
-        noOfRows={noOfRows}
         noOfNodes={noOfNodes}
         sideNav={sideNavRef}
-        showCover={showCover}
-        hideCover={hideCover}
-        clearPathNodes={clearPathNodes}
+        visualize={visualize}
+        noAlgoRef={noAlgoRef}
+        noPathRef={noPathRef}
       />
 
       {/* <OpenSideNav
@@ -398,7 +467,7 @@ function App() {
         height={pfGridHeight}
         addBomb={
           // eslint-disable-next-line max-len
-          () => { addBomb(noOfNodes, nodesRef.current, sideNavRef.current); }
+          () => { addBomb(noOfNodes, nodesRef.current, sideNavRef.current, visualize); }
         }
         resetBoard={
           () => {
@@ -429,6 +498,7 @@ function App() {
         noOfNodes={noOfNodes}
         onMouseDown={handleMouseDown}
         onMouseEnter={handleMouseEnter}
+        visualize={visualize}
       />
 
       <BottomNav

@@ -2,6 +2,7 @@
 import { getBombIndex } from '../App.Functions';
 import { dataIsWallNode } from '../helperFunctions/customAttr';
 import {
+  finishAnimation,
   getAttr, getNodeBombInfo, getNodeStartInfo, getNodeTargetInfo,
 } from '../helperFunctions/helperFunctions';
 import {
@@ -144,6 +145,7 @@ const depthFirstSearch = (
   showCover: (arg: boolean) => void,
   hideCover: () => void,
   showError: () => void,
+  finish: boolean = false,
 ) => {
   nodesH = nodes;
   noOfNodesH = noOfNodes;
@@ -214,6 +216,14 @@ const depthFirstSearch = (
 
   hideCover();
   showCover(true);
+  if (finish) {
+    showCover(false);
+    finishAnimation(nodes, bombAnimations, targetAnimations, optimalPath, noOfNodesH);
+    hideCover();
+    if (!isPathFound) { showError(); hideCover(); }
+    if (!isBombPathFound) { showError(); hideCover(); }
+    return;
+  }
   animateBombNode(
     nodes, bombAnimations, targetAnimations, optimalPath,
     hideCover, showError, bombNode, isPathFound, isBombPathFound, noOfNodesH,

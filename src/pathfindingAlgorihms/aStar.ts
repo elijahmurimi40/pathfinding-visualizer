@@ -292,6 +292,7 @@ const aStar = (
   showCover: (arg: boolean) => void,
   hideCover: () => void,
   showError: () => void,
+  finish: boolean = false,
 ) => {
   nodesH = nodes;
   noOfNodesH = noOfNodes;
@@ -365,6 +366,14 @@ const aStar = (
 
   hideCover();
   showCover(true);
+  if (finish) {
+    showCover(false);
+    finishAnimation(nodes, bombAnimations, targetAnimations, optimalPath, noOfNodesH);
+    hideCover();
+    if (!isPathFound) { showError(); hideCover(); }
+    if (!isBombPathFound) { showError(); hideCover(); }
+    return;
+  }
   animateBombNode(nodes, bombAnimations, targetAnimations, optimalPath, hideCover, showError);
 };
 

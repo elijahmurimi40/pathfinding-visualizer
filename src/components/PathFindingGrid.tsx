@@ -17,8 +17,10 @@ interface Props {
   onMouseDown: (elem: HTMLElement) => void;
   // eslint-disable-next-line no-unused-vars
   onMouseEnter: (elem: HTMLElement,) => void;
+  // eslint-disable-next-line no-unused-vars
+  visualize: (finish: boolean) => void;
 }
-
+// let p = 0;
 const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDivElement>) => {
   const {
     pfGridHeight,
@@ -49,7 +51,7 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
       iNode[nodeIndex].classList.add('large', 'map', 'marker', 'alternate', 'icon', addDarkMode, type);
       node?.appendChild(iNode[nodeIndex]);
     }
-    createDraggble(type, nodeIndex, noOfNodes, nodesRef.current);
+    createDraggble(type, nodeIndex, noOfNodes, nodesRef.current, props.visualize);
   };
 
   return (

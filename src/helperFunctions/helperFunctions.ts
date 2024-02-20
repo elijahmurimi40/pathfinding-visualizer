@@ -64,6 +64,12 @@ const calculateNodeNewIndex = (params: number[], type: string = '') => {
   return 0;
 };
 
+// to know if a search algorith was used
+let isSearchAlgoUsed = false;
+export const setIsSearchAlgoUsed = (isUsed: boolean) => {
+  isSearchAlgoUsed = isUsed;
+};
+
 // function to finish animation when finish button is pressed
 export const finishAnimation = (
   nodes: HTMLDivElement[], bombAnimations: number[] | null,
@@ -399,6 +405,8 @@ export const createDraggble = (
   nodeIndex: number,
   noOfNodes: number,
   nodes: HTMLDivElement[] | null,
+  // eslint-disable-next-line no-unused-vars
+  visualize: (finish: boolean) => void,
 ) => {
   if (className === startNode) nodeInfoStart.index = nodeIndex;
   if (className === targetNode) nodeInfoTarget.index = nodeIndex;
@@ -489,6 +497,16 @@ export const createDraggble = (
         // gsap.to(`.${className}`, { x: nodeInfo.x, y: nodeInfo.y });
       }
 
+      const isArrowNode = getAttr(nodes[nodeInfo.index], dataIsArrowNode);
+      if (isArrowNode === 'true') {
+        const node = nodes[nodeInfo.index];
+        setAttr(node, dataIsArrowNode, 'false');
+        const childrenCollections = node.children;
+        if (childrenCollections.length > 0) {
+          childrenCollections[0].remove();
+        }
+      }
+
       // dragging startNode
       if (className === startNode) {
         nodeInfoStart = JSON.parse(JSON.stringify(nodeInfo));
@@ -512,6 +530,10 @@ export const createDraggble = (
 
       gsap.set(`.${className}`, { x: 0, y: 0 });
       nodes[nodeInfo.index].appendChild(this.target);
+
+      if (isSearchAlgoUsed) {
+        visualize(true);
+      }
     },
   });
 };

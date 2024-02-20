@@ -190,6 +190,8 @@ export const addBomb = (
   noOfNodes: number,
   nodes: HTMLDivElement[],
   sideNav: HTMLDivElement | null,
+  // eslint-disable-next-line no-unused-vars
+  visualize: (finish: boolean) => void,
 ) => {
   if (
     typeOfSearchAlgorithm === 'Bidirectional Algorithm'
@@ -231,7 +233,7 @@ export const addBomb = (
     i.classList.add('large', 'map', 'pin', 'icon', bombNode, addDarkMode);
     node.appendChild(i);
 
-    createDraggble(bombNode, nodeIndex, noOfNodes, nodes);
+    createDraggble(bombNode, nodeIndex, noOfNodes, nodes, visualize);
 
     addBombElem.textContent = 'Remove Pin';
     bombIndex = nodeIndex;
