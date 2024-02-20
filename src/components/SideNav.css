@@ -1,7 +1,7 @@
 .open-side-nav {
     margin-top: 0 !important;
     border-radius: 0px !important;
-    display: flex !important;
+    /* display: flex !important; */
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer;

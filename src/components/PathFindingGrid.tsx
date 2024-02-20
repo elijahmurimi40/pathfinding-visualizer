@@ -19,6 +19,7 @@ interface Props {
   onMouseEnter: (elem: HTMLElement,) => void;
   // eslint-disable-next-line no-unused-vars
   visualize: (finish: boolean) => void;
+  checkWidth: () => void;
 }
 // let p = 0;
 const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDivElement>) => {
@@ -30,6 +31,7 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
     noOfNodes,
     onMouseDown,
     onMouseEnter,
+    checkWidth,
   } = props;
 
   let iNode: HTMLElement[] = [];
@@ -123,6 +125,7 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
             ))
         }
       </div>
+      {checkWidth()}
     </div>
   );
 });

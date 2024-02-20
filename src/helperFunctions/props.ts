@@ -53,4 +53,5 @@ export interface SideNavDivProps extends SideNavProps {
   clearWalls: () => void;
   speedSideNavRef: RefObject<HTMLDivElement> | null;
   openSideNavRef: RefObject<HTMLDivElement> | null;
+  pfGridNodeHolder: Element | undefined;
 }

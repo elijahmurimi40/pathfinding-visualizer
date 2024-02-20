@@ -44,7 +44,10 @@ const speedOnClick = (
 const animateSideNavRefWidth = (
   // eslint-disable-next-line no-unused-vars
   sideNavRef: RefObject<HTMLDivElement> | null, setLeft: (left: number) => void,
+  openSideNavRef: RefObject<HTMLDivElement>,
 ) => {
+  const icon = openSideNavRef.current?.children[0].children[0];
+
   // H for helper
   const sideNavRefH = sideNavRef!!.current!!;
   const sideNavRefHWidth = sideNavRefH.style.width;
@@ -56,11 +59,15 @@ const animateSideNavRefWidth = (
     sideNavRefH.classList.add('side-nav-open');
     sideNavRefH.style.width = '200px';
     setLeft(205);
+    icon?.classList.remove('grid', 'layout');
+    icon?.classList.add('close', 'large');
   } else {
     sideNavRefH.classList.remove('side-nav-open');
     sideNavRefH.classList.add('side-nav');
     sideNavRefH.style.width = '50px';
     setLeft(55);
+    icon?.classList.remove('close', 'large');
+    icon?.classList.add('grid', 'layout');
   }
 };
 
@@ -125,7 +132,8 @@ const SideNav = React.forwardRef((
         <Menu.Item
           className="open-menu-item"
           onClick={() => {
-            animateSideNavRefWidth(ref as RefObject<HTMLDivElement>, setLeftHelper);
+            animateSideNavRefWidth(ref as RefObject<HTMLDivElement>, setLeftHelper,
+              props.openSideNavRef!!);
           }}
         >
           <Icon name="grid layout" />
@@ -172,8 +180,9 @@ const SideNav = React.forwardRef((
         style={{
           width: '50px',
           position: 'absolute',
-          height: `${props.height - 55}px`,
-          top: `${props.top + 55}px`,
+          // height: `${props.height - 65}px`,
+          // top: `${props.top + 55}px`,
+          // left: '0px',
         }}
         className="ui vertical menu side-nav"
         ref={ref}

@@ -321,6 +321,40 @@ function App() {
     return 0;
   };
 
+  const checkWidth = () => {
+    const pfGridNodeHolder = pfGridRef.current?.children[0];
+    const nodeHolderWidth = (pfGridNodeHolder as HTMLDivElement)?.clientWidth;
+    const windowWidth = window.innerWidth;
+    const reimaingWidth = windowWidth - nodeHolderWidth;
+    const sideNavRefH = sideNavRef.current;
+    const icon = openSideNavRef.current?.children[0].children[0];
+
+    if (openSideNavRef?.current != null) {
+      if (windowWidth >= 1580) {
+        openSideNavRef.current.style.display = 'none';
+        sideNavRefH!!.classList.remove('side-nav');
+        sideNavRefH!!.classList.add('side-nav-open');
+        sideNavRefH!!.style.width = '200px';
+        sideNavRefH!!.style.top = `${pfGridRef.current!!.offsetTop + 1}px`;
+        sideNavRefH!!.style.left = `${Math.floor(reimaingWidth / 2) - 200 - 5}px`;
+        const h = pfGridHeight > 854 ? 854 : pfGridHeight - 11;
+        sideNavRefH!!.style.height = `${h}px`;
+      } else {
+        openSideNavRef.current.style.display = 'flex';
+        sideNavRefH!!.classList.remove('side-nav-open');
+        sideNavRefH!!.classList.add('side-nav');
+        sideNavRefH!!.style.width = '50px';
+        sideNavRefH!!.style.top = `${pfGridRef.current!!.offsetTop + 55}px`;
+        sideNavRefH!!.style.left = '0px';
+        const h = pfGridHeight > 854 ? 854 : pfGridHeight - 63;
+        sideNavRefH!!.style.height = `${h}px`;
+
+        icon?.classList.remove('close', 'large');
+        icon?.classList.add('grid', 'layout');
+      }
+    }
+  };
+
   calculateAndSetDimension.current = () => {
     clearTimeouts();
     resetMazesAndPatterns();
@@ -352,7 +386,7 @@ function App() {
     // minus 10 for bottom margin
     const height = remainingWindowHeight - bottomNavHeight - 10;
 
-    setPfGridHeight(height);
+    // setPfGridHeight(height);
     pfGridWidth = pfGridRef.current!!.clientWidth;
 
     // dividing by 25 the height and width of each node
@@ -363,6 +397,7 @@ function App() {
     pfGridTopMargin = (remaingSpace / 2) - 1;
     if (noOfRows > 34) noOfRows = 34;
     const rows: RowsType = generatePfGrid(noOfRows, noOfNodes);
+    setPfGridHeight(height);
     setPfgridRows(rows);
     clearTimeout(debounceTimer);
   };
@@ -461,6 +496,25 @@ function App() {
         sideNavRef={sideNavRef}
       /> */}
 
+      <MazesPatternSwitchButton
+        ref={mazesPatternDetailRef}
+        isSliderChecked={isSliderChecked}
+        darkModeToggle={darkModeToggle}
+      />
+
+      <PathFindingGrid
+        ref={pfGridRef}
+        pfGridHeight={pfGridHeight}
+        marginTop={pfGridTopMargin}
+        pfGridRows={pfGridRows}
+        nodesRef={nodesRef}
+        noOfNodes={noOfNodes}
+        onMouseDown={handleMouseDown}
+        onMouseEnter={handleMouseEnter}
+        visualize={visualize}
+        checkWidth={checkWidth}
+      />
+
       <SideNav
         ref={sideNavRef}
         top={pfGridRef.current === null ? 0 : pfGridRef.current!!.offsetTop}
@@ -481,24 +535,7 @@ function App() {
         clearWalls={() => { clearWalls(nodesRef.current, resetMazesAndPatterns, clearPathNodes); }}
         speedSideNavRef={speedSideNavRef}
         openSideNavRef={openSideNavRef}
-      />
-
-      <MazesPatternSwitchButton
-        ref={mazesPatternDetailRef}
-        isSliderChecked={isSliderChecked}
-        darkModeToggle={darkModeToggle}
-      />
-
-      <PathFindingGrid
-        ref={pfGridRef}
-        pfGridHeight={pfGridHeight}
-        marginTop={pfGridTopMargin}
-        pfGridRows={pfGridRows}
-        nodesRef={nodesRef}
-        noOfNodes={noOfNodes}
-        onMouseDown={handleMouseDown}
-        onMouseEnter={handleMouseEnter}
-        visualize={visualize}
+        pfGridNodeHolder={pfGridRef.current?.children[0]}
       />
 
       <BottomNav
