@@ -1,5 +1,8 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, { ForwardedRef, RefObject, useState } from 'react';
-import { Menu, Icon } from 'semantic-ui-react';
+import {
+  Menu, Icon, Modal, ModalHeader, ModalContent, ModalDescription, Header, ModalActions, Button,
+} from 'semantic-ui-react';
 import {
   shortestPathNodeColor, transparent, visitedNodeColor, visitedNodeColorToBomb, wallNodeColor,
 } from '../helperFunctions/color';
@@ -111,7 +114,10 @@ const SideNav = React.forwardRef((
   const [left, setLeft] = useState(55);
   const [display, setDisplay] = useState('none');
   const [active, setActive] = useState(0);
+  const [open, setOpen] = React.useState(true);
+
   const setLeftHelper = (leftHelper: number) => { setLeft(leftHelper); };
+  const setOpenH = () => { setOpen(true); };
   // const setActiveHelper = (activeHelper: number) => { setActive(activeHelper); };
   const className = getDarkMode()
     ? 'ui vertical menu speed-menu speed-menu-inverted inverted'
@@ -224,6 +230,11 @@ const SideNav = React.forwardRef((
           <span className="menu-item-name">Clear Walls</span>
         </Menu.Item>
 
+        <Menu.Item className="menu-item" onClick={setOpenH}>
+          <Icon name="help" />
+          <span className="menu-item-name">Help</span>
+        </Menu.Item>
+
         <Menu.Item className="menu-item" onClick={() => { infoOnClick(ref as RefObject<HTMLDivElement>); }}>
           <Icon name="info" />
           <span className="menu-item-name">Info</span>
@@ -273,6 +284,78 @@ const SideNav = React.forwardRef((
           </div>
         </Menu.Item>
       </div>
+
+      <Modal
+        onClose={() => setOpen(false)}
+        onOpen={() => setOpen(false)}
+        open={open}
+        size="small"
+        closeIcon
+        dimmer="blurring"
+        closeOnEscape={false}
+        closeOnDimmerClick={false}
+        style={{
+          height: 'auto',
+          outline: 'auto',
+          overflow: 'visible',
+          top: 'auto',
+          left: 'auto',
+        }}
+      >
+        <ModalHeader>Pathfinding Visualizer</ModalHeader>
+        <ModalContent scrolling>
+          <ModalDescription>
+            <Header>
+              Welcome
+            </Header>
+            <p style={{ fontSize: '1.2em' }}>
+              This short tutorial will walk you through all of the features of this application.
+            </p>
+
+            <p style={{ fontSize: '1.2em' }}>
+              Pathfinding algorithm is a computational technique used to find the optimal path
+              between two points in a given space, often represented as a graph or a grid. The goal
+              of a pathfinding algorithm is to determine the most efficient route from a starting
+              point to a destination, considering obstacles, terrain, or other constraints.
+            </p>
+
+            <p style={{ fontSize: '1.2em' }}>
+              All of the algorithms on this application are adapted for a 2D grid
+            </p>
+
+            <Header>Adding walls</Header>
+            <p style={{ fontSize: '1.2em' }}>
+              Feel free to add walls to the grid effortlessly - just click and drag anywhere on the
+              grid. These walls act as obstacles, preventing any path from crossing through them.
+            </p>
+
+            <Header>Adding a Pin</Header>
+            <p style={{ fontSize: '1.2em' }}>
+              By simply clicking the 'Add Pin' button, you introduce a pivotal element into the
+              algorithm's course. The algorithm will now prioritize seeking the added pin before
+              proceeding to locate the target node, altering its navigation strategy accordingly.
+            </p>
+
+            <Header>Dragging nodes</Header>
+            <p style={{ fontSize: '1.2em' }}>
+              Rearrange the start, pin, and target nodes by clicking and dragging them across the
+              grid. Simply click, hold, and move to position these elements on the grid according
+              to your liking.
+            </p>
+
+            <Header>Enjoy</Header>
+            <p style={{ fontSize: '1.2em' }}>
+              I hope you have just as much fun playing around with this visualization tool as I had
+              building it.
+            </p>
+          </ModalDescription>
+        </ModalContent>
+        <ModalActions>
+          <Button color="black" onClick={() => setOpen(false)}>
+            Close
+          </Button>
+        </ModalActions>
+      </Modal>
     </>
   );
 });
