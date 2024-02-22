@@ -37,6 +37,10 @@ html, body {
     display: none;
 }
 
+.c-white {
+    color: #ffffff !important;
+}
+
 @media only screen and (max-width: 319px) {
     .cover-div-error {
         display: block;

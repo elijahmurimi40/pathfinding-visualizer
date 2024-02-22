@@ -83,6 +83,7 @@ function App() {
     if (element === topNavRef.current!!) {
       const topNavParentDiv = topNavRef.current!!.parentElement;
       topNavParentDiv?.classList.add('inverted');
+      topNavParentDiv!!.style.backgroundColor = '#2a2b2e';
       topNavParentDiv!!.style.borderBottom = '1px solid #767676';
       elementH.style.borderLeft = '1px solid #2d2e2f';
       elementH.style.borderRight = '1px solid #2d2e2f';
@@ -92,6 +93,18 @@ function App() {
       elementH.style.borderTop = '1px solid #767676';
       elementH.style.borderRight = '1px solid #767676';
       elementH.style.borderBottom = '1px solid #767676';
+      elementH.style.borderLeft = '1px solid #767676';
+    }
+
+    if (element === sideNavRef.current!!) {
+      const openSideNav = openSideNavRef.current!!;
+      const icon = openSideNav.children[0].children[0];
+      icon.classList.add('c-white');
+      const sideNav = sideNavRef.current!!.children;
+      for (let i = 0; i < sideNav.length; i += 1) {
+        const icon2 = sideNav[i].children[0];
+        icon2.classList.add('c-white');
+      }
     }
   };
 
@@ -107,7 +120,19 @@ function App() {
       elementH.style.borderTop = '1px solid transparent';
       const topNavParentDiv = topNavRef.current!!.parentElement;
       topNavParentDiv?.classList.remove('inverted');
+      topNavParentDiv!!.style.backgroundColor = '#ffffff';
       topNavParentDiv!!.style.borderBottom = '1px solid rgba(34, 36, 38, .15)';
+    }
+
+    if (element === sideNavRef.current!!) {
+      const openSideNav = openSideNavRef.current!!;
+      const icon = openSideNav.children[0].children[0];
+      icon.classList.remove('c-white');
+      const sideNav = sideNavRef.current!!.children;
+      for (let i = 0; i < sideNav.length; i += 1) {
+        const icon2 = sideNav[i].children[0];
+        icon2.classList.remove('c-white');
+      }
     }
   };
 
