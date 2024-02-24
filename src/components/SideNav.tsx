@@ -343,6 +343,57 @@ const SideNav = React.forwardRef((
               to your liking.
             </p>
 
+            <Header>Note</Header>
+            <p style={{ fontSize: '1.2em' }}>
+              You can drag nodes even after an algorithm has finished running. After you
+              finishing dragging you will instantly see the path.
+            </p>
+
+            <Header>Info</Header>
+            <p style={{ fontSize: '1.2em' }}>
+              <span>
+                <Icon name="bullseye" />
+                Start Node
+              </span>
+
+              <br />
+              <span>
+                <Icon name="map marker alternate" />
+                Target Node
+              </span>
+
+              <br />
+              <span>
+                <Icon name="map pin" />
+                Pin Node
+              </span>
+
+              <br />
+              <span>
+                <div className="info-span-div" style={{ backgroundColor: transparent }} />
+                <span> Unvisited Node</span>
+              </span>
+
+              <br />
+              <span>
+                <div className="info-span-div" style={{ backgroundColor: shortestPathNodeColor }} />
+                <span> Shortest-path Node</span>
+              </span>
+
+              <br />
+              <span>
+                <div className="info-span-div" style={{ backgroundColor: wallNodeColor }} />
+                <span> Wall Node</span>
+              </span>
+
+              <br />
+              <span>
+                <div className="info-span-div" style={{ backgroundColor: visitedNodeColor }} />
+                <div className="info-span-div" style={{ marginLeft: 5, backgroundColor: visitedNodeColorToBomb }} />
+                <span> Visited Nodes</span>
+              </span>
+            </p>
+
             <Header>Enjoy</Header>
             <p style={{ fontSize: '1.2em' }}>
               I hope you have just as much fun playing around with this visualization tool as I had
