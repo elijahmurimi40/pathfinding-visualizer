@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // Depth-first search
 import { getBombIndex } from '../App.Functions';
 import { dataIsWallNode } from '../helperFunctions/customAttr';
@@ -53,88 +54,177 @@ const getNeighbour = (
 const depthFirstSearchHelper = (
   animations: number[], stack: NodeType[], targetType: string, nodeTarget: number,
 ) => {
-  let nodeStart: NodeType = {
-    nodeIdx: -1, nodeIdxParent: -1, directionToVisit: [], directionVisited: [],
-  };
-  if (stack.length >= 1) nodeStart = stack[stack.length - 1];
+  let i = 0;
+  for (;;) {
+    i += 1;
+    let nodeStart: NodeType = {
+      nodeIdx: -1, nodeIdxParent: -1, directionToVisit: [], directionVisited: [],
+    };
+    if (stack.length >= 1) nodeStart = stack[stack.length - 1];
 
-  if (nodeStart.nodeIdx === nodeTarget) {
-    animations.push(nodeStart.nodeIdx);
-    closedNodes.set(nodeStart.nodeIdx, nodeStart);
-    return;
-  }
-  if (nodeStart.nodeIdx === -1 && stack.length === 0 && targetType === '') { isPathFound = false; return; }
-  if (nodeStart.nodeIdx === -1 && stack.length === 0 && targetType !== '') { isBombPathFound = false; return; }
-
-  if (nodeStart.directionVisited.length === 0) {
-    if (conditionUp(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(UP);
-    if (conditionDown(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(DOWN);
-    if (conditionLeft(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(LEFT);
-    if (conditionRight(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(RIGHT);
-  }
-
-  const randomIndex = Math.floor(Math.random() * nodeStart.directionToVisit.length);
-  const direction = nodeStart.directionToVisit[randomIndex];
-  const indexOfDirection = nodeStart.directionToVisit.indexOf(direction);
-  nodeStart.directionVisited.push(direction);
-  nodeStart.directionToVisit.splice(indexOfDirection, 1);
-
-  const isNeighbourInClosedH = closedNodes.has(nodeStart.nodeIdx);
-  if (!isNeighbourInClosedH) closedNodes.set(nodeStart.nodeIdx, nodeStart);
-  if (nodeStart.directionToVisit.length === 0) {
-    // closedNodes.set(nodeStart.nodeIdx, nodeStart);
-    openNodes.delete(nodeStart.nodeIdx);
-    stack.pop();
-  }
-
-  const nodeIndexAnimation = animations.indexOf(nodeStart.nodeIdx);
-  if (nodeIndexAnimation === -1) animations.push(nodeStart.nodeIdx);
-  const nodeNeighbours: NodeType[] = [];
-
-  let nodeIdx = 0;
-  // neighbour up
-  if (direction === UP) {
-    nodeIdx = nodeStart.nodeIdx - noOfNodesH;
-    getNeighbour(
-      conditionUp(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
-    );
-  }
-
-  // neighbour down
-  if (direction === DOWN) {
-    nodeIdx = nodeStart.nodeIdx + noOfNodesH;
-    getNeighbour(
-      conditionDown(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
-    );
-  }
-
-  // neighbour left
-  if (direction === LEFT) {
-    nodeIdx = nodeStart.nodeIdx - 1;
-    getNeighbour(
-      conditionLeft(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
-    );
-  }
-
-  // neighbour right
-  if (direction === RIGHT) {
-    nodeIdx = nodeStart.nodeIdx + 1;
-    getNeighbour(
-      conditionRight(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
-    );
-  }
-
-  // nodeNeighbours array should have on item
-  nodeNeighbours.forEach((node: NodeType) => {
-    const isNeighbourInClosed = closedNodes.has(node.nodeIdx);
-    const isNeighbourInOpen = openNodes.has(node.nodeIdx);
-    if (!isNeighbourInClosed && !isNeighbourInOpen) {
-      openNodes.set(node.nodeIdx, node);
-      stack.push(node);
+    if (nodeStart.nodeIdx === nodeTarget) {
+      animations.push(nodeStart.nodeIdx);
+      closedNodes.set(nodeStart.nodeIdx, nodeStart);
+      break;
     }
-  });
 
-  depthFirstSearchHelper(animations, stack, targetType, nodeTarget);
+    if (nodeStart.nodeIdx === -1 && stack.length === 0 && targetType === '') { isPathFound = false; break; }
+    if (nodeStart.nodeIdx === -1 && stack.length === 0 && targetType !== '') { isBombPathFound = false; break; }
+
+    if (nodeStart.directionVisited.length === 0) {
+      if (conditionUp(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(UP);
+      if (conditionDown(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(DOWN);
+      if (conditionLeft(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(LEFT);
+      if (conditionRight(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(RIGHT);
+    }
+
+    const randomIndex = Math.floor(Math.random() * nodeStart.directionToVisit.length);
+    const direction = nodeStart.directionToVisit[randomIndex];
+    const indexOfDirection = nodeStart.directionToVisit.indexOf(direction);
+    nodeStart.directionVisited.push(direction);
+    nodeStart.directionToVisit.splice(indexOfDirection, 1);
+
+    const isNeighbourInClosedH = closedNodes.has(nodeStart.nodeIdx);
+    if (!isNeighbourInClosedH) closedNodes.set(nodeStart.nodeIdx, nodeStart);
+    if (nodeStart.directionToVisit.length === 0) {
+      // closedNodes.set(nodeStart.nodeIdx, nodeStart);
+      openNodes.delete(nodeStart.nodeIdx);
+      stack.pop();
+    }
+
+    const nodeIndexAnimation = animations.indexOf(nodeStart.nodeIdx);
+    if (nodeIndexAnimation === -1) animations.push(nodeStart.nodeIdx);
+    const nodeNeighbours: NodeType[] = [];
+
+    let nodeIdx = 0;
+    // neighbour up
+    if (direction === UP) {
+      nodeIdx = nodeStart.nodeIdx - noOfNodesH;
+      getNeighbour(
+        conditionUp(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
+      );
+    }
+
+    // neighbour down
+    if (direction === DOWN) {
+      nodeIdx = nodeStart.nodeIdx + noOfNodesH;
+      getNeighbour(
+        conditionDown(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
+      );
+    }
+
+    // neighbour left
+    if (direction === LEFT) {
+      nodeIdx = nodeStart.nodeIdx - 1;
+      getNeighbour(
+        conditionLeft(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
+      );
+    }
+
+    // neighbour right
+    if (direction === RIGHT) {
+      nodeIdx = nodeStart.nodeIdx + 1;
+      getNeighbour(
+        conditionRight(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
+      );
+    }
+
+    // nodeNeighbours array should have on item
+    nodeNeighbours.forEach((node: NodeType) => {
+      const isNeighbourInClosed = closedNodes.has(node.nodeIdx);
+      const isNeighbourInOpen = openNodes.has(node.nodeIdx);
+      if (!isNeighbourInClosed && !isNeighbourInOpen) {
+        openNodes.set(node.nodeIdx, node);
+        stack.push(node);
+      }
+    });
+  }
+  return i;
+
+  // let nodeStart: NodeType = {
+  //   nodeIdx: -1, nodeIdxParent: -1, directionToVisit: [], directionVisited: [],
+  // };
+  // if (stack.length >= 1) nodeStart = stack[stack.length - 1];
+
+  // if (nodeStart.nodeIdx === nodeTarget) {
+  //   animations.push(nodeStart.nodeIdx);
+  //   closedNodes.set(nodeStart.nodeIdx, nodeStart);
+  //   return;
+  // }
+  // if (nodeStart.nodeIdx === -1 && stack.length
+  // === 0 && targetType === '') { isPathFound = false; return; }
+  // if (nodeStart.nodeIdx === -1 && stack.length
+  // === 0 && targetType !== '') { isBombPathFound = false; return; }
+
+  // if (nodeStart.directionVisited.length === 0) {
+  //   if (conditionUp(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(UP);
+  //   if (conditionDown(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(DOWN);
+  //   if (conditionLeft(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(LEFT);
+  //   if (conditionRight(nodesH[nodeStart.nodeIdx])) nodeStart.directionToVisit.push(RIGHT);
+  // }
+
+  // const randomIndex = Math.floor(Math.random() * nodeStart.directionToVisit.length);
+  // const direction = nodeStart.directionToVisit[randomIndex];
+  // const indexOfDirection = nodeStart.directionToVisit.indexOf(direction);
+  // nodeStart.directionVisited.push(direction);
+  // nodeStart.directionToVisit.splice(indexOfDirection, 1);
+
+  // const isNeighbourInClosedH = closedNodes.has(nodeStart.nodeIdx);
+  // if (!isNeighbourInClosedH) closedNodes.set(nodeStart.nodeIdx, nodeStart);
+  // if (nodeStart.directionToVisit.length === 0) {
+  //   // closedNodes.set(nodeStart.nodeIdx, nodeStart);
+  //   openNodes.delete(nodeStart.nodeIdx);
+  //   stack.pop();
+  // }
+
+  // const nodeIndexAnimation = animations.indexOf(nodeStart.nodeIdx);
+  // if (nodeIndexAnimation === -1) animations.push(nodeStart.nodeIdx);
+  // const nodeNeighbours: NodeType[] = [];
+
+  // let nodeIdx = 0;
+  // // neighbour up
+  // if (direction === UP) {
+  //   nodeIdx = nodeStart.nodeIdx - noOfNodesH;
+  //   getNeighbour(
+  //     conditionUp(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
+  //   );
+  // }
+
+  // // neighbour down
+  // if (direction === DOWN) {
+  //   nodeIdx = nodeStart.nodeIdx + noOfNodesH;
+  //   getNeighbour(
+  //     conditionDown(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
+  //   );
+  // }
+
+  // // neighbour left
+  // if (direction === LEFT) {
+  //   nodeIdx = nodeStart.nodeIdx - 1;
+  //   getNeighbour(
+  //     conditionLeft(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
+  //   );
+  // }
+
+  // // neighbour right
+  // if (direction === RIGHT) {
+  //   nodeIdx = nodeStart.nodeIdx + 1;
+  //   getNeighbour(
+  //     conditionRight(nodesH[nodeStart.nodeIdx]), nodeIdx, nodeStart, nodeNeighbours,
+  //   );
+  // }
+
+  // // nodeNeighbours array should have on item
+  // nodeNeighbours.forEach((node: NodeType) => {
+  //   const isNeighbourInClosed = closedNodes.has(node.nodeIdx);
+  //   const isNeighbourInOpen = openNodes.has(node.nodeIdx);
+  //   if (!isNeighbourInClosed && !isNeighbourInOpen) {
+  //     openNodes.set(node.nodeIdx, node);
+  //     stack.push(node);
+  //   }
+  // });
+
+  // depthFirstSearchHelper(animations, stack, targetType, nodeTarget);
 };
 
 const depthFirstSearch = (
