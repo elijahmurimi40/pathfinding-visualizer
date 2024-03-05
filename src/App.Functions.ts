@@ -227,6 +227,13 @@ export const addBomb = (
       getNodeBombInfo().index = nodeIndex;
       getNodeBombInfo().isWallNode = isWallNode;
     }
+
+    const shuldren = node.children;
+    for (let k = 0; k < shuldren.length; k += 1) {
+      const shald = shuldren[k];
+      shald.remove();
+    }
+
     setAttr(node, dataIsBombNode, 'true');
     i = document.createElement('i');
     const addDarkMode = getDarkMode() ? 'inverted' : 'NA';
