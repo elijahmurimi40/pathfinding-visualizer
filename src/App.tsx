@@ -11,7 +11,8 @@ import {
 } from './App.Functions';
 import {
   setFinishButtonStatus, getNodeBombInfo, getNodeStartInfo,
-  getNodeTargetInfo, setDarkMode, pathNodes, getAttr, setAttr, setIsSearchAlgoUsed,
+  getNodeTargetInfo, setDarkMode, pathNodes, getAttr, setAttr,
+  setIsSearchAlgoUsed, resetRepeatedPathNodes,
 } from './helperFunctions/helperFunctions';
 import { mazesKeys } from './mazesAndPatterns/mazesAndPatternsOptions';
 import basicRandomMaze from './mazesAndPatterns/basicRandomMaze';
@@ -297,6 +298,7 @@ function App() {
     const label = mazesPatternDetailRef.current!!.parentElement;
     const { parentElement } = label!!;
     parentElement!!.style.visibility = 'visible';
+    resetRepeatedPathNodes();
   };
 
   // mazes and patterns

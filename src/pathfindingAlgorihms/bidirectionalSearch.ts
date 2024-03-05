@@ -44,7 +44,7 @@ const animatePath = (optimalPath: number[], nodes: HTMLDivElement[], hideCover: 
         } else {
           const prevIdx = optimalPath[i - 1];
           const nextIdx = optimalPath[i + 1];
-          addPathNode(nodes, prevIdx, nodeIdx, nextIdx, noOfNodesRow, '');
+          addPathNode(nodes, prevIdx, nodeIdx, nextIdx, noOfNodesRow, optimalPath);
           if (i === optimalPath.length - 1) hideCover();
         }
       }, i * timer);

@@ -10,6 +10,7 @@ import {
   shortestPathNodeColor, transparent, visitedNodeColor, visitedNodeColorToBomb, wallNodeColor,
 } from './color';
 import { clearTimeouts } from '../mazesAndPatterns/mazesAndPatternsHelper';
+import { getBombIndex } from '../App.Functions';
 
 gsap.registerPlugin(Draggable);
 
@@ -98,7 +99,7 @@ export const finishAnimation = (
       const nodeIdx = pathAniamtions[i];
       const prevIdx = pathAniamtions[i - 1];
       const nextIdx = pathAniamtions[i + 1];
-      addPathNode(nodes, prevIdx, nodeIdx, nextIdx, noOfNodesRow, '');
+      addPathNode(nodes, prevIdx, nodeIdx, nextIdx, noOfNodesRow, pathAniamtions);
     }
   }
 };
@@ -195,6 +196,91 @@ export const setAttr = (node: HTMLDivElement, attr: string, value: any) => {
   }
 };
 
+// #######################################################
+let execute = true;
+let repeatedPathNodes: number[] = [];
+
+export const resetRepeatedPathNodes = () => {
+  execute = true;
+  repeatedPathNodes.length = 0;
+  repeatedPathNodes = [];
+};
+
+const checkIndexOfPathnode = (animations: number[]) => {
+  for (let i = 0; i < animations.length; i += 1) {
+    const nodeIdx = animations[i];
+    const pathNode = animations.indexOf(nodeIdx, i + 1);
+    if (pathNode !== -1) {
+      repeatedPathNodes.push(nodeIdx);
+    }
+  }
+};
+
+const isIndexInPathNode = (idx: number): boolean => {
+  const pathNode = repeatedPathNodes.indexOf(idx);
+
+  if (pathNode === -1) return false;
+  return true;
+};
+
+const addReturnArrow = (node: HTMLDivElement, direction: string) => {
+  const shuldren = node.children;
+  const div1 = shuldren[0];
+  const div2 = shuldren[1] as HTMLDivElement;
+  const firstIcon = div1.children[0];
+  const secocondIcon = div2.children[0] as HTMLElement;
+
+  const classNames1 = firstIcon.classList;
+  const classNames2 = secocondIcon.classList[0];
+  const right = classNames1.contains('right');
+  const left = classNames1.contains('left');
+  const up = classNames1.contains('up');
+  const down = classNames1.contains('down');
+
+  secocondIcon.classList.remove(classNames2);
+  // secocondIcon.style.color = '#000';
+  div2.style.backgroundColor = shortestPathNodeColor;
+
+  if (right || left) {
+    if (direction === 'right') {
+      secocondIcon.classList.add('long', 'arrow', 'alternate', 'right', 'large', 'icon', 'ico-lr');
+    }
+
+    if (direction === 'left') {
+      secocondIcon.classList.add('long', 'arrow', 'alternate', 'left', 'large', 'icon', 'ico-lr');
+    }
+
+    if (direction === 'up') {
+      secocondIcon.classList.add('caret', 'big', 'up', 'icon', 'ico-lru');
+    }
+
+    if (direction === 'down') {
+      secocondIcon.classList.add('caret', 'big', 'down', 'icon', 'ico-lrd');
+    }
+
+    return;
+  }
+
+  if (up || down) {
+    if (direction === 'right') {
+      secocondIcon.classList.add('caret', 'big', 'right', 'icon', 'ico-udr');
+    }
+
+    if (direction === 'left') {
+      secocondIcon.classList.add('caret', 'big', 'left', 'icon', 'ico-udl');
+    }
+
+    if (direction === 'up') {
+      secocondIcon.classList.add('long', 'arrow', 'alternate', 'up', 'large', 'icon', 'ico-ud');
+    }
+
+    if (direction === 'down') {
+      secocondIcon.classList.add('long', 'arrow', 'alternate', 'down', 'large', 'icon', 'ico-ud');
+    }
+  }
+};
+// #######################################################
+
 // add visited nodes
 export const addVisitedNode = (node: HTMLDivElement, toTarget: string, idx: number) => {
   const nodeH = node;
@@ -210,8 +296,12 @@ export const addVisitedNode = (node: HTMLDivElement, toTarget: string, idx: numb
 // add path node
 export const addPathNode = (
   nodes: HTMLDivElement[], prevIdx: number, idx: number, nextIdx: number, noOfNodesRow: number,
-  p: string,
+  animations: number[],
 ) => {
+  if (execute) {
+    execute = false;
+    checkIndexOfPathnode(animations);
+  }
   pathNodes.push(idx);
   const nodeH = nodes[idx];
   const isStartNode = getAttr(nodeH, dataIsStartNode);
@@ -220,7 +310,7 @@ export const addPathNode = (
   const isArrowNode = getAttr(nodeH, dataIsArrowNode);
   const isPathNode = getAttr(nodeH, dataIsPathNode);
   // nodeH.classList.remove('pf-grid-node-border-color');
-  nodeH.style.backgroundColor = shortestPathNodeColor;
+  // nodeH.style.backgroundColor = shortestPathNodeColor;
 
   if (isStartNode === 'true' || isTargetNode === 'true' || isBombNode === 'true') {
     const child = nodeH.children[0] as HTMLElement;
@@ -229,6 +319,7 @@ export const addPathNode = (
       isStartTargetPinNode = true;
     }
     setAttr(nodeH, dataIsPathNode, 'true');
+    nodeH.style.backgroundColor = shortestPathNodeColor;
     return;
   }
 
@@ -236,21 +327,24 @@ export const addPathNode = (
   setAttr(nodeH, dataIsArrowNode, 'true');
 
   if (isArrowNode === 'true') {
-    console.log(p);
     isStartTargetPinNode = false;
-    // return;
   }
 
   drawArrows(nodes, nodeH, prevIdx, idx, nextIdx, noOfNodesRow);
 };
 
 const drawStartArrow = (element: HTMLElement) => {
+  const bombNodeIdx = getBombIndex();
+  if (bombNodeIdx !== -1) {
+    return;
+  }
   const elementH = element;
   elementH.style.color = '#ff1493';
   isStartTargetPinNode = false;
 };
 
 // show directional arrows.
+let changeColorToBlack = false;
 const drawArrows = (
   nodes: HTMLDivElement[], nodeH: HTMLDivElement, prevIdx: number, idx: number,
   nextIdx: number, noOfNodesRow: number,
@@ -258,112 +352,287 @@ const drawArrows = (
   const arrow = document.createElement('i');
   const isTargetNode = getAttr(nodes[nextIdx], dataIsTargetNode);
   const isBombNode = getAttr(nodes[nextIdx], dataIsBombNode);
+  let drawWall = true;
+
+  const shuldren = nodeH.children;
+  const div1 = document.createElement('div');
+  const div2 = document.createElement('div');
+  const arrow1 = document.createElement('i');
+  const arrow2 = document.createElement('i');
 
   if (isStartTargetPinNode || isTargetNode === 'true' || isBombNode === 'true') {
     drawStartArrow(arrow);
   }
 
+  if (getBombIndex() !== -1 && !changeColorToBlack) {
+    arrow.style.color = '#ff1493';
+    arrow1.style.color = '#ff1493';
+    // arrow2.style.color = '#ff1493';
+  }
+
+  if (isBombNode === 'true') {
+    changeColorToBlack = true;
+  }
+
+  if (isTargetNode === 'true') {
+    changeColorToBlack = false;
+  }
+
+  const isIndexAvailable = isIndexInPathNode(idx);
+  const up = 'up';
+  const down = 'down';
+  const left = 'left';
+  const right = 'right';
+  let direction = '';
   // ######## start of clockwise direction ########
   // up to right
   if (prevIdx - idx === noOfNodesRow && nextIdx - idx === 1) {
-    arrow.classList.add('share', 'icon');
-    arrow.style.marginLeft = '8px';
-    arrow.style.marginTop = '3px';
-    nodeH.appendChild(arrow);
-    return;
+    if (isIndexAvailable) {
+      direction = right;
+    } else {
+      arrow.classList.add('share', 'icon');
+      arrow.style.marginLeft = '8px';
+      arrow.style.marginTop = '3px';
+      nodeH.appendChild(arrow);
+
+      const node = nodeH;
+      if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+      return;
+    }
   }
 
   // right to down
   if (nextIdx - idx === noOfNodesRow && idx - prevIdx === 1) {
-    arrow.classList.add('share', 'clockwise', 'rotated', 'icon');
-    arrow.style.marginLeft = '6px';
-    arrow.style.marginTop = '9px';
-    nodeH.appendChild(arrow);
-    return;
+    if (isIndexAvailable) {
+      direction = down;
+    } else {
+      arrow.classList.add('share', 'clockwise', 'rotated', 'icon');
+      arrow.style.marginLeft = '6px';
+      arrow.style.marginTop = '9px';
+      nodeH.appendChild(arrow);
+
+      const node = nodeH;
+      if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+      return;
+    }
   }
 
   // down to left
   if (idx - prevIdx === noOfNodesRow && idx - nextIdx === 1) {
-    arrow.classList.add('reply', 'vertically', 'flipped', 'icon');
-    arrow.style.marginRight = '5px';
-    arrow.style.marginTop = '7px';
-    nodeH.appendChild(arrow);
-    return;
+    if (isIndexAvailable) {
+      direction = left;
+    } else {
+      arrow.classList.add('reply', 'vertically', 'flipped', 'icon');
+      arrow.style.marginRight = '5px';
+      arrow.style.marginTop = '7px';
+      nodeH.appendChild(arrow);
+
+      const node = nodeH;
+      if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+      return;
+    }
   }
 
   // left to up
   if (idx - nextIdx === noOfNodesRow && prevIdx - idx === 1) {
-    arrow.classList.add('share', 'counterclockwise', 'rotated', 'icon');
-    arrow.style.marginLeft = '2px';
-    arrow.style.marginTop = '2px';
-    nodeH.appendChild(arrow);
-    return;
+    if (isIndexAvailable) {
+      direction = up;
+    } else {
+      arrow.classList.add('share', 'counterclockwise', 'rotated', 'icon');
+      arrow.style.marginLeft = '2px';
+      arrow.style.marginTop = '2px';
+      nodeH.appendChild(arrow);
+
+      const node = nodeH;
+      if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+      return;
+    }
   }
   // ######## end of clockwise direction ########
 
   // ######## start of counter clockwise direction ########
   // left to down
   if (nextIdx - idx === noOfNodesRow && prevIdx - idx === 1) {
-    arrow.classList.add('reply', 'counterclockwise', 'rotated', 'icon');
-    arrow.style.marginLeft = '2px';
-    arrow.style.marginTop = '9px';
-    nodeH.appendChild(arrow);
-    return;
+    if (isIndexAvailable) {
+      direction = down;
+    } else {
+      arrow.classList.add('reply', 'counterclockwise', 'rotated', 'icon');
+      arrow.style.marginLeft = '2px';
+      arrow.style.marginTop = '9px';
+      nodeH.appendChild(arrow);
+
+      const node = nodeH;
+      if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+      return;
+    }
   }
 
   // down to right
   if (idx - prevIdx === noOfNodesRow && nextIdx - idx === 1) {
-    arrow.classList.add('share', 'vertically', 'flipped', 'icon');
-    arrow.style.marginLeft = '8px';
-    arrow.style.marginTop = '7px';
-    nodeH.appendChild(arrow);
-    return;
+    if (isIndexAvailable) {
+      direction = right;
+    } else {
+      arrow.classList.add('share', 'vertically', 'flipped', 'icon');
+      arrow.style.marginLeft = '8px';
+      arrow.style.marginTop = '7px';
+      nodeH.appendChild(arrow);
+
+      const node = nodeH;
+      if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+      return;
+    }
   }
 
   // right to up
   if (idx - nextIdx === noOfNodesRow && idx - prevIdx === 1) {
-    arrow.classList.add('reply', 'clockwise', 'rotated', 'icon');
-    arrow.style.marginLeft = '7px';
-    arrow.style.marginTop = '1px';
-    nodeH.appendChild(arrow);
-    return;
+    if (isIndexAvailable) {
+      direction = up;
+    } else {
+      arrow.classList.add('reply', 'clockwise', 'rotated', 'icon');
+      arrow.style.marginLeft = '7px';
+      arrow.style.marginTop = '1px';
+      nodeH.appendChild(arrow);
+
+      const node = nodeH;
+      if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+      return;
+    }
   }
 
   // up to left
   if (prevIdx - idx === noOfNodesRow && idx - nextIdx === 1) {
-    arrow.classList.add('reply', 'icon');
-    arrow.style.marginRight = '2px';
-    arrow.style.marginTop = '2px';
-    nodeH.appendChild(arrow);
-    return;
+    if (isIndexAvailable) {
+      direction = left;
+    } else {
+      arrow.classList.add('reply', 'icon');
+      arrow.style.marginRight = '2px';
+      arrow.style.marginTop = '2px';
+      nodeH.appendChild(arrow);
+
+      const node = nodeH;
+      if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+      return;
+    }
   }
   // ######## end of counter clockwise direction ########
 
   // going right
-  if (idx - prevIdx === 1) {
+  if (idx - prevIdx === 1 || direction === right) {
+    if (isIndexAvailable && shuldren.length === 0) {
+      div1.classList.add('width');
+      div2.classList.add('width');
+      arrow1.classList.add('long', 'arrow', 'alternate', 'right', 'large', 'icon', 'ico-lr');
+      arrow2.classList.add('ico-lr');
+      div1.appendChild(arrow1);
+      div2.appendChild(arrow2);
+      nodeH.appendChild(div1);
+      nodeH.appendChild(div2);
+      div1.style.backgroundColor = shortestPathNodeColor;
+      drawWall = false;
+      return;
+    }
+
+    if (shuldren.length > 0) {
+      addReturnArrow(nodeH, right);
+      drawWall = false;
+      return;
+    }
+
     arrow.classList.add('long', 'arrow', 'alternate', 'right', 'large', 'icon');
     nodeH.appendChild(arrow);
+
+    const node = nodeH;
+    if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
     return;
   }
 
   // going left
-  if (prevIdx - idx === 1) {
+  if (prevIdx - idx === 1 || direction === left) {
+    if (isIndexAvailable && shuldren.length === 0) {
+      div1.classList.add('width');
+      div2.classList.add('width');
+      arrow1.classList.add('long', 'arrow', 'alternate', 'left', 'large', 'icon', 'ico-lr');
+      arrow2.classList.add('ico-lr');
+      div1.appendChild(arrow1);
+      div2.appendChild(arrow2);
+      nodeH.appendChild(div1);
+      nodeH.appendChild(div2);
+      div1.style.backgroundColor = shortestPathNodeColor;
+      drawWall = false;
+      return;
+    }
+
+    if (shuldren.length > 0) {
+      addReturnArrow(nodeH, left);
+      drawWall = false;
+      return;
+    }
+
     arrow.classList.add('long', 'arrow', 'alternate', 'left', 'large', 'icon');
     nodeH.appendChild(arrow);
+
+    const node = nodeH;
+    if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
     return;
   }
 
   // going up
-  if (idx - nextIdx === noOfNodesRow) {
+  if (idx - nextIdx === noOfNodesRow || direction === up) {
+    if (isIndexAvailable && shuldren.length === 0) {
+      div1.classList.add('height');
+      div2.classList.add('height');
+      arrow1.classList.add('long', 'arrow', 'alternate', 'up', 'large', 'icon', 'ico-ud');
+      arrow2.classList.add('ico-ud');
+      div1.appendChild(arrow1);
+      div2.appendChild(arrow2);
+      nodeH.appendChild(div1);
+      nodeH.appendChild(div2);
+      drawWall = false;
+      div1.style.backgroundColor = shortestPathNodeColor;
+      return;
+    }
+
+    if (shuldren.length > 0) {
+      addReturnArrow(nodeH, up);
+      drawWall = false;
+      return;
+    }
+
     arrow.classList.add('long', 'arrow', 'alternate', 'up', 'large', 'icon');
     nodeH.appendChild(arrow);
+
+    const node = nodeH;
+    if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
     return;
   }
 
   // going down
-  if (nextIdx - idx === noOfNodesRow) {
+  if (nextIdx - idx === noOfNodesRow || direction === down) {
+    if (isIndexAvailable && shuldren.length === 0) {
+      div1.classList.add('height');
+      div2.classList.add('height');
+      arrow1.classList.add('long', 'arrow', 'alternate', 'down', 'large', 'icon', 'ico-ud');
+      arrow2.classList.add('ico-ud');
+      div1.appendChild(arrow1);
+      div2.appendChild(arrow2);
+      nodeH.appendChild(div1);
+      nodeH.appendChild(div2);
+      drawWall = false;
+      div1.style.backgroundColor = shortestPathNodeColor;
+      return;
+    }
+
+    if (shuldren.length > 0) {
+      addReturnArrow(nodeH, down);
+      drawWall = false;
+      return;
+    }
+
     arrow.classList.add('long', 'arrow', 'alternate', 'down', 'large', 'icon');
     nodeH.appendChild(arrow);
+
+    const node = nodeH;
+    if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
   }
 };
 

@@ -92,7 +92,7 @@ const animatePath = (
       } else {
         const prevIdx = animations[i - 1];
         const nextIdx = animations[i + 1];
-        addPathNode(nodes, prevIdx, nodeIdx, nextIdx, noOfNodesRow, '');
+        addPathNode(nodes, prevIdx, nodeIdx, nextIdx, noOfNodesRow, animations);
         if (i === animations.length - 1) hideCover();
       }
     }, i * timer);
