@@ -154,6 +154,7 @@ export const resetBoard = (
   // eslint-disable-next-line no-unused-vars
   clearPathNodes: (nodesH: HTMLDivElement[]) => void,
 ) => {
+  clearPathNodes(nodes);
   if (bombIndex !== -1) {
     const sideNavAddBomb = sideNav?.children[1];
     const addBombElem = sideNavAddBomb!!.children[1];

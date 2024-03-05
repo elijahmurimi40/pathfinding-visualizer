@@ -792,8 +792,11 @@ export const createDraggble = (
         const node = nodes[nodeInfo.index];
         setAttr(node, dataIsArrowNode, 'false');
         const childrenCollections = node.children;
-        if (childrenCollections.length > 0) {
-          childrenCollections[0].remove();
+        const len = childrenCollections.length;
+
+        for (let i = 0; i < len; i += 1) {
+          const shald = childrenCollections[0];
+          shald.remove();
         }
       }
 
