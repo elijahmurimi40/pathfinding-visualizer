@@ -80,6 +80,27 @@ export const finishAnimation = (
   clearTimeouts();
   setFinishButtonStatus(false);
 
+  pathNodes.forEach((idx: number) => {
+    const node = nodes[idx];
+    const isStartNode = getAttr(node, dataIsStartNode);
+    const isTargetNode = getAttr(node, dataIsTargetNode);
+    const isBombNode = getAttr(node, dataIsBombNode);
+
+    setAttr(node, dataIsPathNode, 'false');
+    setAttr(node, dataIsArrowNode, 'false');
+    isStartTargetPinNode = false;
+
+    if (isStartNode === 'false' && isTargetNode === 'false' && isBombNode === 'false') {
+      const shuldren = node.children;
+      if (shuldren.length > 0) {
+        for (let i = 0; i < shuldren.length; i += 1) {
+          const shald = shuldren[i];
+          shald.remove();
+        }
+      }
+    }
+  });
+
   if (bombAnimations != null) {
     for (let i = 0; i < bombAnimations.length; i += 1) {
       const nodeIdx = bombAnimations[i];
