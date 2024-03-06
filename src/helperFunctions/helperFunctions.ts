@@ -230,6 +230,22 @@ export const resetRepeatedPathNodes = () => {
   repeatedPathNodes = [];
 };
 
+const up = 'up';
+const down = 'down';
+const left = 'left';
+const right = 'right';
+
+const setDirection = (idx: number, nextIdx: number): string => {
+  const direction = '';
+
+  if (idx - nextIdx === -1) return right;
+  if (idx - nextIdx === 1) return left;
+  if (idx - nextIdx > 0) return up;
+  if (idx - nextIdx < 0) return down;
+
+  return direction;
+};
+
 const checkIndexOfPathnode = (animations: number[]) => {
   for (let i = 0; i < animations.length; i += 1) {
     const nodeIdx = animations[i];
@@ -256,16 +272,16 @@ const addReturnArrow = (node: HTMLDivElement, direction: string) => {
 
   const classNames1 = firstIcon.classList;
   const classNames2 = secocondIcon.classList[0];
-  const right = classNames1.contains('right');
-  const left = classNames1.contains('left');
-  const up = classNames1.contains('up');
-  const down = classNames1.contains('down');
+  const rightDir = classNames1.contains('right');
+  const leftDir = classNames1.contains('left');
+  const upDir = classNames1.contains('up');
+  const downDir = classNames1.contains('down');
 
   secocondIcon.classList.remove(classNames2);
   // secocondIcon.style.color = '#000';
   div2.style.backgroundColor = shortestPathNodeColor;
 
-  if (right || left) {
+  if (rightDir || leftDir) {
     if (direction === 'right') {
       secocondIcon.classList.add('long', 'arrow', 'alternate', 'right', 'large', 'icon', 'ico-lr');
     }
@@ -285,7 +301,7 @@ const addReturnArrow = (node: HTMLDivElement, direction: string) => {
     return;
   }
 
-  if (up || down) {
+  if (upDir || downDir) {
     if (direction === 'right') {
       secocondIcon.classList.add('caret', 'big', 'right', 'icon', 'ico-udr');
     }
@@ -367,21 +383,141 @@ const drawStartArrow = (element: HTMLElement) => {
   isStartTargetPinNode = false;
 };
 
+let drawWall = true;
+let div1 = document.createElement('div');
+let div2 = document.createElement('div');
+let arrow = document.createElement('i');
+let arrow1 = document.createElement('i');
+let arrow2 = document.createElement('i');
+let isIndexAvailable: boolean = false;
+
+const goingRight = (shuldren: HTMLCollection, nodeH: HTMLDivElement) => {
+  if (isIndexAvailable && shuldren.length === 0) {
+    div1.classList.add('width');
+    div2.classList.add('width');
+    arrow1.classList.add('long', 'arrow', 'alternate', 'right', 'large', 'icon', 'ico-lr');
+    arrow2.classList.add('ico-lr');
+    div1.appendChild(arrow1);
+    div2.appendChild(arrow2);
+    nodeH.appendChild(div1);
+    nodeH.appendChild(div2);
+    div1.style.backgroundColor = shortestPathNodeColor;
+    drawWall = false;
+    return;
+  }
+
+  if (shuldren.length > 0) {
+    addReturnArrow(nodeH, right);
+    drawWall = false;
+    return;
+  }
+
+  arrow.classList.add('long', 'arrow', 'alternate', 'right', 'large', 'icon');
+  nodeH.appendChild(arrow);
+
+  const node = nodeH;
+  if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+};
+
+const goingLeft = (shuldren: HTMLCollection, nodeH: HTMLDivElement) => {
+  if (isIndexAvailable && shuldren.length === 0) {
+    div1.classList.add('width');
+    div2.classList.add('width');
+    arrow1.classList.add('long', 'arrow', 'alternate', 'left', 'large', 'icon', 'ico-lr');
+    arrow2.classList.add('ico-lr');
+    div1.appendChild(arrow1);
+    div2.appendChild(arrow2);
+    nodeH.appendChild(div1);
+    nodeH.appendChild(div2);
+    div1.style.backgroundColor = shortestPathNodeColor;
+    drawWall = false;
+    return;
+  }
+
+  if (shuldren.length > 0) {
+    addReturnArrow(nodeH, left);
+    drawWall = false;
+    return;
+  }
+
+  arrow.classList.add('long', 'arrow', 'alternate', 'left', 'large', 'icon');
+  nodeH.appendChild(arrow);
+
+  const node = nodeH;
+  if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+};
+
+const goingUp = (shuldren: HTMLCollection, nodeH: HTMLDivElement) => {
+  if (isIndexAvailable && shuldren.length === 0) {
+    div1.classList.add('height');
+    div2.classList.add('height');
+    arrow1.classList.add('long', 'arrow', 'alternate', 'up', 'large', 'icon', 'ico-ud');
+    arrow2.classList.add('ico-ud');
+    div1.appendChild(arrow1);
+    div2.appendChild(arrow2);
+    nodeH.appendChild(div1);
+    nodeH.appendChild(div2);
+    drawWall = false;
+    div1.style.backgroundColor = shortestPathNodeColor;
+    return;
+  }
+
+  if (shuldren.length > 0) {
+    addReturnArrow(nodeH, up);
+    drawWall = false;
+    return;
+  }
+
+  arrow.classList.add('long', 'arrow', 'alternate', 'up', 'large', 'icon');
+  nodeH.appendChild(arrow);
+
+  const node = nodeH;
+  if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+};
+
+const goingDown = (shuldren: HTMLCollection, nodeH: HTMLDivElement) => {
+  if (isIndexAvailable && shuldren.length === 0) {
+    div1.classList.add('height');
+    div2.classList.add('height');
+    arrow1.classList.add('long', 'arrow', 'alternate', 'down', 'large', 'icon', 'ico-ud');
+    arrow2.classList.add('ico-ud');
+    div1.appendChild(arrow1);
+    div2.appendChild(arrow2);
+    nodeH.appendChild(div1);
+    nodeH.appendChild(div2);
+    drawWall = false;
+    div1.style.backgroundColor = shortestPathNodeColor;
+    return;
+  }
+
+  if (shuldren.length > 0) {
+    addReturnArrow(nodeH, down);
+    drawWall = false;
+    return;
+  }
+
+  arrow.classList.add('long', 'arrow', 'alternate', 'down', 'large', 'icon');
+  nodeH.appendChild(arrow);
+
+  const node = nodeH;
+  if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+};
+
 // show directional arrows.
 const drawArrows = (
   nodes: HTMLDivElement[], nodeH: HTMLDivElement, prevIdx: number, idx: number,
   nextIdx: number, noOfNodesRow: number,
 ) => {
-  const arrow = document.createElement('i');
+  arrow = document.createElement('i');
   const isTargetNode = getAttr(nodes[nextIdx], dataIsTargetNode);
   const isBombNode = getAttr(nodes[nextIdx], dataIsBombNode);
-  let drawWall = true;
+  drawWall = true;
 
   const shuldren = nodeH.children;
-  const div1 = document.createElement('div');
-  const div2 = document.createElement('div');
-  const arrow1 = document.createElement('i');
-  const arrow2 = document.createElement('i');
+  div1 = document.createElement('div');
+  div2 = document.createElement('div');
+  arrow1 = document.createElement('i');
+  arrow2 = document.createElement('i');
 
   if (isStartTargetPinNode || isTargetNode === 'true' || isBombNode === 'true') {
     drawStartArrow(arrow);
@@ -401,17 +537,18 @@ const drawArrows = (
     changeColorToBlack = false;
   }
 
-  const isIndexAvailable = isIndexInPathNode(idx);
-  const up = 'up';
-  const down = 'down';
-  const left = 'left';
-  const right = 'right';
+  isIndexAvailable = isIndexInPathNode(idx);
+  // const up = 'up';
+  // const down = 'down';
+  // const left = 'left';
+  // const right = 'right';
   let direction = '';
   // ######## start of clockwise direction ########
   // up to right
   if (prevIdx - idx === noOfNodesRow && nextIdx - idx === 1) {
     if (isIndexAvailable) {
       direction = up;
+      direction = setDirection(idx, nextIdx);
     } else {
       arrow.classList.add('share', 'icon');
       arrow.style.marginLeft = '8px';
@@ -428,6 +565,7 @@ const drawArrows = (
   if (nextIdx - idx === noOfNodesRow && idx - prevIdx === 1) {
     if (isIndexAvailable) {
       direction = right;
+      direction = setDirection(idx, nextIdx);
     } else {
       arrow.classList.add('share', 'clockwise', 'rotated', 'icon');
       arrow.style.marginLeft = '6px';
@@ -444,6 +582,7 @@ const drawArrows = (
   if (idx - prevIdx === noOfNodesRow && idx - nextIdx === 1) {
     if (isIndexAvailable) {
       direction = down;
+      direction = setDirection(idx, nextIdx);
     } else {
       arrow.classList.add('reply', 'vertically', 'flipped', 'icon');
       arrow.style.marginRight = '5px';
@@ -460,6 +599,7 @@ const drawArrows = (
   if (idx - nextIdx === noOfNodesRow && prevIdx - idx === 1) {
     if (isIndexAvailable) {
       direction = left;
+      direction = setDirection(idx, nextIdx);
     } else {
       arrow.classList.add('share', 'counterclockwise', 'rotated', 'icon');
       arrow.style.marginLeft = '2px';
@@ -478,6 +618,7 @@ const drawArrows = (
   if (nextIdx - idx === noOfNodesRow && prevIdx - idx === 1) {
     if (isIndexAvailable) {
       direction = left;
+      direction = setDirection(idx, nextIdx);
     } else {
       arrow.classList.add('reply', 'counterclockwise', 'rotated', 'icon');
       arrow.style.marginLeft = '2px';
@@ -494,6 +635,7 @@ const drawArrows = (
   if (idx - prevIdx === noOfNodesRow && nextIdx - idx === 1) {
     if (isIndexAvailable) {
       direction = down;
+      direction = setDirection(idx, nextIdx);
     } else {
       arrow.classList.add('share', 'vertically', 'flipped', 'icon');
       arrow.style.marginLeft = '8px';
@@ -510,6 +652,7 @@ const drawArrows = (
   if (idx - nextIdx === noOfNodesRow && idx - prevIdx === 1) {
     if (isIndexAvailable) {
       direction = right;
+      direction = setDirection(idx, nextIdx);
     } else {
       arrow.classList.add('reply', 'clockwise', 'rotated', 'icon');
       arrow.style.marginLeft = '7px';
@@ -526,6 +669,7 @@ const drawArrows = (
   if (prevIdx - idx === noOfNodesRow && idx - nextIdx === 1) {
     if (isIndexAvailable) {
       direction = up;
+      direction = setDirection(idx, nextIdx);
     } else {
       arrow.classList.add('reply', 'icon');
       arrow.style.marginRight = '2px';
@@ -539,123 +683,31 @@ const drawArrows = (
   }
   // ######## end of counter clockwise direction ########
 
+  if (direction === right) { goingRight(shuldren, nodeH); return; }
+  if (direction === left) { goingLeft(shuldren, nodeH); return; }
+  if (direction === up) { goingUp(shuldren, nodeH); return; }
+  if (direction === down) { goingDown(shuldren, nodeH); return; }
   // going right
   if (idx - prevIdx === 1 || direction === right) {
-    if (isIndexAvailable && shuldren.length === 0) {
-      div1.classList.add('width');
-      div2.classList.add('width');
-      arrow1.classList.add('long', 'arrow', 'alternate', 'right', 'large', 'icon', 'ico-lr');
-      arrow2.classList.add('ico-lr');
-      div1.appendChild(arrow1);
-      div2.appendChild(arrow2);
-      nodeH.appendChild(div1);
-      nodeH.appendChild(div2);
-      div1.style.backgroundColor = shortestPathNodeColor;
-      drawWall = false;
-      return;
-    }
-
-    if (shuldren.length > 0) {
-      addReturnArrow(nodeH, right);
-      drawWall = false;
-      return;
-    }
-
-    arrow.classList.add('long', 'arrow', 'alternate', 'right', 'large', 'icon');
-    nodeH.appendChild(arrow);
-
-    const node = nodeH;
-    if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+    goingRight(shuldren, nodeH);
     return;
   }
 
   // going left
   if (prevIdx - idx === 1 || direction === left) {
-    if (isIndexAvailable && shuldren.length === 0) {
-      div1.classList.add('width');
-      div2.classList.add('width');
-      arrow1.classList.add('long', 'arrow', 'alternate', 'left', 'large', 'icon', 'ico-lr');
-      arrow2.classList.add('ico-lr');
-      div1.appendChild(arrow1);
-      div2.appendChild(arrow2);
-      nodeH.appendChild(div1);
-      nodeH.appendChild(div2);
-      div1.style.backgroundColor = shortestPathNodeColor;
-      drawWall = false;
-      return;
-    }
-
-    if (shuldren.length > 0) {
-      addReturnArrow(nodeH, left);
-      drawWall = false;
-      return;
-    }
-
-    arrow.classList.add('long', 'arrow', 'alternate', 'left', 'large', 'icon');
-    nodeH.appendChild(arrow);
-
-    const node = nodeH;
-    if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+    goingLeft(shuldren, nodeH);
     return;
   }
 
   // going up
   if (idx - nextIdx === noOfNodesRow || direction === up) {
-    if (isIndexAvailable && shuldren.length === 0) {
-      div1.classList.add('height');
-      div2.classList.add('height');
-      arrow1.classList.add('long', 'arrow', 'alternate', 'up', 'large', 'icon', 'ico-ud');
-      arrow2.classList.add('ico-ud');
-      div1.appendChild(arrow1);
-      div2.appendChild(arrow2);
-      nodeH.appendChild(div1);
-      nodeH.appendChild(div2);
-      drawWall = false;
-      div1.style.backgroundColor = shortestPathNodeColor;
-      return;
-    }
-
-    if (shuldren.length > 0) {
-      addReturnArrow(nodeH, up);
-      drawWall = false;
-      return;
-    }
-
-    arrow.classList.add('long', 'arrow', 'alternate', 'up', 'large', 'icon');
-    nodeH.appendChild(arrow);
-
-    const node = nodeH;
-    if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+    goingUp(shuldren, nodeH);
     return;
   }
 
   // going down
   if (nextIdx - idx === noOfNodesRow || direction === down) {
-    if (isIndexAvailable && shuldren.length === 0) {
-      div1.classList.add('height');
-      div2.classList.add('height');
-      arrow1.classList.add('long', 'arrow', 'alternate', 'down', 'large', 'icon', 'ico-ud');
-      arrow2.classList.add('ico-ud');
-      div1.appendChild(arrow1);
-      div2.appendChild(arrow2);
-      nodeH.appendChild(div1);
-      nodeH.appendChild(div2);
-      drawWall = false;
-      div1.style.backgroundColor = shortestPathNodeColor;
-      return;
-    }
-
-    if (shuldren.length > 0) {
-      addReturnArrow(nodeH, down);
-      drawWall = false;
-      return;
-    }
-
-    arrow.classList.add('long', 'arrow', 'alternate', 'down', 'large', 'icon');
-    nodeH.appendChild(arrow);
-
-    const node = nodeH;
-    if (drawWall) node.style.backgroundColor = shortestPathNodeColor;
+    goingDown(shuldren, nodeH);
   }
 };
 
