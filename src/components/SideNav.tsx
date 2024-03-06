@@ -370,6 +370,18 @@ const SideNav = React.forwardRef((
 
               <br />
               <span>
+                <Icon name="long arrow alternate right" color="red" />
+                <span> Red arrow to Pin Node</span>
+              </span>
+
+              <br />
+              <span>
+                <Icon name="long arrow alternate right" color="black" />
+                <span> Black arrow to Target Node</span>
+              </span>
+
+              <br />
+              <span>
                 <div className="info-span-div" style={{ backgroundColor: transparent }} />
                 <span> Unvisited Node</span>
               </span>
