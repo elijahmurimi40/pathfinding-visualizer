@@ -18,6 +18,7 @@ let initialIndex = 0;
 let isDarkMode = false;
 let prevIndex = 0;
 let isStartTargetPinNode = false;
+let changeColorToBlack = false;
 
 let nodeInfoStart: NodeInfoType = {
   index: -1,
@@ -89,12 +90,14 @@ export const finishAnimation = (
     setAttr(node, dataIsPathNode, 'false');
     setAttr(node, dataIsArrowNode, 'false');
     isStartTargetPinNode = false;
+    changeColorToBlack = false;
 
     if (isStartNode === 'false' && isTargetNode === 'false' && isBombNode === 'false') {
       const shuldren = node.children;
       if (shuldren.length > 0) {
-        for (let i = 0; i < shuldren.length; i += 1) {
-          const shald = shuldren[i];
+        const len = shuldren.length;
+        for (let i = 0; i < len; i += 1) {
+          const shald = shuldren[0];
           shald.remove();
         }
       }
@@ -365,7 +368,6 @@ const drawStartArrow = (element: HTMLElement) => {
 };
 
 // show directional arrows.
-let changeColorToBlack = false;
 const drawArrows = (
   nodes: HTMLDivElement[], nodeH: HTMLDivElement, prevIdx: number, idx: number,
   nextIdx: number, noOfNodesRow: number,
@@ -409,7 +411,7 @@ const drawArrows = (
   // up to right
   if (prevIdx - idx === noOfNodesRow && nextIdx - idx === 1) {
     if (isIndexAvailable) {
-      direction = right;
+      direction = up;
     } else {
       arrow.classList.add('share', 'icon');
       arrow.style.marginLeft = '8px';
@@ -425,7 +427,7 @@ const drawArrows = (
   // right to down
   if (nextIdx - idx === noOfNodesRow && idx - prevIdx === 1) {
     if (isIndexAvailable) {
-      direction = down;
+      direction = right;
     } else {
       arrow.classList.add('share', 'clockwise', 'rotated', 'icon');
       arrow.style.marginLeft = '6px';
@@ -441,7 +443,7 @@ const drawArrows = (
   // down to left
   if (idx - prevIdx === noOfNodesRow && idx - nextIdx === 1) {
     if (isIndexAvailable) {
-      direction = left;
+      direction = down;
     } else {
       arrow.classList.add('reply', 'vertically', 'flipped', 'icon');
       arrow.style.marginRight = '5px';
@@ -457,7 +459,7 @@ const drawArrows = (
   // left to up
   if (idx - nextIdx === noOfNodesRow && prevIdx - idx === 1) {
     if (isIndexAvailable) {
-      direction = up;
+      direction = left;
     } else {
       arrow.classList.add('share', 'counterclockwise', 'rotated', 'icon');
       arrow.style.marginLeft = '2px';
@@ -475,7 +477,7 @@ const drawArrows = (
   // left to down
   if (nextIdx - idx === noOfNodesRow && prevIdx - idx === 1) {
     if (isIndexAvailable) {
-      direction = down;
+      direction = left;
     } else {
       arrow.classList.add('reply', 'counterclockwise', 'rotated', 'icon');
       arrow.style.marginLeft = '2px';
@@ -491,7 +493,7 @@ const drawArrows = (
   // down to right
   if (idx - prevIdx === noOfNodesRow && nextIdx - idx === 1) {
     if (isIndexAvailable) {
-      direction = right;
+      direction = down;
     } else {
       arrow.classList.add('share', 'vertically', 'flipped', 'icon');
       arrow.style.marginLeft = '8px';
@@ -507,7 +509,7 @@ const drawArrows = (
   // right to up
   if (idx - nextIdx === noOfNodesRow && idx - prevIdx === 1) {
     if (isIndexAvailable) {
-      direction = up;
+      direction = right;
     } else {
       arrow.classList.add('reply', 'clockwise', 'rotated', 'icon');
       arrow.style.marginLeft = '7px';
@@ -523,7 +525,7 @@ const drawArrows = (
   // up to left
   if (prevIdx - idx === noOfNodesRow && idx - nextIdx === 1) {
     if (isIndexAvailable) {
-      direction = left;
+      direction = up;
     } else {
       arrow.classList.add('reply', 'icon');
       arrow.style.marginRight = '2px';
