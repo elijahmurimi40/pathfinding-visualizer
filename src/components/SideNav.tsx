@@ -114,7 +114,7 @@ const SideNav = React.forwardRef((
   const [left, setLeft] = useState(55);
   const [display, setDisplay] = useState('none');
   const [active, setActive] = useState(0);
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
 
   const setLeftHelper = (leftHelper: number) => { setLeft(leftHelper); };
   const setOpenH = () => { setOpen(true); };

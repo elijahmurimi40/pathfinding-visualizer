@@ -352,9 +352,27 @@ export const addPathNode = (
   // nodeH.classList.remove('pf-grid-node-border-color');
   // nodeH.style.backgroundColor = shortestPathNodeColor;
 
-  if (isStartNode === 'true' || isTargetNode === 'true' || isBombNode === 'true') {
+  if (isStartNode === 'true' || isBombNode === 'true') {
     const child = nodeH.children[0] as HTMLElement;
     child.style.color = '#ff1493';
+    if (isPathNode === 'false') {
+      isStartTargetPinNode = true;
+    }
+    setAttr(nodeH, dataIsPathNode, 'true');
+    nodeH.style.backgroundColor = shortestPathNodeColor;
+    return;
+  }
+
+  if (isTargetNode === 'true') {
+    const targetIdx = animations.indexOf(prevIdx);
+    const finalIdx = animations.indexOf(idx, targetIdx);
+    if (getBombIndex() !== -1 && finalIdx === animations.length - 1) {
+      const child = nodeH.children[0] as HTMLElement;
+      child.style.color = '#ff1493';
+    } else if (getBombIndex() === -1) {
+      const child = nodeH.children[0] as HTMLElement;
+      child.style.color = '#ff1493';
+    }
     if (isPathNode === 'false') {
       isStartTargetPinNode = true;
     }
