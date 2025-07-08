@@ -12,7 +12,7 @@ Explore the world of pathfinding algorithms visually: [https://pfv.elijahmurimi.
 	alt="Demo" hspace="20" />
 
  ## Local setup.
- Before diving in, ensure you have Nodejs installed and yarn as your package manager for a seamless setup of the Pathfinding Visualizer. `npm` can also be used. Running the Pathfinding Visualizer locally, first clone the repository. This Project uses `node version 16`
+ Before diving in, ensure you have Nodejs installed and yarn as your package manager for a seamless setup of the Pathfinding Visualizer. `npm` can also be used. Running the Pathfinding Visualizer locally, first clone the repository. This project uses `node version 16`
 
  	git clone https://github.com/elijahmurimi40/pathfinding-visualizer.git
 
