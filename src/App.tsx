@@ -364,6 +364,7 @@ function App() {
         sideNavRefH!!.style.width = '200px';
         sideNavRefH!!.style.top = `${pfGridRef.current!!.offsetTop + 1}px`;
         sideNavRefH!!.style.left = `${Math.floor(reimaingWidth / 2) - 200 - 5}px`;
+        speedSideNavRef.current!!.style.left = `${Math.floor(reimaingWidth / 2)}px`;
         const h = pfGridHeight > 854 ? 854 : pfGridHeight - 11;
         sideNavRefH!!.style.height = `${h}px`;
       } else {
