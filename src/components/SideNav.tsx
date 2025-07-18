@@ -119,6 +119,7 @@ const SideNav = React.forwardRef((
   const setLeftHelper = (leftHelper: number) => { setLeft(leftHelper); };
   const setOpenH = () => { setOpen(true); };
   // const setActiveHelper = (activeHelper: number) => { setActive(activeHelper); };
+  const windowWidth = window.innerWidth;
   const className = getDarkMode()
     ? 'ui vertical menu speed-menu speed-menu-inverted inverted'
     : 'ui vertical menu speed-menu';
@@ -151,7 +152,8 @@ const SideNav = React.forwardRef((
         ref={props.speedSideNavRef}
         style={{
           left: `${left}px`,
-          top: `${props.top + 55}px`,
+          // top: `${props.top + 55}px`,
+          top: windowWidth >= 1580 ? `${props.top}px` : `${props.top + 55}px`,
           display,
         }}
         className={className}

@@ -68,7 +68,7 @@ const PathFindingGrid = React.forwardRef((props: Props, ref: ForwardedRef<HTMLDi
         maxHeight: '880px',
       }}
     >
-      <div className="pf-grid-node-holder" style={{ marginTop: Math.floor(marginTop / 2) }}>
+      <div className="pf-grid-node-holder" style={{ marginTop: Math.floor(marginTop / 2) - Math.floor(marginTop / 2) }}>
         {
           pfGridRows.length === 0 ? ''
             : pfGridRows.map((row: RowType, idxC: number) => (
