@@ -56,8 +56,8 @@ const debounce = (callBack: () => void, time: number = 305) => {
 function App() {
   const [pfGridHeight, setPfGridHeight] = useState(0);
   const [pfGridRows, setPfgridRows] = useState<RowsType>([]);
-
   const topNavRef = useRef<HTMLDivElement>(null);
+
   const bottomNavRef = useRef<HTMLDivElement>(null);
   const pfGridRef = useRef<HTMLDivElement>(null);
   const openSideNavRef = useRef<HTMLDivElement>(null);
@@ -374,12 +374,15 @@ function App() {
         sideNavRefH!!.style.width = '50px';
         sideNavRefH!!.style.top = `${pfGridRef.current!!.offsetTop + 55}px`;
         sideNavRefH!!.style.left = '0px';
+        speedSideNavRef.current!!.style.left = '55px';
         const h = pfGridHeight > 854 ? 854 : pfGridHeight - 63;
         sideNavRefH!!.style.height = `${h}px`;
 
         icon?.classList.remove('close', 'large');
         icon?.classList.add('grid', 'layout');
       }
+
+      speedSideNavRef.current!!.style.display = 'none';
     }
   };
 

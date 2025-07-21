@@ -123,6 +123,7 @@ const SideNav = React.forwardRef((
   const className = getDarkMode()
     ? 'ui vertical menu speed-menu speed-menu-inverted inverted'
     : 'ui vertical menu speed-menu';
+  const speedNav = props.speedSideNavRef?.current;
   return (
     <>
       {/* open side nav */}
@@ -198,10 +199,12 @@ const SideNav = React.forwardRef((
         <Menu.Item
           className="menu-item"
           onClick={() => {
-            if (display === 'none') {
+            if (display === 'none' || speedNav!!.style.display === 'none') {
               setDisplay('block');
+              speedNav!!.style.display = 'block';
             } else {
               setDisplay('none');
+              speedNav!!.style.display = 'none';
             }
           }}
         >
