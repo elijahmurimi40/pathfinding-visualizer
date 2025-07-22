@@ -306,7 +306,8 @@ const SideNav = React.forwardRef((
           height: 'auto',
           outline: 'auto',
           overflow: 'visible',
-          top: 'auto',
+          // top: 'auto',
+          top: props.top,
           left: 'auto',
         }}
       >
