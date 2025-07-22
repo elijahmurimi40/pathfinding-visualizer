@@ -47,13 +47,14 @@ const speedOnClick = (
 const animateSideNavRefWidth = (
   // eslint-disable-next-line no-unused-vars
   sideNavRef: RefObject<HTMLDivElement> | null, setLeft: (left: number) => void,
-  openSideNavRef: RefObject<HTMLDivElement>,
+  openSideNavRef: RefObject<HTMLDivElement>, speedNavRef: RefObject<HTMLDivElement>,
 ) => {
   const icon = openSideNavRef.current?.children[0].children[0];
 
   // H for helper
   const sideNavRefH = sideNavRef!!.current!!;
   const sideNavRefHWidth = sideNavRefH.style.width;
+  const speedNavRefH = speedNavRef!!.current!!;
   // eslint-disable-next-line no-unused-expressions
   // sideNavRefHWidth === '50px' ? sideNavRefH.style.width = '200px'
   //   : sideNavRefH.style.width = '50px';
@@ -62,6 +63,7 @@ const animateSideNavRefWidth = (
     sideNavRefH.classList.add('side-nav-open');
     sideNavRefH.style.width = '200px';
     setLeft(205);
+    speedNavRefH.style.left = '205px';
     icon?.classList.remove('grid', 'layout');
     icon?.classList.add('close', 'large');
   } else {
@@ -69,6 +71,7 @@ const animateSideNavRefWidth = (
     sideNavRefH.classList.add('side-nav');
     sideNavRefH.style.width = '50px';
     setLeft(55);
+    speedNavRefH.style.left = '55px';
     icon?.classList.remove('close', 'large');
     icon?.classList.add('grid', 'layout');
   }
@@ -141,7 +144,7 @@ const SideNav = React.forwardRef((
           className="open-menu-item"
           onClick={() => {
             animateSideNavRefWidth(ref as RefObject<HTMLDivElement>, setLeftHelper,
-              props.openSideNavRef!!);
+              props.openSideNavRef!!, props.speedSideNavRef!!);
           }}
         >
           <Icon name="grid layout" />
