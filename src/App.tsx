@@ -491,15 +491,43 @@ function App() {
     }
   };
 
+  const documentClicked = (e: MouseEvent) => {
+    const windowWidth = window.innerWidth;
+    if (windowWidth >= 1580) return;
+
+    const t = e.target as Node;
+    const sideNav = sideNavRef.current!!;
+    const speedNav = speedSideNavRef.current!!;
+    const openSideNav = openSideNavRef.current!!;
+    const clickedInsideSideNav = sideNav.contains(t);
+    const clickedInsideSpeedNav = speedNav.contains(t);
+    const clickedInsideOpen = openSideNav.contains(t);
+    const icon = openSideNavRef.current?.children[0].children[0];
+
+    if (!clickedInsideSideNav && !clickedInsideSpeedNav && !clickedInsideOpen) {
+      speedNav.style.left = '55px';
+      speedNav.style.display = 'none';
+      sideNav.classList.remove('side-nav-open');
+      sideNav.classList.add('side-nav');
+      sideNav.style.width = '50px';
+      sideNav.style.top = `${pfGridRef.current!!.offsetTop + 55}px`;
+      sideNav.style.left = '0px';
+      icon?.classList.remove('close', 'large');
+      icon?.classList.add('grid', 'layout');
+    }
+  };
+
   useEffect(() => {
     // effect
     calculateAndSetDimension.current();
     window.addEventListener('resize', debounce(calculateAndSetDimension.current));
     window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('click', documentClicked);
     return () => {
       // cleanup
       window.removeEventListener('resize', debounce(calculateAndSetDimension.current));
       window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('click', documentClicked);
     };
   }, []);
 
