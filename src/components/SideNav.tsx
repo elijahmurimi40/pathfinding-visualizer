@@ -77,15 +77,21 @@ const animateSideNavRefWidth = (
   }
 };
 
-const infoOnClick = (sideNavRef: RefObject<HTMLDivElement>) => {
+const infoOnClick = (
+  sideNavRef: RefObject<HTMLDivElement>,
+  openSideNav: RefObject<HTMLDivElement> | null,
+) => {
   // H for helper
   const sideNavRefH = sideNavRef.current!!;
   const sideNavRefHWidth = sideNavRefH.style.width;
+  const icon = openSideNav?.current?.children[0].children[0];
 
   if (sideNavRefHWidth === '50px') {
     sideNavRefH.classList.remove('side-nav');
     sideNavRefH.classList.add('side-nav-open');
     sideNavRefH.style.width = '200px';
+    icon?.classList.add('close', 'large');
+    icon?.classList.remove('grid', 'layout');
   }
 };
 
@@ -243,7 +249,10 @@ const SideNav = React.forwardRef((
           <span className="menu-item-name">Help</span>
         </Menu.Item>
 
-        <Menu.Item className="menu-item" onClick={() => { infoOnClick(ref as RefObject<HTMLDivElement>); }}>
+        <Menu.Item
+          className="menu-item"
+          onClick={() => { infoOnClick(ref as RefObject<HTMLDivElement>, props.openSideNavRef); }}
+        >
           <Icon name="info" />
           <span className="menu-item-name">Info</span>
 
